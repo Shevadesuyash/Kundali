@@ -1,0 +1,113 @@
+"""
+app/models.py
+--------------
+Domain model (Person) used by the astrology engine, plus Pydantic
+request/response schemas used by the FastAPI layer.
+"""
+from __future__ import annotations
+
+import datetime
+from typing import List, Optional
+
+import pytz
+from pydantic import BaseModel, Field, field_validator
+
+
+# --------------------------------------------------------------------------
+# Domain model
+# --------------------------------------------------------------------------
+class Person:
+    """
+    Data model representing a person for astrological calculations.
+    Holds their name, exact birth time, and birth coordinates, and
+    pre-computes the UTC datetime needed by the Swiss Ephemeris.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        year: int,
+        month: int,
+        day: int,
+        hour: int,
+        minute: int,
+        lat: float,
+        lon: float,
+        timezone_str: str = "Asia/Kolkata",
+    ):
+        self.name = name
+        self.year = year
+        self.month = month
+        self.day = day
+        self.hour = hour
+        self.minute = minute
+        self.lat = lat
+        self.lon = lon
+        self.timezone_str = timezone_str
+
+        try:
+            local_tz = pytz.timezone(timezone_str)
+        except pytz.UnknownTimeZoneError as exc:
+            raise ValueError(f"Unknown timezone: {timezone_str}") from exc
+
+        local_dt = datetime.datetime(year, month, day, hour, minute)
+        self.utc_dt = local_tz.localize(local_dt).astimezone(pytz.utc)
+
+    def display_info(self) -> str:
+        return (
+            f"Profile: {self.name} | DOB: {self.day}-{self.month}-{self.year} "
+            f"| Time: {self.hour:02d}:{self.minute:02d} | "
+            f"Coordinates: {self.lat}, {self.lon}"
+        )
+
+    def __repr__(self) -> str:
+        return f"<Person {self.name} {self.utc_dt.isoformat()}>"
+
+
+# --------------------------------------------------------------------------
+# API schemas (Pydantic v2)
+# --------------------------------------------------------------------------
+class BirthDetails(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+    year: int = Field(..., ge=1900, le=2100)
+    month: int = Field(..., ge=1, le=12)
+    day: int = Field(..., ge=1, le=31)
+    hour: int = Field(..., ge=0, le=23)
+    minute: int = Field(..., ge=0, le=59)
+    lat: float = Field(..., ge=-90, le=90)
+    lon: float = Field(..., ge=-180, le=180)
+    timezone_str: str = Field(default="Asia/Kolkata")
+
+    @field_validator("day")
+    @classmethod
+    def validate_real_date(cls, v, info):
+        # Cross-field validation happens in model_validator normally,
+        # but a simple calendar check is done in to_person() to keep
+        # this validator lightweight and field-order independent.
+        return v
+
+    def to_person(self) -> Person:
+        try:
+            datetime.date(self.year, self.month, self.day)
+        except ValueError as exc:
+            raise ValueError(f"Invalid calendar date: {exc}") from exc
+        return Person(
+            self.name, self.year, self.month, self.day,
+            self.hour, self.minute, self.lat, self.lon, self.timezone_str,
+        )
+
+
+class KundaliRequest(BaseModel):
+    person: BirthDetails
+    include_ai_reading: bool = False
+
+
+class MatchRequest(BaseModel):
+    boy: BirthDetails
+    girl: BirthDetails
+    include_ai_reading: bool = False
+
+
+class ErrorResponse(BaseModel):
+    error: str
+    detail: Optional[str] = None

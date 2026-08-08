@@ -1,0 +1,106 @@
+.scorecard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.scorecard__total {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.scorecard__ring {
+  --pct: 0;
+  width: 136px;
+  height: 136px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: conic-gradient(var(--color-gold) calc(var(--pct) * 1%), var(--color-bg-panel-raised) 0);
+  position: relative;
+  box-shadow: 0 4px 16px rgba(180, 80, 0, 0.12);
+}
+
+.scorecard__ring::before {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  background: #FFFFFF;
+}
+
+.scorecard__ring-number,
+.scorecard__ring-max {
+  position: relative;
+  z-index: 1;
+}
+
+.scorecard__ring-number {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.scorecard__ring-max {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-faint);
+}
+
+.scorecard__verdict {
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin: 4px 0 10px;
+  color: var(--color-text);
+}
+
+.scorecard__flags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.scorecard__flag {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+
+.scorecard__flag--warn {
+  color: var(--color-vermilion);
+  border-color: rgba(183, 28, 28, 0.3);
+  background: var(--color-vermilion-soft);
+}
+
+.scorecard__flag--ok {
+  color: var(--color-jade);
+  border-color: rgba(27, 110, 65, 0.3);
+  background: var(--color-jade-soft);
+}
+
+.scorecard__manglik-verdict {
+  font-size: 0.95rem;
+  color: var(--color-text);
+  font-weight: 500;
+  padding: 14px 18px;
+  border-left: 4px solid var(--color-gold);
+  background: var(--color-bg-panel-raised);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  box-shadow: var(--shadow-card);
+}
+
+.scorecard__kootas {
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: var(--radius-md);
+  padding: 8px 18px;
+  background: #FFFFFF;
+}

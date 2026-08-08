@@ -1,0 +1,32 @@
+# Python / Backend
+kundali_backend/venv/
+kundali_backend/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+.venv/
+.pytest_cache/
+
+# Node / Frontend
+kundali_frontend/node_modules/
+kundali_frontend/dist/
+kundali_frontend/.env
+kundali_frontend/.env.local
+kundali_frontend/.env.*
+npm-debug.log
+yarn-error.log
+
+# OS & General
+.DS_Store
+*.zip
+Thumbs.db
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo

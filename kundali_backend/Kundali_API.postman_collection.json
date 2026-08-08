@@ -1,0 +1,510 @@
+{
+  "info": {
+    "name": "Kundali & Matchmaking API",
+    "description": "Vedic astrology Kundali generation and Ashtakoot Guna Milan matchmaking engine.\n\nBase URL: http://localhost:8000\n\nEndpoints:\n- GET  /health\n- POST /api/v1/kundali\n- POST /api/v1/match\n\nNotes:\n- All POST bodies are JSON.\n- timezone_str defaults to Asia/Kolkata if omitted.\n- include_ai_reading:true requires GEMINI_API_KEY env var; returns null gracefully if not set.\n- Interactive Swagger docs: http://localhost:8000/docs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string",
+      "description": "Change to your deployed Lambda / API Gateway URL for production"
+    }
+  ],
+  "item": [
+    {
+      "name": "1 - Health Check",
+      "item": [
+        {
+          "name": "GET /health",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Liveness probe. Returns {status: ok} when server is up."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 - Kundali (Individual Report)",
+      "item": [
+        {
+          "name": "Basic Kundali - Sunita Pune 1982",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/kundali",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kundali"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"person\": {\n    \"name\": \"Sunita\",\n    \"year\": 1982,\n    \"month\": 7,\n    \"day\": 20,\n    \"hour\": 5,\n    \"minute\": 5,\n    \"lat\": 17.0,\n    \"lon\": 74.0,\n    \"timezone_str\": \"Asia/Kolkata\"\n  },\n  \"include_ai_reading\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Standard Kundali report. Returns ascendant, moon sign/nakshatra, 9 planet positions with houses, Manglik status, and D1/Rashi/D9 charts."
+          }
+        },
+        {
+          "name": "Kundali WITH AI Reading - Sunita",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/kundali",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kundali"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"person\": {\n    \"name\": \"Sunita\",\n    \"year\": 1982,\n    \"month\": 7,\n    \"day\": 20,\n    \"hour\": 5,\n    \"minute\": 5,\n    \"lat\": 17.0,\n    \"lon\": 74.0,\n    \"timezone_str\": \"Asia/Kolkata\"\n  },\n  \"include_ai_reading\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Includes ai_reading field (150-200 word Gemini narrative). Requires GEMINI_API_KEY on server. Returns null gracefully if key not set."
+          }
+        },
+        {
+          "name": "Kundali - Rahul Mumbai 1995",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/kundali",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kundali"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"person\": {\n    \"name\": \"Rahul Sharma\",\n    \"year\": 1995,\n    \"month\": 3,\n    \"day\": 14,\n    \"hour\": 7,\n    \"minute\": 30,\n    \"lat\": 19.0760,\n    \"lon\": 72.8777,\n    \"timezone_str\": \"Asia/Kolkata\"\n  },\n  \"include_ai_reading\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Example with Mumbai coordinates (lat: 19.0760, lon: 72.8777)."
+          }
+        },
+        {
+          "name": "Kundali - Priya Delhi 2001",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/kundali",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kundali"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"person\": {\n    \"name\": \"Priya Singh\",\n    \"year\": 2001,\n    \"month\": 11,\n    \"day\": 5,\n    \"hour\": 14,\n    \"minute\": 45,\n    \"lat\": 28.6139,\n    \"lon\": 77.2090,\n    \"timezone_str\": \"Asia/Kolkata\"\n  },\n  \"include_ai_reading\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Example with Delhi coordinates (lat: 28.6139, lon: 77.2090). Afternoon birth time."
+          }
+        },
+        {
+          "name": "Kundali - Midnight Edge Case",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/kundali",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kundali"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"person\": {\n    \"name\": \"Midnight Test\",\n    \"year\": 1990,\n    \"month\": 1,\n    \"day\": 1,\n    \"hour\": 0,\n    \"minute\": 0,\n    \"lat\": 18.5204,\n    \"lon\": 73.8567,\n    \"timezone_str\": \"Asia/Kolkata\"\n  },\n  \"include_ai_reading\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Edge case: exactly midnight birth on 1st Jan 1990, Pune."
+          }
+        },
+        {
+          "name": "ERROR 400 - Invalid Date (Feb 30)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/kundali",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kundali"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"person\": {\n    \"name\": \"Bad Date\",\n    \"year\": 2000,\n    \"month\": 2,\n    \"day\": 30,\n    \"hour\": 10,\n    \"minute\": 0,\n    \"lat\": 18.52,\n    \"lon\": 73.86\n  },\n  \"include_ai_reading\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Expects HTTP 400. February 30 is not a real date."
+          }
+        },
+        {
+          "name": "ERROR 400 - Invalid Timezone",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/kundali",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kundali"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"person\": {\n    \"name\": \"Bad TZ\",\n    \"year\": 1990,\n    \"month\": 6,\n    \"day\": 15,\n    \"hour\": 8,\n    \"minute\": 0,\n    \"lat\": 18.52,\n    \"lon\": 73.86,\n    \"timezone_str\": \"Not/ARealZone\"\n  },\n  \"include_ai_reading\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Expects HTTP 400. Unknown timezone string."
+          }
+        },
+        {
+          "name": "ERROR 422 - Hour Out of Range (hour=27)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/kundali",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kundali"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"person\": {\n    \"name\": \"Bad Hour\",\n    \"year\": 1990,\n    \"month\": 6,\n    \"day\": 15,\n    \"hour\": 27,\n    \"minute\": 0,\n    \"lat\": 18.52,\n    \"lon\": 73.86\n  },\n  \"include_ai_reading\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Expects HTTP 422. Pydantic schema rejects hour > 23."
+          }
+        },
+        {
+          "name": "ERROR 422 - Missing Required Fields",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/kundali",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kundali"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"person\": {\n    \"name\": \"Incomplete\",\n    \"year\": 1990,\n    \"month\": 6,\n    \"day\": 15\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Expects HTTP 422. Missing hour, minute, lat, lon."
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 - Match (Ashtakoot Guna Milan)",
+      "item": [
+        {
+          "name": "Match - Saurabh x Apurva (Pune x Sangli)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/match",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "match"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"boy\": {\n    \"name\": \"Saurabh\",\n    \"year\": 1997,\n    \"month\": 8,\n    \"day\": 15,\n    \"hour\": 4,\n    \"minute\": 17,\n    \"lat\": 18.5204,\n    \"lon\": 73.8567,\n    \"timezone_str\": \"Asia/Kolkata\"\n  },\n  \"girl\": {\n    \"name\": \"Apurva\",\n    \"year\": 2000,\n    \"month\": 8,\n    \"day\": 29,\n    \"hour\": 4,\n    \"minute\": 0,\n    \"lat\": 16.9125,\n    \"lon\": 74.1358,\n    \"timezone_str\": \"Asia/Kolkata\"\n  },\n  \"include_ai_reading\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Full matchmaking report.\n\nReturns:\n- boy / girl: full Kundali profiles with manglik_dosha\n- guna_milan: all 8 kootas scored, total_score/36, verdict, nadi_dosha, bhakoot_dosha flags\n- manglik_analysis: per-partner status + combined_verdict\n\nExpected: ~22/36 -> Good / Compatible Match"
+          }
+        },
+        {
+          "name": "Match WITH AI Reading - Saurabh x Apurva",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/match",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "match"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"boy\": {\n    \"name\": \"Saurabh\",\n    \"year\": 1997,\n    \"month\": 8,\n    \"day\": 15,\n    \"hour\": 4,\n    \"minute\": 17,\n    \"lat\": 18.5204,\n    \"lon\": 73.8567,\n    \"timezone_str\": \"Asia/Kolkata\"\n  },\n  \"girl\": {\n    \"name\": \"Apurva\",\n    \"year\": 2000,\n    \"month\": 8,\n    \"day\": 29,\n    \"hour\": 4,\n    \"minute\": 0,\n    \"lat\": 16.9125,\n    \"lon\": 74.1358,\n    \"timezone_str\": \"Asia/Kolkata\"\n  },\n  \"include_ai_reading\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Adds ai_reading: a 150-250 word Gemini-generated plain-language compatibility summary. Requires GEMINI_API_KEY on server."
+          }
+        },
+        {
+          "name": "Match - Rahul x Priya (Delhi x Mumbai)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/match",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "match"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"boy\": {\n    \"name\": \"Rahul Sharma\",\n    \"year\": 1995,\n    \"month\": 3,\n    \"day\": 14,\n    \"hour\": 7,\n    \"minute\": 30,\n    \"lat\": 28.6139,\n    \"lon\": 77.2090,\n    \"timezone_str\": \"Asia/Kolkata\"\n  },\n  \"girl\": {\n    \"name\": \"Priya Singh\",\n    \"year\": 2001,\n    \"month\": 11,\n    \"day\": 5,\n    \"hour\": 14,\n    \"minute\": 45,\n    \"lat\": 19.0760,\n    \"lon\": 72.8777,\n    \"timezone_str\": \"Asia/Kolkata\"\n  },\n  \"include_ai_reading\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Second example pair for testing different city coordinates."
+          }
+        },
+        {
+          "name": "ERROR 400 - Invalid Timezone (girl)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/match",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "match"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"boy\": {\n    \"name\": \"Saurabh\",\n    \"year\": 1997,\n    \"month\": 8,\n    \"day\": 15,\n    \"hour\": 4,\n    \"minute\": 17,\n    \"lat\": 18.5204,\n    \"lon\": 73.8567\n  },\n  \"girl\": {\n    \"name\": \"Bad TZ Girl\",\n    \"year\": 2000,\n    \"month\": 8,\n    \"day\": 29,\n    \"hour\": 4,\n    \"minute\": 0,\n    \"lat\": 16.9125,\n    \"lon\": 74.1358,\n    \"timezone_str\": \"Not/AZone\"\n  },\n  \"include_ai_reading\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Expects HTTP 400. Girl has an invalid timezone string."
+          }
+        },
+        {
+          "name": "ERROR 422 - Missing Boy lat Field",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/match",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "match"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"boy\": {\n    \"name\": \"Saurabh\",\n    \"year\": 1997,\n    \"month\": 8,\n    \"day\": 15,\n    \"hour\": 4,\n    \"minute\": 17,\n    \"lon\": 73.8567\n  },\n  \"girl\": {\n    \"name\": \"Apurva\",\n    \"year\": 2000,\n    \"month\": 8,\n    \"day\": 29,\n    \"hour\": 4,\n    \"minute\": 0,\n    \"lat\": 16.9125,\n    \"lon\": 74.1358\n  },\n  \"include_ai_reading\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Expects HTTP 422. Boy is missing the required lat field."
+          }
+        }
+      ]
+    }
+  ]
+}

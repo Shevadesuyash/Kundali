@@ -1,0 +1,69 @@
+.dasha-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-panel);
+  box-shadow: var(--shadow-card);
+  margin-top: 1rem;
+}
+
+.dasha-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  min-width: 500px;
+}
+
+.dasha-table thead th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  padding: 12px 14px;
+  border-bottom: 2px solid var(--color-hairline-strong);
+  background: var(--color-bg-panel-raised);
+}
+
+.dasha-table tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-hairline);
+  color: var(--color-text-dim);
+  vertical-align: middle;
+}
+
+.dasha-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.dasha-table tbody tr:hover td {
+  background: rgba(200, 114, 10, 0.04);
+}
+
+.dasha-table__name {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.dasha-table__row--active td {
+  background: rgba(232, 179, 76, 0.08); /* faint gold background */
+}
+
+.dasha-table__row--active:hover td {
+  background: rgba(232, 179, 76, 0.12);
+}
+
+.dasha-table__active-badge {
+  margin-left: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--color-gold);
+  background: var(--color-gold-soft);
+  border: 1px solid rgba(232, 179, 76, 0.25);
+  border-radius: 3px;
+  padding: 2px 6px;
+  vertical-align: middle;
+}

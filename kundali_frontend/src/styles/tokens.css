@@ -1,0 +1,129 @@
+/* ============================================================
+   Design tokens — "Vedic Parchment" theme
+   Subject: Vedic astrology (Kundali) reading & matchmaking.
+   Bright, rich, sacred saffron, gold, copper & parchment aesthetic.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Sora:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* Color - Bright Warm Vedic Parchment Palette */
+  --color-bg: #FEF3E2;
+  --color-bg-panel: #FFFFFF;
+  --color-bg-panel-raised: #FFF8EF;
+  --color-hairline: rgba(180, 80, 0, 0.16);
+  --color-hairline-strong: rgba(180, 80, 0, 0.35);
+  --color-gold: #C8720A;
+  --color-gold-hover: #E8820A;
+  --color-gold-soft: #F9E4C8;
+  --color-gold-bright: #F5A623;
+  --color-vermilion: #B71C1C;
+  --color-vermilion-soft: rgba(183, 28, 28, 0.08);
+  --color-jade: #1B6E41;
+  --color-jade-soft: rgba(27, 110, 65, 0.08);
+  --color-text: #1C0A00;
+  --color-text-dim: #6B3A1A;
+  --color-text-faint: #9E6538;
+
+  /* Type */
+  --font-display: 'Fraunces', 'Georgia', serif;
+  --font-body: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Layout */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --max-width: 1120px;
+  --shadow-panel: 0 10px 30px -10px rgba(150, 60, 0, 0.12), 0 2px 6px rgba(150, 60, 0, 0.04);
+  --shadow-card: 0 4px 14px rgba(180, 80, 0, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: #FEF3E2;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(245, 166, 35, 0.15), transparent),
+    radial-gradient(ellipse 60% 50% at 90% 90%, rgba(200, 114, 10, 0.1), transparent),
+    radial-gradient(ellipse 50% 50% at 10% 80%, rgba(183, 28, 28, 0.04), transparent);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--color-text);
+}
+
+p { margin: 0; line-height: 1.6; }
+
+a { color: inherit; text-decoration: none; }
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+input, select {
+  font-family: var(--font-body);
+}
+
+/* Visible keyboard focus everywhere */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.mono { font-family: var(--font-mono); }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  font-weight: 600;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.hairline {
+  border: none;
+  border-top: 1px solid var(--color-hairline);
+  margin: 0;
+}
+
+/* Card Panel Styling */
+.panel {
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-panel);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

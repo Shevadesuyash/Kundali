@@ -1,0 +1,89 @@
+.birth-form {
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin: 0;
+  background: var(--color-bg-panel);
+  box-shadow: var(--shadow-panel);
+}
+
+.birth-form__legend {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  padding: 0 10px;
+}
+
+.birth-form__row {
+  margin-bottom: 18px;
+}
+
+.birth-form__row:last-child {
+  margin-bottom: 0;
+}
+
+.birth-form__group-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-dim);
+  margin-bottom: 8px;
+}
+
+.birth-form__group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.birth-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 90px;
+}
+
+.birth-form__field--sm {
+  flex: 0 0 84px;
+  min-width: 70px;
+}
+
+.birth-form__field--wide {
+  flex: 1 1 100%;
+}
+
+.birth-form__field span {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-dim);
+}
+
+.birth-form__field input,
+.birth-form__field select {
+  background: #FFFFFF;
+  border: 1.5px solid var(--color-hairline-strong);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.birth-form__field input:hover,
+.birth-form__field select:hover {
+  border-color: var(--color-gold);
+}
+
+.birth-form__field input:focus,
+.birth-form__field select:focus {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(200, 114, 10, 0.15);
+}
+
+.birth-form__field input::placeholder {
+  color: var(--color-text-faint);
+}
