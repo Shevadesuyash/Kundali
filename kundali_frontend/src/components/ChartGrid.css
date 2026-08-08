@@ -1,0 +1,184 @@
+.chart-grid-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.chart-style-toggle {
+  display: inline-flex;
+  background: var(--color-bg-panel-raised);
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  gap: 2px;
+}
+
+.chart-style-btn {
+  font-size: 0.76rem;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: calc(var(--radius-sm) - 2px);
+  border: none;
+  background: transparent;
+  color: var(--color-text-dim);
+  transition: all 0.15s ease;
+}
+
+.chart-style-btn:hover {
+  color: var(--color-gold);
+}
+
+.chart-style-btn.is-active {
+  background: var(--color-gold);
+  color: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(180, 80, 0, 0.15);
+}
+
+.chart-grid-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 4px;
+  width: 100%;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  width: min(440px, 100%);
+  aspect-ratio: 1 / 1;
+  border: 2px solid var(--color-gold);
+  background: var(--color-bg-panel);
+  box-shadow: var(--shadow-panel);
+  border-radius: var(--radius-sm);
+}
+
+.chart-grid__cell {
+  border: 1px solid var(--color-hairline);
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg-panel);
+}
+
+.chart-grid__cell--asc {
+  background: linear-gradient(135deg, rgba(245, 166, 35, 0.22), rgba(200, 114, 10, 0.08));
+  box-shadow: inset 0 0 0 1.5px var(--color-gold);
+}
+
+.chart-grid__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.chart-grid__sign {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+}
+
+.chart-grid__house-num {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--color-text-faint);
+  background: var(--color-bg-panel-raised);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.chart-grid__house-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--color-text-dim);
+}
+
+.chart-grid__sign-badge {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 600;
+  color: var(--color-gold);
+  background: var(--color-gold-soft);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.chart-grid__cell--asc .chart-grid__sign,
+.chart-grid__cell--asc .chart-grid__house-label {
+  color: var(--color-gold);
+}
+
+.chart-grid__occupants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: auto;
+}
+
+.chart-grid__planet {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-bg-panel-raised);
+  border: 1px solid var(--color-hairline);
+  border-radius: 4px;
+  padding: 1px 5px;
+  line-height: 1.4;
+}
+
+.chart-grid__planet.is-retro {
+  color: var(--color-vermilion);
+  background: var(--color-vermilion-soft);
+  border-color: rgba(183, 28, 28, 0.2);
+}
+
+.chart-grid__planet sup {
+  font-size: 0.55em;
+  color: var(--color-vermilion);
+}
+
+.chart-grid__title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px;
+  background: var(--color-bg-panel-raised);
+  border: 1px solid var(--color-hairline);
+}
+
+.chart-grid__title-text {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  line-height: 1.2;
+}
+
+.chart-grid__subtitle-text {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--color-text-faint);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.chart-grid__empty {
+  font-size: 0.88rem;
+  color: var(--color-text-faint);
+  padding: 20px;
+}

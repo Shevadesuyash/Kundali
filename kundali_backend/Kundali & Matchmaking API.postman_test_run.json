@@ -1,0 +1,352 @@
+{
+	"id": "e7ef6312-b882-4735-beb4-7264a35ec4f8",
+	"name": "Kundali & Matchmaking API",
+	"timestamp": "2026-08-01T09:14:54.197Z",
+	"collection_id": "32198085-fd5c5081-a009-44f2-8c9f-fb0802033751",
+	"folder_id": 0,
+	"environment_id": "0",
+	"totalPass": 0,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2026-08-01T09:14:51.451Z",
+	"totalFail": 0,
+	"results": [
+		{
+			"id": "f132c10e-1daa-4678-8c6f-95e9169d9c99",
+			"name": "GET /health",
+			"url": "http://localhost:8000/health",
+			"time": 13,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				13
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "8c528114-8259-40c1-892b-3c5875e6dbcc",
+			"name": "Basic Kundali - Sunita Pune 1982",
+			"url": "http://localhost:8000/api/v1/kundali",
+			"time": 16,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				16
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "a537e908-3b06-45bc-9199-ee91c9e009cb",
+			"name": "Kundali WITH AI Reading - Sunita",
+			"url": "http://localhost:8000/api/v1/kundali",
+			"time": 12,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				12
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "84b07ca5-ed38-4a16-a6a6-d871b4421f04",
+			"name": "Kundali - Rahul Mumbai 1995",
+			"url": "http://localhost:8000/api/v1/kundali",
+			"time": 14,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				14
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "014e4ce4-3017-45e9-bd5b-65eb559d181b",
+			"name": "Kundali - Priya Delhi 2001",
+			"url": "http://localhost:8000/api/v1/kundali",
+			"time": 12,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				12
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "759275e4-5721-4466-8bf3-197c16bc7a7e",
+			"name": "Kundali - Midnight Edge Case",
+			"url": "http://localhost:8000/api/v1/kundali",
+			"time": 17,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				17
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "6ce074c9-63e8-4844-bcde-aa635e9c5198",
+			"name": "ERROR 400 - Invalid Date (Feb 30)",
+			"url": "http://localhost:8000/api/v1/kundali",
+			"time": 6,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				6
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "f3a8a412-b761-4244-b6a8-22c727c3f0a4",
+			"name": "ERROR 400 - Invalid Timezone",
+			"url": "http://localhost:8000/api/v1/kundali",
+			"time": 7,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				7
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "aa0eb148-f145-479b-aa17-2c9dca08a163",
+			"name": "ERROR 422 - Hour Out of Range (hour=27)",
+			"url": "http://localhost:8000/api/v1/kundali",
+			"time": 7,
+			"responseCode": {
+				"code": 422,
+				"name": "Unprocessable Entity"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				7
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "17975b4a-0b39-4b0b-981a-a838befe9603",
+			"name": "ERROR 422 - Missing Required Fields",
+			"url": "http://localhost:8000/api/v1/kundali",
+			"time": 8,
+			"responseCode": {
+				"code": 422,
+				"name": "Unprocessable Entity"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				8
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "b1a1e975-19a7-4487-9a43-f2571e9025d0",
+			"name": "Match - Saurabh x Apurva (Pune x Sangli)",
+			"url": "http://localhost:8000/api/v1/match",
+			"time": 29,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				29
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "bb0613af-4f8a-4a3f-83ac-1f2565ea6b6a",
+			"name": "Match WITH AI Reading - Saurabh x Apurva",
+			"url": "http://localhost:8000/api/v1/match",
+			"time": 15,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				15
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "24e97c0c-1864-4985-a9aa-8a2a08b8d1a7",
+			"name": "Match - Rahul x Priya (Delhi x Mumbai)",
+			"url": "http://localhost:8000/api/v1/match",
+			"time": 26,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				26
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "4eb63b56-75f0-4611-a93f-77d4bfc2f328",
+			"name": "ERROR 400 - Invalid Timezone (girl)",
+			"url": "http://localhost:8000/api/v1/match",
+			"time": 7,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				7
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "d5c6bd80-ac47-4ba8-aca5-47f788f31f4f",
+			"name": "ERROR 422 - Missing Boy lat Field",
+			"url": "http://localhost:8000/api/v1/match",
+			"time": 5,
+			"responseCode": {
+				"code": 422,
+				"name": "Unprocessable Entity"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				5
+			],
+			"allTests": [
+				{}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 194,
+	"collection": {
+		"requests": [
+			{
+				"id": "f132c10e-1daa-4678-8c6f-95e9169d9c99",
+				"method": "GET"
+			},
+			{
+				"id": "8c528114-8259-40c1-892b-3c5875e6dbcc",
+				"method": "POST"
+			},
+			{
+				"id": "a537e908-3b06-45bc-9199-ee91c9e009cb",
+				"method": "POST"
+			},
+			{
+				"id": "84b07ca5-ed38-4a16-a6a6-d871b4421f04",
+				"method": "POST"
+			},
+			{
+				"id": "014e4ce4-3017-45e9-bd5b-65eb559d181b",
+				"method": "POST"
+			},
+			{
+				"id": "759275e4-5721-4466-8bf3-197c16bc7a7e",
+				"method": "POST"
+			},
+			{
+				"id": "6ce074c9-63e8-4844-bcde-aa635e9c5198",
+				"method": "POST"
+			},
+			{
+				"id": "f3a8a412-b761-4244-b6a8-22c727c3f0a4",
+				"method": "POST"
+			},
+			{
+				"id": "aa0eb148-f145-479b-aa17-2c9dca08a163",
+				"method": "POST"
+			},
+			{
+				"id": "17975b4a-0b39-4b0b-981a-a838befe9603",
+				"method": "POST"
+			},
+			{
+				"id": "b1a1e975-19a7-4487-9a43-f2571e9025d0",
+				"method": "POST"
+			},
+			{
+				"id": "bb0613af-4f8a-4a3f-83ac-1f2565ea6b6a",
+				"method": "POST"
+			},
+			{
+				"id": "24e97c0c-1864-4985-a9aa-8a2a08b8d1a7",
+				"method": "POST"
+			},
+			{
+				"id": "4eb63b56-75f0-4611-a93f-77d4bfc2f328",
+				"method": "POST"
+			},
+			{
+				"id": "d5c6bd80-ac47-4ba8-aca5-47f788f31f4f",
+				"method": "POST"
+			}
+		]
+	}
+}

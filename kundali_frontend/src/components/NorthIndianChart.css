@@ -1,0 +1,93 @@
+.north-chart-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 4px;
+}
+
+.north-chart-svg {
+  width: min(440px, 100%);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  background: #FFFFFF;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-panel);
+}
+
+.north-chart-bg {
+  fill: #FFFFFF;
+}
+
+.north-chart-diamond-fill {
+  fill: #FFF8EF;
+}
+
+.north-chart-lagna-fill {
+  fill: rgba(245, 166, 35, 0.22);
+}
+
+.north-chart-border {
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-width: 3;
+}
+
+.north-chart-line {
+  stroke: var(--color-hairline-strong);
+  stroke-width: 1.5;
+}
+
+.north-chart-diamond-border {
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-width: 2;
+}
+
+.north-chart-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  fill: var(--color-gold);
+}
+
+.north-chart-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  fill: var(--color-text-faint);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.north-sign-num {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 600;
+  fill: var(--color-text-dim);
+}
+
+.north-sign-num.is-lagna-num {
+  fill: var(--color-gold);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.north-lagna-marker {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 700;
+  fill: var(--color-gold);
+  letter-spacing: 0.04em;
+}
+
+.north-planet-name {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 700;
+  fill: var(--color-text);
+}
+
+.north-planet-name.is-retro {
+  fill: var(--color-vermilion);
+}

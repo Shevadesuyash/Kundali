@@ -1,0 +1,251 @@
+.kundali-report {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.kundali-report__header {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-hairline-strong);
+}
+
+.kundali-report__profile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.kundali-report__name {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.kundali-report__meta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.82rem;
+  color: var(--color-text-dim);
+}
+
+.kundali-report__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin: 0;
+}
+
+.stat-card {
+  background: var(--color-bg-panel-raised);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  box-shadow: var(--shadow-card);
+}
+
+.stat-card dt {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.stat-card__val {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 2px 0 0;
+}
+
+.stat-card__sub {
+  font-size: 0.76rem;
+  color: var(--color-text-dim);
+  margin: 0;
+}
+
+/* Classifications Cards */
+.kundali-report__classifications {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.class-card {
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  border-top: 3px solid var(--color-gold);
+}
+
+.class-card__title {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.class-card__name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 4px 0 6px;
+}
+
+.class-card__desc {
+  font-size: 0.82rem;
+  color: var(--color-text-dim);
+}
+
+/* House Summary Strip */
+.kundali-report__house-strip {
+  background: var(--color-bg-panel-raised);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.house-strip__label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.house-strip__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.house-pill {
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+}
+
+.house-pill__num {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-gold);
+
+}
+
+.house-pill__sign {
+  color: var(--color-text-dim);
+  font-weight: 500;
+}
+
+.house-pill__planets {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-gold-soft);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+}
+
+/* Charts Section & Tabs */
+.kundali-report__charts-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chart-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--color-bg-panel-raised);
+  border: 1px solid var(--color-hairline);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+}
+
+.chart-tabs-title {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-right: 6px;
+}
+
+.chart-tab {
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-hairline);
+  background: var(--color-bg-panel);
+  color: var(--color-text-dim);
+  transition: all 0.15s ease;
+}
+
+.chart-tab:hover {
+  color: var(--color-gold);
+  border-color: var(--color-gold);
+}
+
+.chart-tab.is-active {
+  background: var(--color-gold);
+  color: #FFFFFF;
+  border-color: var(--color-gold);
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(180, 80, 0, 0.15);
+}
+
+.kundali-report__charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.chart-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kundali-report__chart-label {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  text-align: center;
+}
+
+.kundali-report__section-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 12px;
+}

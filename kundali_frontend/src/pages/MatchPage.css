@@ -1,0 +1,25 @@
+.match-form__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 760px) {
+  .match-form__grid { grid-template-columns: 1fr; }
+}
+
+.match-profiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+}
+
+.match-profiles__label {
+  margin-bottom: 14px;
+  display: block;
+}
+
+@media (max-width: 860px) {
+  .match-profiles { grid-template-columns: 1fr; }
+}

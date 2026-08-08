@@ -1,0 +1,110 @@
+.planet-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-panel);
+  box-shadow: var(--shadow-card);
+}
+
+.planet-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  min-width: 680px;
+}
+
+.planet-table thead th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  padding: 12px 14px;
+  border-bottom: 2px solid var(--color-hairline-strong);
+  background: var(--color-bg-panel-raised);
+}
+
+.planet-table tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-hairline);
+  color: var(--color-text-dim);
+  vertical-align: middle;
+}
+
+.planet-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.planet-table tbody tr:hover td {
+  background: rgba(200, 114, 10, 0.04);
+}
+
+.planet-table__name {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.planet-table__sign {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.planet-table__retro {
+  margin-left: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--color-vermilion);
+  background: var(--color-vermilion-soft);
+  border: 1px solid rgba(183, 28, 28, 0.25);
+  border-radius: 3px;
+  padding: 0 4px;
+}
+
+.dignity-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.dignity-badge--exalted {
+  color: var(--color-jade);
+  background: var(--color-jade-soft);
+  border: 1px solid rgba(27, 110, 65, 0.25);
+}
+
+.dignity-badge--own-sign {
+  color: var(--color-gold);
+  background: var(--color-gold-soft);
+  border: 1px solid rgba(200, 114, 10, 0.25);
+}
+
+.dignity-badge--debilitated {
+  color: var(--color-vermilion);
+  background: var(--color-vermilion-soft);
+  border: 1px solid rgba(183, 28, 28, 0.25);
+}
+
+.dignity-badge--friendly {
+  color: #2B5797;
+  background: rgba(43, 87, 151, 0.08);
+  border: 1px solid rgba(43, 87, 151, 0.2);
+}
+
+.dignity-badge--enemy-sign {
+  color: #795548;
+  background: rgba(121, 85, 72, 0.08);
+  border: 1px solid rgba(121, 85, 72, 0.2);
+}
+
+.dignity-badge--neutral {
+  color: var(--color-text-faint);
+  background: var(--color-bg-panel-raised);
+  border: 1px solid var(--color-hairline);
+}

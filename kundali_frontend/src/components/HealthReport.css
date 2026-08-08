@@ -1,0 +1,218 @@
+.health-report {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.health-report__header {
+  border-bottom: 1px solid var(--color-hairline);
+  padding-bottom: 14px;
+}
+
+.health-report__subtitle {
+  font-size: 0.85rem;
+  color: var(--color-text-dim);
+  margin-top: 4px;
+}
+
+/* ── Section Grids ──────────────────────────────── */
+.health-section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.health-house-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+/* ── Base Card ──────────────────────────────────── */
+.health-card {
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.health-card__icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.health-card__title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.health-card__desc,
+.health-card__body-parts {
+  font-size: 0.88rem;
+  color: var(--color-text-dim);
+  line-height: 1.6;
+}
+
+.health-card__prakriti {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  background: var(--color-gold-soft);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+}
+
+/* Disease list */
+.health-card__dis-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  margin-bottom: 4px;
+}
+
+.health-disease-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--color-text-dim);
+}
+
+.health-disease-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-gold);
+  flex-shrink: 0;
+}
+.health-disease-dot--warn { background: var(--color-gold-bright); }
+.health-disease-dot--chronic { background: var(--color-vermilion); }
+
+/* ── Fever Card ─────────────────────────────────── */
+.health-card--fever {
+  border-width: 2px;
+  gap: 12px;
+}
+
+.health-fever-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.health-fever-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.health-fever-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-top: 4px;
+}
+
+.health-mars-info { margin-left: auto; }
+
+.health-mars-badge {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--color-vermilion-soft);
+  color: var(--color-vermilion);
+  border: 1px solid rgba(183, 28, 28, 0.25);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.health-fever-text {
+  font-size: 0.9rem;
+  color: var(--color-text);
+  line-height: 1.65;
+}
+
+.health-fever-sign-note {
+  font-size: 0.85rem;
+  color: var(--color-text-dim);
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid currentColor;
+  line-height: 1.5;
+}
+
+/* ── Planet Tags ────────────────────────────────── */
+.health-card__planet-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.health-planet-tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--color-gold-soft);
+  color: var(--color-gold);
+  border: 1px solid rgba(200, 114, 10, 0.25);
+}
+.health-planet-tag--chronic {
+  background: var(--color-vermilion-soft);
+  color: var(--color-vermilion);
+  border-color: rgba(183, 28, 28, 0.25);
+}
+
+/* ── Mental card ────────────────────────────────── */
+.health-card--mental { border-top: 3px solid #2B5797; }
+
+.health-mental-text {
+  font-size: 0.88rem;
+  color: var(--color-text-dim);
+  line-height: 1.65;
+  padding: 10px 14px;
+  background: rgba(43, 87, 151, 0.05);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid #2B5797;
+}
+
+/* ── Remedy card ────────────────────────────────── */
+.health-card--remedy { border-top: 3px solid var(--color-jade); }
+
+.health-remedy-text {
+  font-size: 0.88rem;
+  color: var(--color-text-dim);
+  line-height: 1.65;
+  padding: 10px 14px;
+  background: var(--color-jade-soft);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--color-jade);
+}
+
+/* ── Disclaimer ─────────────────────────────────── */
+.health-disclaimer {
+  font-size: 0.78rem;
+  color: var(--color-text-faint);
+  font-style: italic;
+  text-align: center;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-hairline);
+}
