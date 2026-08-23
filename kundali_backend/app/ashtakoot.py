@@ -130,10 +130,9 @@ GANA_NAMES = {0: "Deva", 1: "Manushya", 2: "Rakshasa"}
 # ---------------------------------------------------------------------------
 # 7. BHAKOOT (7 points) – Moon-sign distance
 #    True Doshas (per BPHS & Muhurta Chintamani):
-#      6/8 = Shadashtak, 2/12 = Dwiteeya-Dwadasha
-#    NOTE: 5/9 (Pancham-Navami) is a TRINE, NOT a Dosha — removed.
+#      6/8 = Shadashtak, 2/12 = Dwiteeya-Dwadasha, 5/9 = Navam-Pancham
 # ---------------------------------------------------------------------------
-BHAKOOT_DOSHA_COUNTS = {2, 12, 6, 8}   # Only the classical two pairs
+BHAKOOT_DOSHA_COUNTS = {2, 12, 6, 8, 5, 9}
 
 # ---------------------------------------------------------------------------
 # 8. NADI (8 points) – genetic/health compatibility, based on nakshatra

@@ -37,28 +37,30 @@ class MatchMaker:
         Produces a combined Mangal Dosha verdict for the couple.
         Uses the effective (post-cancellation) Manglik status from both partners.
         """
-        b_active = boy_manglik["is_manglik"]  and not boy_manglik["is_cancelled"]
-        g_active = girl_manglik["is_manglik"] and not girl_manglik["is_cancelled"]
+        b_points = boy_manglik.get("papa_points", 0.0)
+        g_points = girl_manglik.get("papa_points", 0.0)
 
-        if b_active and g_active:
+        if b_points == 0.0 and g_points == 0.0:
+            return "Neither partner has an active Manglik Dosha or significant malefic influence (Papa points: 0.0)."
+
+        TOLERANCE = 0.5   # Classical tolerance — minor differential is permissible
+
+        if b_points >= g_points:
             return (
-                "Both partners are Manglik — the Dosha is mutually neutralised "
-                "per classical rules. Severity: "
-                f"Boy={boy_manglik['severity']}, Girl={girl_manglik['severity']}."
+                f"Boy's Papa points ({b_points}) >= Girl's Papa points ({g_points}) — "
+                "The malefic influence is balanced and mutually neutralized."
             )
-        if b_active:
+        elif (g_points - b_points) <= TOLERANCE:
             return (
-                f"Boy is Manglik (severity: {boy_manglik['severity']}); Girl is not. "
-                "Remedies such as Kumbh Vivah or Mangal mantra japa are traditionally "
-                "recommended before proceeding."
+                f"Mild differential — Girl's Papa points ({g_points}) exceed Boy's ({b_points}) "
+                f"by {round(g_points - b_points, 2)}, within the acceptable tolerance of {TOLERANCE}. "
+                "Minor remedies (Mangal mantra japa) are recommended before proceeding."
             )
-        if g_active:
+        else:
             return (
-                f"Girl is Manglik (severity: {girl_manglik['severity']}); Boy is not. "
-                "Remedies such as Kumbh Vivah or Mangal mantra japa are traditionally "
-                "recommended before proceeding."
+                f"Girl's Papa points ({g_points}) significantly exceed Boy's ({b_points}) — "
+                "The Dosha is not balanced. Remedies such as Kumbh Vivah are traditionally recommended before proceeding."
             )
-        return "Neither partner has an active Manglik Dosha."
 
     # ------------------------------------------------------------------
     def match_profiles(self, boy: Person, girl: Person, include_charts: bool = False) -> Dict:
