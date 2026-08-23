@@ -107,7 +107,7 @@ def test_guna_milan_total_never_exceeds_36(calc):
     assert len(result["kootas"]) == 8
 
 
-def test_guna_milan_identical_charts_scores_high_but_flags_nadi(calc):
+def test_guna_milan_identical_charts_scores_high_but_cancels_nadi(calc):
     same = {"rashi_index": 2, "nakshatra_index": 8, "rashi_lord": "Mercury"}
     result = calc.calculate_guna_milan(same, dict(same))
-    assert result["nadi_dosha"] is True  # identical nakshatra => same Nadi => dosha
+    assert result["nadi_dosha"] is False  # same rashi => cancelled

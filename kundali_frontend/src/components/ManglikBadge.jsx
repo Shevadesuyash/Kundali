@@ -3,11 +3,10 @@ import './ManglikBadge.css';
 /**
  * ManglikBadge — shows full Mangal Dosha status for one person.
  *
- * New in accuracy upgrade:
- *   - Multi-chart breakdown (Lagna / Moon / Venus)
- *   - Cancellation reason shown explicitly
- *   - Ketu supplementary indicator
- *   - Severity mapped to colour tone
+ * Updates:
+ *   - Tiered Severity Classification
+ *   - Papa Samyam score display
+ *   - Conditional progressive disclosure for non-Manglik
  */
 export default function ManglikBadge({ manglik }) {
   const {
@@ -22,7 +21,7 @@ export default function ManglikBadge({ manglik }) {
     mars_house_lagna,
     mars_house_moon,
     mars_house_venus,
-    ketu_manglik,
+    papa_points,
   } = manglik;
 
   // Derive tone from effective state
@@ -33,11 +32,14 @@ export default function ManglikBadge({ manglik }) {
     tone  = 'gold';
     label = 'Manglik — Dosha Cancelled';
   } else if (is_manglik) {
-    tone  = severity?.startsWith('Severe') || severity?.startsWith('High') ? 'vermilion' : 'amber';
+    tone  = severity?.startsWith('Primary') ? 'vermilion' : 'amber';
     label = `Manglik — ${severity}`;
+  } else if (severity && severity !== 'None') {
+    // Surface Anshik/Minor without calling them full Manglik
+    label = `Not Manglik — ${severity}`;
   }
 
-  const hasMultiChart = manglik_from_lagna != null;
+  const hasMultiChart = manglik_from_lagna != null && is_manglik;
 
   return (
     <div className={`manglik-badge manglik-badge--${tone}`}>
@@ -47,10 +49,31 @@ export default function ManglikBadge({ manglik }) {
         {/* Primary label */}
         <p className="manglik-badge__label">{label}</p>
 
-        {/* Mars position */}
-        <p className="manglik-badge__detail mono">
-          Mars in house {mars_house_lagna ?? '—'} · {mars_sign}
-        </p>
+        {/* Mars position / Progressive disclosure */}
+        {!is_manglik ? (
+          <details className="manglik-badge__details-accordion">
+            <summary className="manglik-badge__summary">View Detailed Planetary Positions</summary>
+            <p className="manglik-badge__detail mono">
+              Mars in house {mars_house_lagna ?? '—'} · {mars_sign}
+            </p>
+            {papa_points !== undefined && (
+              <p className="manglik-badge__papa-points">
+                Papa Samyam (Malefic Score): {papa_points}
+              </p>
+            )}
+          </details>
+        ) : (
+          <>
+            <p className="manglik-badge__detail mono">
+              Mars in house {mars_house_lagna ?? '—'} · {mars_sign}
+            </p>
+            {papa_points !== undefined && (
+              <p className="manglik-badge__papa-points" style={{ fontSize: '0.85em', opacity: 0.8, marginTop: '4px' }}>
+                Papa Samyam (Malefic Score): {papa_points}
+              </p>
+            )}
+          </>
+        )}
 
         {/* Cancellation reason */}
         {is_cancelled && cancellation_reason && (
@@ -78,15 +101,6 @@ export default function ManglikBadge({ manglik }) {
               active={manglik_from_venus}
             />
           </div>
-        )}
-
-        {/* Ketu supplementary indicator */}
-        {ketu_manglik?.is_manglik && (
-          <p className="manglik-badge__ketu">
-            <span aria-hidden="true">◈</span>{' '}
-            Ketu also in house {ketu_manglik.ketu_house} ({ketu_manglik.ketu_sign}) —{' '}
-            <span className="manglik-badge__ketu-note">{ketu_manglik.note}</span>
-          </p>
         )}
       </div>
     </div>

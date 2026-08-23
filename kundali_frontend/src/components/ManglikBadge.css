@@ -121,3 +121,6 @@
 .manglik-badge__ketu-note {
   font-style: italic;
 }
+
+.manglik-badge__details-accordion { margin-top: 10px; font-size: 0.9em; }
+.manglik-badge__summary { cursor: pointer; color: var(--color-text-muted, #888); opacity: 0.9; margin-bottom: 5px; }

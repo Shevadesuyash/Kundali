@@ -10,6 +10,7 @@ venv/
 .env
 .venv/
 .pytest_cache/
+*.db
 
 # Node / Frontend
 kundali_frontend/node_modules/

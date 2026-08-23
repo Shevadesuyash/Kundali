@@ -58,7 +58,10 @@ NAKSHATRA_SPAN = 360.0 / 27.0     # 13deg20'
 PADA_SPAN = 360.0 / 108.0         # 3deg20'
 NAVAMSA_SPAN = 30.0 / 9.0         # 3deg20' per navamsa within a 30deg sign
 
-MANGLIK_HOUSES = {1, 2, 4, 7, 8, 12}
+import os
+
+MANGLIK_MODE = os.environ.get("MANGLIK_MODE", "SOUTH")
+MANGLIK_HOUSES = {1, 2, 4, 7, 8, 12} if MANGLIK_MODE == "SOUTH" else {1, 4, 7, 8, 12}
 
 
 class VedicAstrologyEngine:

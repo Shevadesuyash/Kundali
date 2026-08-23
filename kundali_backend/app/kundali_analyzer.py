@@ -75,14 +75,16 @@ class KundaliAnalyzer:
         manglik_from_moon   = house_from_moon   in MANGLIK_HOUSES
         manglik_from_venus  = house_from_venus  in MANGLIK_HOUSES
 
-        # Overall Manglik flag: True if Manglik from ANY chart
-        is_manglik = manglik_from_lagna or manglik_from_moon or manglik_from_venus
+        # Overall Manglik flag: True ONLY if Manglik from Lagna (Primary)
+        is_manglik = manglik_from_lagna
 
         # ---- 2. Cancellation checks (Muhurta Chintamani) ----------------
+        # Run cancellations BEFORE Papa Samyam so we know if Mars is cancelled.
         cancellation_reason: Optional[str] = None
 
-        # Debilitation flag — severity note only, NOT a cancellation
-        mars_debilitated = (mars_idx == 3)   # Cancer = Neecha for Mars
+        # Debilitation: Cancer (sign index 3) weakens Mars significantly.
+        # This reduces its Papa weight (see below) but does NOT grant full cancellation.
+        mars_debilitated = (mars_idx == 3)  # Cancer = Neecha for Mars
 
         # (a/b) Mars sign-based cancellations
         if is_manglik:
@@ -103,42 +105,70 @@ class KundaliAnalyzer:
 
         is_cancelled = is_manglik and (cancellation_reason is not None)
 
+        # ---- 1b. Papa Samyam Calculation (Full Multi-Chart) ---------------
+        # Classical South Indian / Kerala Papa Samyam (Papa Sankhya):
+        #   Total = S_Lagna + (0.75 × S_Moon) + (0.50 × S_Venus)
+        #
+        # Mars weight adjustments:
+        #   - Normal Mars in Manglik house from Lagna : +2.0
+        #   - Cancelled Mars (Parihara active)        : +0.5  (weakened, not eliminated)
+        #   - Debilitated Mars in Cancer              : +1.0  (Neecha = reduced intensity)
+        #
+        # Other malefics: Saturn/Rahu = +1.0, Sun/Ketu = +0.5 per reference chart.
+
+        def _chart_papa(ref_sign_idx: int) -> float:
+            """Compute raw Papa Samyam points for one reference chart."""
+            def in_m(p_name: str) -> bool:
+                return self.engine.house_of_planet(ref_sign_idx, planets[p_name]["sign_index"]) in MANGLIK_HOUSES
+
+            # Mars weight: cancelled → 0.5, debilitated → 1.0, normal → 2.0
+            if in_m("Mars"):
+                if is_cancelled:
+                    score = 0.5
+                elif mars_debilitated:
+                    score = 1.0
+                else:
+                    score = 2.0
+            else:
+                score = 0.0
+
+            if in_m("Saturn"): score += 1.0
+            if in_m("Rahu"):   score += 1.0
+            if in_m("Sun"):    score += 0.5
+            if in_m("Ketu"):   score += 0.5
+            return score
+
+        lagna_papa  = _chart_papa(asc_idx)
+        moon_papa   = _chart_papa(moon_idx)
+        venus_papa  = _chart_papa(venus_idx)
+
+        papa_points = round(lagna_papa + (0.75 * moon_papa) + (0.50 * venus_papa), 2)
+
         # ---- 3. Severity -------------------------------------------------
         debilitated_note = " [Mars debilitated in Cancer — strength reduced]" if mars_debilitated else ""
 
-        if not is_manglik:
-            severity = "None"
-        elif is_cancelled:
+        if is_cancelled:
             severity = f"Cancelled ({cancellation_reason})"
+        elif manglik_from_lagna:
+            severity = f"Primary (Mars in Manglik house from Lagna){debilitated_note}"
+        elif manglik_from_moon:
+            severity = f"Anshik / Partial (Mars in Manglik house from Moon only){debilitated_note}"
+        elif manglik_from_venus:
+            severity = f"Minor / Secondary (Mars in Manglik house from Venus only){debilitated_note}"
         else:
-            # Count how many charts show Manglik
-            chart_count = sum([manglik_from_lagna, manglik_from_moon, manglik_from_venus])
-            if chart_count == 3:
-                severity = f"Severe (Manglik in all three charts){debilitated_note}"
-            elif chart_count == 2:
-                severity = f"High (Manglik in two of three charts){debilitated_note}"
-            elif house_from_lagna in {1, 7, 8}:
-                severity = f"High (Mars in critical house from Lagna){debilitated_note}"
-            else:
-                severity = "Low (Manglik from one secondary chart only)"
-
-        # ---- 4. Ketu supplementary check --------------------------------
-        ketu_house_lagna = self.engine.house_of_planet(asc_idx, ketu["sign_index"])
-        ketu_manglik = {
-            "is_manglik":   ketu_house_lagna in MANGLIK_HOUSES,
-            "ketu_house":   ketu_house_lagna,
-            "ketu_sign":    ketu["sign"],
-            "note": (
-                "Ketu in a Manglik house is treated as a Mangal equivalent by many "
-                "schools; verify with a practitioner for your tradition."
-            ),
-        }
+            severity = "None"
 
         return {
             "is_manglik":           is_manglik,
             "is_cancelled":         is_cancelled,
             "cancellation_reason":  cancellation_reason,
             "severity":             severity,
+            "papa_points":          papa_points,
+            "papa_breakdown": {
+                "lagna":  round(lagna_papa, 2),
+                "moon":   round(moon_papa, 2),
+                "venus":  round(venus_papa, 2),
+            },
             # Per-chart detail
             "manglik_from_lagna":   manglik_from_lagna,
             "manglik_from_moon":    manglik_from_moon,
@@ -147,8 +177,6 @@ class KundaliAnalyzer:
             "mars_house_moon":      house_from_moon,
             "mars_house_venus":     house_from_venus,
             "mars_sign":            mars["sign"],
-            # Supplementary
-            "ketu_manglik":         ketu_manglik,
         }
 
     # ------------------------------------------------------------------
