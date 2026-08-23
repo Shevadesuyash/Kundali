@@ -104,3 +104,76 @@
   padding: 8px 18px;
   background: #FFFFFF;
 }
+
+/* ── Parihara flag variant ── */
+.scorecard__flag--parihara {
+  color: var(--color-jade);
+  border-color: rgba(27, 110, 65, 0.3);
+  background: var(--color-jade-soft);
+}
+
+/* ── Rajju Koota supplementary panel ── */
+.scorecard__rajju {
+  border-radius: var(--radius-md);
+  border: 1px solid;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scorecard__rajju--warn {
+  border-color: rgba(183, 28, 28, 0.3);
+  background: var(--color-vermilion-soft);
+}
+
+.scorecard__rajju--ok {
+  border-color: rgba(27, 110, 65, 0.25);
+  background: var(--color-jade-soft);
+}
+
+.scorecard__rajju-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.scorecard__rajju-title {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.scorecard__rajju-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.06);
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+}
+
+.scorecard__rajju-pair {
+  font-size: 0.82rem;
+  color: var(--color-text-dim);
+}
+
+.scorecard__rajju-detail {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.scorecard__rajju-note {
+  font-size: 0.76rem;
+  color: var(--color-text-dim);
+  font-style: italic;
+}

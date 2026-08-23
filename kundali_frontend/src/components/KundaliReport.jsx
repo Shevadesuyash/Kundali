@@ -96,7 +96,7 @@ export default function KundaliReport({ report, compact = false }) {
             <dd className="stat-card__val">
               {manglik_dosha.is_manglik ? (manglik_dosha.is_cancelled ? t('report.cancelled') : manglik_dosha.severity) : t('report.clear')}
             </dd>
-            <dd className="stat-card__sub">{t('report.house')} {manglik_dosha.mars_house}</dd>
+            <dd className="stat-card__sub">{t('report.house')} {manglik_dosha.mars_house_lagna}</dd>
           </div>
         </dl>
       </div>

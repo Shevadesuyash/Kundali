@@ -47,3 +47,42 @@
   font-size: 0.8rem;
   color: var(--color-text-dim);
 }
+
+/* Parihara (Dosha cancellation) note — shown in green */
+.koota-bar__parihara {
+  font-size: 0.78rem;
+  color: var(--color-jade);
+  font-weight: 600;
+  margin-top: 5px;
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.koota-bar__parihara-icon {
+  flex-shrink: 0;
+  font-size: 0.85rem;
+}
+
+/* Bar turns gold when a Parihara overrides a Dosha */
+.koota-bar__fill.is-parihara {
+  background: var(--color-gold);
+}
+
+/* Tara named-warning list */
+.koota-bar__tara-warnings {
+  margin: 5px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.koota-bar__tara-warning {
+  font-size: 0.76rem;
+  color: #a05a00;
+  font-weight: 500;
+  display: flex;
+  gap: 5px;
+}
