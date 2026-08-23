@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import BirthDetailsForm, { makeEmptyPerson, toApiPayload, isPersonComplete } from '../components/BirthDetailsForm';
 import KundaliReport from '../components/KundaliReport';
+import SaveProfileButton from '../components/SaveProfileButton';
 import { LoadingState, ErrorState } from '../components/StatusStates';
 import { getKundali, ApiError } from '../api/kundaliApi';
 import { useLang } from '../context/LanguageContext';
@@ -82,6 +83,10 @@ export default function KundaliPage() {
           </button>
           <div className="panel">
             <KundaliReport report={report} />
+            <SaveProfileButton
+              person={toApiPayload(person)}
+              birthPlace={person.place_label}
+            />
           </div>
         </div>
       )}

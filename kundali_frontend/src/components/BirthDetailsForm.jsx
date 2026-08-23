@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { geocodeSearch } from '../api/kundaliApi';
 import { useLang } from '../context/LanguageContext';
 import './BirthDetailsForm.css';
 import './PlaceSearch.css';
@@ -39,22 +40,9 @@ function guessTimezone(nominatimResult) {
   return tzMap[cc] || 'UTC';
 }
 
-/** Calls OpenStreetMap Nominatim for place suggestions. Free, no key needed. */
-async function searchPlaces(query) {
-  const url = new URL('https://nominatim.openstreetmap.org/search');
-  url.searchParams.set('q', query);
-  url.searchParams.set('format', 'json');
-  url.searchParams.set('addressdetails', '1');
-  url.searchParams.set('limit', '8');
-  url.searchParams.set('accept-language', 'en');
-  // Bias results towards South Asia for better village-level results in India
-  url.searchParams.set('countrycodes', 'in,pk,np,bd,lk,bt');
-
-  const res = await fetch(url.toString(), {
-    headers: { 'Accept-Language': 'en' },
-  });
-  if (!res.ok) throw new Error('Geocoding request failed');
-  return res.json();
+/** Calls backend geocode endpoint (3-tier cached: memory -> SQLite -> Nominatim). */
+function searchPlaces(query) {
+  return geocodeSearch(query);
 }
 
 const emptyPerson = {

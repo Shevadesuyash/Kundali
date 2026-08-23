@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import KundaliPage from './pages/KundaliPage';
 import MatchPage from './pages/MatchPage';
+import ProfilesPage from './pages/ProfilesPage';
 
 function AppFooter() {
   const { t } = useLang();
@@ -21,9 +22,10 @@ function AppRoutes() {
     <BrowserRouter>
       <Navbar />
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/kundali" element={<KundaliPage />} />
-        <Route path="/match" element={<MatchPage />} />
+        <Route path="/"         element={<HomePage />} />
+        <Route path="/kundali"  element={<KundaliPage />} />
+        <Route path="/match"    element={<MatchPage />} />
+        <Route path="/profiles" element={<ProfilesPage />} />
       </Routes>
       <AppFooter />
     </BrowserRouter>

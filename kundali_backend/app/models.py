@@ -7,7 +7,7 @@ request/response schemas used by the FastAPI layer.
 from __future__ import annotations
 
 import datetime
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 import pytz
 from pydantic import BaseModel, Field, field_validator
@@ -111,3 +111,48 @@ class MatchRequest(BaseModel):
 class ErrorResponse(BaseModel):
     error: str
     detail: Optional[str] = None
+
+
+# ---------------------------------------------------------------------------
+# Profile schemas
+# ---------------------------------------------------------------------------
+
+class SaveProfileRequest(BaseModel):
+    person: BirthDetails
+    gender: Literal["boy", "girl", "other"] = "other"
+    birth_place: Optional[str] = None
+
+
+class ProfileSummary(BaseModel):
+    id: int
+    name: str
+    gender: str
+    birth_place: Optional[str] = None
+    year: int
+    month: int
+    day: int
+    moon_sign: Optional[str] = None
+    nakshatra: Optional[str] = None
+    is_manglik: bool
+    created_at: str
+
+
+class ProfileDetail(ProfileSummary):
+    hour: int
+    minute: int
+    lat: float
+    lon: float
+    timezone_str: str
+
+
+class MatchSavedRequest(BaseModel):
+    boy_id: int
+    girl_id: int
+    include_ai_reading: bool = False
+
+
+class ProfileListResponse(BaseModel):
+    profiles: List[ProfileSummary]
+    total: int
+    page: int
+    per_page: int
