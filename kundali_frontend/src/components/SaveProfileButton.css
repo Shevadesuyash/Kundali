@@ -1,0 +1,68 @@
+.save-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.save-profile__picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.save-profile__label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text-dim);
+}
+
+.save-profile__gender-btn {
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--color-hairline-strong);
+  background: var(--color-bg-page);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.save-profile__gender-btn.is-active {
+  background: var(--color-gold);
+  border-color: var(--color-gold);
+  color: #fff;
+}
+
+.save-profile__confirm { padding: 5px 16px; font-size: 0.82rem; }
+
+.save-profile__done {
+  color: var(--color-jade);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+.save-profile__error {
+  color: var(--color-vermilion);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.save-profile__retry {
+  font-size: 0.8rem;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-dim);
+}

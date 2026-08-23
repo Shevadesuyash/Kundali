@@ -59,3 +59,48 @@ export function getMatch(boy, girl, includeAiReading = false) {
 export function checkHealth() {
   return fetch(`${API_BASE}/health`).then((r) => r.ok);
 }
+
+// ---------------------------------------------------------------------------
+// Geocoding — 3-tier cached via backend
+// ---------------------------------------------------------------------------
+export function geocodeSearch(query) {
+  return fetch(`${API_BASE}/api/v1/geocode?q=${encodeURIComponent(query)}`, {
+    headers: { Accept: 'application/json' },
+  }).then((r) => (r.ok ? r.json() : []));
+}
+
+// ---------------------------------------------------------------------------
+// Profile API
+// ---------------------------------------------------------------------------
+export function saveProfile(person, gender, birthPlace) {
+  return postJSON('/api/v1/profiles', {
+    person,
+    gender,
+    birth_place: birthPlace || null,
+  });
+}
+
+export function searchProfiles({ q = '', gender = '', page = 1, perPage = 20 } = {}) {
+  const params = new URLSearchParams();
+  if (q)      params.set('q',        q);
+  if (gender) params.set('gender',   gender);
+  params.set('page',     String(page));
+  params.set('per_page', String(perPage));
+  return fetch(`${API_BASE}/api/v1/profiles?${params}`, {
+    headers: { Accept: 'application/json' },
+  }).then((r) => r.json());
+}
+
+export function getProfile(id) {
+  return fetch(`${API_BASE}/api/v1/profiles/${id}`, {
+    headers: { Accept: 'application/json' },
+  }).then((r) => r.json());
+}
+
+export function matchSaved(boyId, girlId, includeAiReading = false) {
+  return postJSON('/api/v1/match-saved', {
+    boy_id: boyId,
+    girl_id: girlId,
+    include_ai_reading: includeAiReading,
+  });
+}

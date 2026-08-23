@@ -19,6 +19,9 @@ export default function Navbar() {
           <NavLink to="/match" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>
             {t('nav.match')}
           </NavLink>
+          <NavLink to="/profiles" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>
+            Profiles
+          </NavLink>
 
           {/* Language Toggle */}
           <div className="lang-toggle" role="group" aria-label="Language">
