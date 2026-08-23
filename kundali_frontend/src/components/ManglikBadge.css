@@ -13,7 +13,7 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  margin-top: 4px;
+  margin-top: 5px;
   flex-shrink: 0;
 }
 
@@ -32,14 +32,92 @@
   box-shadow: 0 0 8px rgba(183, 28, 28, 0.4);
 }
 
+/* amber = moderate severity */
+.manglik-badge--amber .manglik-badge__dot {
+  background: #d97706;
+  box-shadow: 0 0 8px rgba(217, 119, 6, 0.4);
+}
+
+.manglik-badge__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
 .manglik-badge__label {
   font-weight: 700;
   font-size: 1rem;
   color: var(--color-text);
-  margin-bottom: 3px;
 }
 
 .manglik-badge__detail {
   font-size: 0.8rem;
   color: var(--color-text-dim);
+}
+
+/* Cancellation reason */
+.manglik-badge__cancellation {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-jade);
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  margin-top: 2px;
+}
+
+/* Multi-chart breakdown row */
+.manglik-badge__charts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.manglik-chart-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--color-hairline-strong);
+  background: var(--color-bg-page);
+  color: var(--color-text-dim);
+}
+
+.manglik-chart-pill__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-hairline-strong);
+  flex-shrink: 0;
+}
+
+/* Active (Manglik from this chart) */
+.manglik-chart-pill--active {
+  border-color: rgba(183, 28, 28, 0.35);
+  background: var(--color-vermilion-soft);
+  color: var(--color-vermilion);
+}
+
+.manglik-chart-pill--active .manglik-chart-pill__dot {
+  background: var(--color-vermilion);
+}
+
+/* Ketu supplementary note */
+.manglik-badge__ketu {
+  font-size: 0.76rem;
+  color: var(--color-text-dim);
+  margin-top: 4px;
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.manglik-badge__ketu-note {
+  font-style: italic;
 }
