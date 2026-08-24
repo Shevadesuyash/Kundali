@@ -12,6 +12,9 @@ Cache strategy for geocoding:
   L1: in-process Python dict (_mem_cache) — microsecond access
   L2: location_cache SQLite table         — millisecond access
   L3: live Nominatim HTTP call            — 500ms-2s, result saved to L1+L2
+
+SCHEMA VERSION: 2 (Phase 1 — fresh start, adds lagna, active_dasha, tag columns)
+Gender values: 'male' | 'female' only.
 """
 from __future__ import annotations
 
@@ -86,13 +89,20 @@ def _conn():
 
 
 def init_db() -> None:
-    """Create tables and seed location cache. Called once at app startup."""
+    """
+    Create tables and seed location cache. Called once at app startup.
+    Phase 1: Fresh schema — drops old profiles table and recreates with
+    new columns (lagna, active_dasha, tag). Gender is now 'male'|'female' only.
+    """
     with _conn() as con:
+        # Drop old profiles table to start fresh (Phase 1 decision)
+        con.execute("DROP TABLE IF EXISTS profiles")
+
         con.executescript("""
             CREATE TABLE IF NOT EXISTS profiles (
                 id           INTEGER PRIMARY KEY AUTOINCREMENT,
                 name         TEXT    NOT NULL,
-                gender       TEXT    NOT NULL CHECK(gender IN ('boy','girl','other')),
+                gender       TEXT    NOT NULL CHECK(gender IN ('male','female')),
                 year         INTEGER NOT NULL,
                 month        INTEGER NOT NULL,
                 day          INTEGER NOT NULL,
@@ -104,12 +114,16 @@ def init_db() -> None:
                 birth_place  TEXT,
                 moon_sign    TEXT,
                 nakshatra    TEXT,
+                lagna        TEXT,
                 is_manglik   INTEGER NOT NULL DEFAULT 0,
+                active_dasha TEXT,
+                tag          TEXT    NOT NULL DEFAULT 'self',
                 created_at   TEXT    NOT NULL
             );
 
             CREATE INDEX IF NOT EXISTS idx_profiles_name   ON profiles(name COLLATE NOCASE);
             CREATE INDEX IF NOT EXISTS idx_profiles_gender ON profiles(gender);
+            CREATE INDEX IF NOT EXISTS idx_profiles_tag    ON profiles(tag);
 
             CREATE TABLE IF NOT EXISTS location_cache (
                 id           INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -154,7 +168,10 @@ def save_profile(
     birth_place: Optional[str] = None,
     moon_sign: Optional[str] = None,
     nakshatra: Optional[str] = None,
+    lagna: Optional[str] = None,
     is_manglik: bool = False,
+    active_dasha: Optional[str] = None,
+    tag: str = "self",
 ) -> int:
     """Insert a new profile and return its id."""
     now = datetime.now(timezone.utc).isoformat()
@@ -163,31 +180,69 @@ def save_profile(
             """
             INSERT INTO profiles
               (name,gender,year,month,day,hour,minute,lat,lon,timezone_str,
-               birth_place,moon_sign,nakshatra,is_manglik,created_at)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+               birth_place,moon_sign,nakshatra,lagna,is_manglik,active_dasha,tag,created_at)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             """,
             (name, gender, year, month, day, hour, minute, lat, lon,
-             timezone_str, birth_place, moon_sign, nakshatra,
-             1 if is_manglik else 0, now)
+             timezone_str, birth_place, moon_sign, nakshatra, lagna,
+             1 if is_manglik else 0, active_dasha, tag, now)
         )
         return cur.lastrowid
+
+
+def update_profile(profile_id: int, **fields) -> bool:
+    """
+    Partially update a profile. Only the supplied keyword arguments are updated.
+    Returns True if a row was modified, False if the id was not found.
+    Allowed fields: name, gender, year, month, day, hour, minute, lat, lon,
+                    timezone_str, birth_place, tag, moon_sign, nakshatra, lagna,
+                    is_manglik, active_dasha.
+    """
+    ALLOWED = {
+        "name", "gender", "year", "month", "day", "hour", "minute",
+        "lat", "lon", "timezone_str", "birth_place", "tag",
+        "moon_sign", "nakshatra", "lagna", "is_manglik", "active_dasha",
+    }
+    updates = {k: v for k, v in fields.items() if k in ALLOWED}
+    if not updates:
+        return False
+
+    set_clause = ", ".join(f"{k} = ?" for k in updates)
+    values = list(updates.values()) + [profile_id]
+
+    with _conn() as con:
+        cur = con.execute(
+            f"UPDATE profiles SET {set_clause} WHERE id = ?", values
+        )
+    return cur.rowcount > 0
+
+
+def delete_profile(profile_id: int) -> bool:
+    """Hard-delete a profile by id. Returns True if deleted."""
+    with _conn() as con:
+        cur = con.execute("DELETE FROM profiles WHERE id = ?", (profile_id,))
+    return cur.rowcount > 0
 
 
 def search_profiles(
     q: Optional[str] = None,
     gender: Optional[str] = None,
+    tag: Optional[str] = None,
     page: int = 1,
     per_page: int = 20,
 ) -> List[Dict]:
-    """Search profiles by name substring and/or gender."""
+    """Search profiles by name substring, gender, and/or tag."""
     conditions: List[str] = []
     params: List[Any] = []
     if q:
         conditions.append("name LIKE ? COLLATE NOCASE")
         params.append(f"%{q}%")
-    if gender and gender in ("boy", "girl", "other"):
+    if gender and gender in ("male", "female"):
         conditions.append("gender = ?")
         params.append(gender)
+    if tag:
+        conditions.append("tag = ?")
+        params.append(tag)
 
     where  = ("WHERE " + " AND ".join(conditions)) if conditions else ""
     offset = (page - 1) * per_page
@@ -196,9 +251,25 @@ def search_profiles(
     with _conn() as con:
         rows = con.execute(
             f"SELECT id,name,gender,birth_place,year,month,day,"
-            f"moon_sign,nakshatra,is_manglik,created_at "
+            f"moon_sign,nakshatra,lagna,is_manglik,active_dasha,tag,created_at "
             f"FROM profiles {where} ORDER BY created_at DESC LIMIT ? OFFSET ?",
             params
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def search_profiles_typeahead(q: str, limit: int = 5) -> List[Dict]:
+    """
+    Lightweight search for the auto-fill typeahead dropdown.
+    Returns minimal fields needed to populate the birth details form.
+    """
+    with _conn() as con:
+        rows = con.execute(
+            "SELECT id,name,gender,year,month,day,hour,minute,"
+            "lat,lon,timezone_str,birth_place,lagna,moon_sign "
+            "FROM profiles WHERE name LIKE ? COLLATE NOCASE "
+            "ORDER BY created_at DESC LIMIT ?",
+            (f"%{q}%", limit)
         ).fetchall()
     return [dict(r) for r in rows]
 
@@ -212,21 +283,41 @@ def get_profile_by_id(profile_id: int) -> Optional[Dict]:
     return dict(row) if row else None
 
 
-def count_profiles(q: Optional[str] = None, gender: Optional[str] = None) -> int:
+def count_profiles(
+    q: Optional[str] = None,
+    gender: Optional[str] = None,
+    tag: Optional[str] = None,
+) -> int:
     conditions: List[str] = []
     params: List[Any] = []
     if q:
         conditions.append("name LIKE ? COLLATE NOCASE")
         params.append(f"%{q}%")
-    if gender and gender in ("boy", "girl", "other"):
+    if gender and gender in ("male", "female"):
         conditions.append("gender = ?")
         params.append(gender)
+    if tag:
+        conditions.append("tag = ?")
+        params.append(tag)
     where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
     with _conn() as con:
         row = con.execute(
             f"SELECT COUNT(*) FROM profiles {where}", params
         ).fetchone()
     return row[0]
+
+
+def get_gender_counts() -> Dict[str, int]:
+    """Return counts of male and female profiles."""
+    with _conn() as con:
+        rows = con.execute(
+            "SELECT gender, COUNT(*) as cnt FROM profiles GROUP BY gender"
+        ).fetchall()
+    counts = {"male": 0, "female": 0}
+    for row in rows:
+        if row["gender"] in counts:
+            counts[row["gender"]] = row["cnt"]
+    return counts
 
 
 # ---------------------------------------------------------------------------

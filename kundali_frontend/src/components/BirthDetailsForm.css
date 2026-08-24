@@ -87,3 +87,58 @@
 .birth-form__field input::placeholder {
   color: var(--color-text-faint);
 }
+
+/* Label text helper for non-<label> wrappers */
+.birth-form__label-text {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-dim);
+  margin-bottom: 6px;
+}
+
+/* Name typeahead wrapper */
+.name-typeahead-wrap {
+  position: relative;
+}
+
+/* Profile typeahead dropdown — same base as place-search but with profile icon */
+.profile-typeahead__dropdown {
+  z-index: 200;
+}
+
+/* Modified from Saved Profile badge */
+.birth-form__modified-badge {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 10px 14px;
+  background: #fef9ec;
+  border: 1.5px solid #f59e0b;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.modified-badge__text {
+  font-weight: 600;
+  color: #92400e;
+  flex: 1;
+  min-width: 160px;
+}
+
+.modified-badge__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.modified-badge__btn {
+  font-size: 0.8rem;
+  padding: 5px 12px;
+}
+
+.modified-badge__btn--keep {
+  color: var(--color-text-dim);
+}

@@ -117,10 +117,15 @@ class ErrorResponse(BaseModel):
 # Profile schemas
 # ---------------------------------------------------------------------------
 
+# Valid relationship tags for saved profiles
+VALID_TAGS = {"self", "family", "friend", "partner", "client"}
+
+
 class SaveProfileRequest(BaseModel):
     person: BirthDetails
-    gender: Literal["boy", "girl", "other"] = "other"
+    gender: Literal["male", "female"]
     birth_place: Optional[str] = None
+    tag: Optional[str] = "self"
 
 
 class ProfileSummary(BaseModel):
@@ -133,7 +138,10 @@ class ProfileSummary(BaseModel):
     day: int
     moon_sign: Optional[str] = None
     nakshatra: Optional[str] = None
+    lagna: Optional[str] = None
     is_manglik: bool
+    active_dasha: Optional[str] = None
+    tag: Optional[str] = None
     created_at: str
 
 
@@ -156,3 +164,21 @@ class ProfileListResponse(BaseModel):
     total: int
     page: int
     per_page: int
+
+
+# Lightweight typeahead result (minimal fields for auto-fill)
+class ProfileTypeahead(BaseModel):
+    id: int
+    name: str
+    gender: str
+    year: int
+    month: int
+    day: int
+    hour: int
+    minute: int
+    lat: float
+    lon: float
+    timezone_str: str
+    birth_place: Optional[str] = None
+    lagna: Optional[str] = None
+    moon_sign: Optional[str] = None

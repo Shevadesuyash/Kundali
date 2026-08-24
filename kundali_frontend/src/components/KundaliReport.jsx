@@ -51,9 +51,12 @@ export default function KundaliReport({ report, compact = false }) {
         <div className="kundali-report__profile">
           <p className="eyebrow">{t('report.eyebrow')}</p>
           <h2 className="kundali-report__name">{profile.name}</h2>
-          <div className="kundali-report__meta-group mono">
+        <div className="kundali-report__meta-group mono">
             <span>📅 {profile.local}</span>
-            <span>🌐 Lat: {profile.lat}, Lon: {profile.lon}</span>
+            {report.birth_place && (
+              <span>🌐 {report.birth_place}</span>
+            )}
+            <span>📍 Lat: {profile.lat}, Lon: {profile.lon}</span>
             {profile.utc && <span>⏱️ UTC: {new Date(profile.utc).toUTCString()}</span>}
           </div>
         </div>
