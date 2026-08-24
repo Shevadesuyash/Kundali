@@ -1,0 +1,60 @@
+.report-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--color-hairline-strong, #e5e7eb);
+  margin-bottom: 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.report-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.report-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  color: var(--color-text-dim, #6b7280);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  margin-bottom: -2px; /* overlap border-bottom */
+}
+
+.report-tab:hover {
+  color: var(--color-text, #111827);
+}
+
+.report-tab.is-active {
+  color: var(--color-gold, #c8720a);
+  border-bottom-color: var(--color-gold, #c8720a);
+}
+
+.report-tab__icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.report-tab__label {
+  line-height: 1;
+}
+
+@media (max-width: 560px) {
+  .report-tab {
+    padding: 10px 12px;
+    font-size: 0.72rem;
+  }
+  .report-tab__icon {
+    font-size: 1rem;
+  }
+}
