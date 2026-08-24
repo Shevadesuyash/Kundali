@@ -1,0 +1,208 @@
+.ashtakvarga-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.ashtakvarga-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.ashtakvarga-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-dim, #6b7280);
+  margin: 0 0 4px 0;
+}
+
+.ashtakvarga-subtitle {
+  font-size: 0.82rem;
+  color: var(--color-text-dim, #6b7280);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ── SAV 12-House Scorecard Grid ─────────────────────────────────────── */
+.sav-house-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
+  gap: 8px;
+}
+
+.sav-house-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px;
+  border-radius: 8px;
+  border: 1.5px solid;
+  text-align: center;
+  background: var(--color-bg-panel, #ffffff);
+}
+
+.sav-house-cell__num {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-dim, #6b7280);
+}
+
+.sav-house-cell__score {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.sav-house-cell__status {
+  font-size: 0.64rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* High >= 28 */
+.sav-score--high {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #15803d;
+}
+.sav-score--high .sav-house-cell__score { color: #15803d; }
+
+/* Mid 25-27 */
+.sav-score--mid {
+  background: #fefce8;
+  border-color: #fde047;
+  color: #854d0e;
+}
+.sav-score--mid .sav-house-cell__score { color: #854d0e; }
+
+/* Low < 25 */
+.sav-score--low {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+.sav-score--low .sav-house-cell__score { color: #b91c1c; }
+
+/* ── Lazy Actions ────────────────────────────────────────────────────── */
+.ashtakvarga-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.ashtakvarga-bav-toggle {
+  font-size: 0.85rem;
+  padding: 8px 18px;
+  border-color: var(--color-gold, #c8720a);
+  color: var(--color-gold, #c8720a);
+}
+
+.ashtakvarga-bav-toggle:hover {
+  background: #fdfaf3;
+}
+
+/* ── BAV Viewer Panel ────────────────────────────────────────────────── */
+.bav-viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  border: 1.5px solid var(--color-hairline-strong, #e5e7eb);
+  border-radius: 10px;
+  background: var(--color-bg-panel, #ffffff);
+}
+
+.bav-viewer__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.bav-viewer__title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+  margin: 0;
+}
+
+.bav-planet-tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.bav-planet-tab {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--color-hairline-strong, #e5e7eb);
+  background: transparent;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--color-text-dim, #6b7280);
+}
+
+.bav-planet-tab:hover {
+  background: var(--color-bg-panel-raised, #f9fafb);
+}
+
+.bav-planet-tab.is-active {
+  background: var(--color-gold, #c8720a);
+  border-color: var(--color-gold, #c8720a);
+  color: #ffffff;
+}
+
+.bav-matrix-total-badge {
+  font-size: 0.82rem;
+  color: var(--color-text-dim, #6b7280);
+}
+
+.bav-table-overflow {
+  overflow-x: auto;
+}
+
+.bav-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.bav-table th,
+.bav-table td {
+  padding: 6px 8px;
+  border: 1px solid var(--color-hairline, #f3f4f6);
+}
+
+.bav-table th {
+  background: var(--color-bg-panel-raised, #f9fafb);
+  font-size: 0.72rem;
+  color: var(--color-text-dim, #6b7280);
+}
+
+.bav-table__ref-name {
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text, #111827);
+}
+
+.bav-table__cell--1 {
+  background: #f0fdf4;
+  color: #15803d;
+  font-weight: 700;
+}
+
+.bav-table__total-row {
+  background: #fdfaf3;
+  font-weight: 700;
+  border-top: 2px solid var(--color-hairline-strong, #e5e7eb);
+}

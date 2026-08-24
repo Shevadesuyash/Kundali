@@ -32,6 +32,7 @@ from app.database import (
 from app.geocode_service import search_locations
 from app.kundali_analyzer import KundaliAnalyzer
 from app.matchmaker import MatchMaker
+from app.ashtakvarga_engine import AshtakvargaEngine
 from app.models import (
     BirthDetails, ErrorResponse, KundaliRequest, MatchRequest,
     MatchSavedRequest, ProfileDetail, ProfileListResponse,
@@ -103,6 +104,29 @@ def get_kundali(request: KundaliRequest):
         report["ai_reading"] = ai_service.generate_individual_reading(report)
 
     return report
+
+
+@app.post(
+    "/api/v1/ashtakvarga",
+    responses={400: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
+)
+def get_ashtakvarga(request: KundaliRequest):
+    """
+    On-demand full Bhinnashtakvarga (7 grahas x 8 references x 12 signs) + Sarvashtakvarga.
+    """
+    try:
+        person = request.person.to_person()
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    try:
+        technical_profile = _astro_engine.get_technical_profile(person)
+        bav_data = AshtakvargaEngine.calculate_full(technical_profile)
+        return bav_data
+    except Exception as exc:
+        logger.exception("Ashtakvarga calculation failed")
+        raise HTTPException(status_code=500, detail="Ashtakvarga calculation failed") from exc
+
 
 
 @app.post(

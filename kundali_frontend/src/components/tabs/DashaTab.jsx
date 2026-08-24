@@ -1,27 +1,28 @@
-import DashaTable from '../DashaTable';
+import DashaTree from '../DashaTree';
+import YogaList from '../YogaList';
 import './tabs.css';
 
 /**
- * DashaTab — Vimshottari Mahadasha table.
- * Placeholder for Phase 4 Antardasha tree and transit cards.
+ * DashaTab — Vimshottari Mahadasha / Antardasha tree and active Yogas.
  */
 export default function DashaTab({ report }) {
-  const { dasha_periods } = report;
+  const { dasha_periods, yogas } = report;
 
   return (
     <div className="tab-panel">
+      {/* 1. Interactive Vimshottari Dasha Tree */}
       <div className="tab-section">
-        <p className="tab-section__title">Vimshottari Dasha (Planetary Periods)</p>
+        <p className="tab-section__title">Vimshottari Dasha &amp; Antardashas</p>
         <p className="tab-section__subtitle">
-          Each Mahadasha is a major planetary cycle. The active period is highlighted.
+          Major planetary cycles (Mahadashas) and sub-periods (Antardashas). Click any cycle to expand.
         </p>
-        <DashaTable periods={dasha_periods} />
+        <DashaTree periods={dasha_periods} />
       </div>
 
-      {/* Phase 4 placeholder — Antardasha tree will be added here */}
-      <div className="tab-coming-soon">
-        <span>🔮</span>
-        <p>Antardasha (sub-period) breakdown coming in Phase 4</p>
+      {/* 2. Classical Vedic Yogas */}
+      <div className="tab-section">
+        <p className="tab-section__title">Vedic Yogas &amp; Planetary Combinations</p>
+        <YogaList yogas={yogas} filterType="all" />
       </div>
     </div>
   );

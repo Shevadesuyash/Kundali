@@ -68,6 +68,11 @@ export function getKundali(person, includeAiReading = false) {
   return postJSON('/api/v1/kundali', { person, include_ai_reading: includeAiReading });
 }
 
+export function getAshtakvarga(person) {
+  return postJSON('/api/v1/ashtakvarga', { person });
+}
+
+
 export function getMatch(boy, girl, includeAiReading = false) {
   return postJSON('/api/v1/match', { boy, girl, include_ai_reading: includeAiReading });
 }

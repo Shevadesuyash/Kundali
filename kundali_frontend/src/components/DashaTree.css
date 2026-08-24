@@ -1,0 +1,234 @@
+.dasha-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dasha-tree__maha-card {
+  background: var(--color-bg-panel, #ffffff);
+  border: 1.5px solid var(--color-hairline-strong, #e5e7eb);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.dasha-tree__maha-card:hover {
+  border-color: var(--color-gold, #c8720a);
+}
+
+.dasha-tree__maha-card.is-active {
+  border-color: var(--color-gold, #c8720a);
+  box-shadow: 0 4px 12px rgba(200, 114, 10, 0.08);
+}
+
+.dasha-tree__maha-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  cursor: pointer;
+  background: var(--color-bg-panel, #ffffff);
+  user-select: none;
+}
+
+.dasha-tree__maha-card.is-active .dasha-tree__maha-header {
+  background: #fdfaf3;
+}
+
+.dasha-tree__maha-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dasha-tree__maha-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.dasha-tree__maha-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dasha-tree__maha-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+  margin: 0;
+}
+
+.dasha-tree__badge--active {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+}
+
+.dasha-tree__dates {
+  font-size: 0.8rem;
+  color: var(--color-text-dim, #6b7280);
+  margin: 3px 0 0 0;
+}
+
+.dasha-tree__duration {
+  opacity: 0.8;
+}
+
+.dasha-tree__maha-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dasha-tree__progress-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.dasha-tree__progress-label {
+  font-size: 0.72rem;
+  color: var(--color-gold, #c8720a);
+  font-weight: 600;
+}
+
+.dasha-tree__progress-bar {
+  width: 90px;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.dasha-tree__progress-fill {
+  height: 100%;
+  background: var(--color-gold, #c8720a);
+  border-radius: 999px;
+}
+
+.dasha-tree__chevron {
+  font-size: 0.75rem;
+  color: var(--color-text-dim, #9ca3af);
+}
+
+/* ── Antardasha Sub-table ────────────────────────────────────────────── */
+.dasha-tree__antardasha-wrap {
+  border-top: 1px solid var(--color-hairline-strong, #e5e7eb);
+  background: var(--color-bg-page, #fafafa);
+  padding: 8px 18px 14px;
+}
+
+.dasha-tree__antardasha-header {
+  display: grid;
+  grid-template-columns: 180px 1fr 100px;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-dim, #9ca3af);
+  border-bottom: 1px solid var(--color-hairline, #f3f4f6);
+}
+
+.dasha-tree__antardasha-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.dasha-tree__antar-row {
+  display: grid;
+  grid-template-columns: 180px 1fr 100px;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 0.84rem;
+  align-items: center;
+  border-bottom: 1px solid var(--color-hairline, #f3f4f6);
+}
+
+.dasha-tree__antar-row:last-child {
+  border-bottom: none;
+}
+
+.dasha-tree__antar-row.is-active {
+  background: #fdfaf3;
+  border-radius: 6px;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.dasha-tree__antar-planet {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dasha-tree__antar-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #d1d5db;
+  flex-shrink: 0;
+}
+
+.dasha-tree__antar-row.is-active .dasha-tree__antar-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 6px #f59e0b;
+}
+
+.dasha-tree__pulse-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #22c55e;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+  animation: pulse-badge 2s infinite ease-in-out;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.dasha-tree__antar-dates {
+  font-size: 0.8rem;
+  color: var(--color-text-dim, #6b7280);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dasha-tree__sub-progress-bar {
+  width: 120px;
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.dasha-tree__sub-progress-fill {
+  height: 100%;
+  background: #f59e0b;
+}
+
+.dasha-tree__antar-duration {
+  font-size: 0.8rem;
+  color: var(--color-text-dim, #9ca3af);
+}
+
+@media (max-width: 640px) {
+  .dasha-tree__antardasha-header,
+  .dasha-tree__antar-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
