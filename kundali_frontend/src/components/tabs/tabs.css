@@ -1,0 +1,187 @@
+/* Shared tab panel styles — used by all tab components */
+
+.tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── Section block within a tab ──────────────────────────── */
+.tab-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tab-section__title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--color-text-dim, #6b7280);
+  margin: 0;
+}
+
+.tab-section__subtitle {
+  font-size: 0.82rem;
+  color: var(--color-text-dim, #6b7280);
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Inner chart tab selector ────────────────────────────── */
+.inner-tabs {
+  display: flex;
+  gap: 0;
+  border: 1.5px solid var(--color-hairline-strong, #e5e7eb);
+  border-radius: 8px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.inner-tab {
+  padding: 7px 18px;
+  background: var(--color-bg-page, #fff);
+  border: none;
+  border-right: 1.5px solid var(--color-hairline-strong, #e5e7eb);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-dim, #6b7280);
+  transition: background 0.12s, color 0.12s;
+}
+
+.inner-tab:last-child {
+  border-right: none;
+}
+
+.inner-tab:hover {
+  background: var(--color-bg-panel, #f3f4f6);
+}
+
+.inner-tab.is-active {
+  background: var(--color-gold, #c8720a);
+  color: #fff;
+}
+
+/* ── Charts grid ─────────────────────────────────────────── */
+.charts-grid-wrap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.chart-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chart-block__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-dim, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0;
+}
+
+/* ── Dosha tab specific ──────────────────────────────────── */
+.dosha-papa-table {
+  border: 1.5px solid var(--color-hairline-strong, #e5e7eb);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.dosha-papa-table__title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-dim, #6b7280);
+  padding: 10px 16px 4px;
+  margin: 0;
+}
+
+.dosha-papa-table__note {
+  font-size: 0.75rem;
+  color: var(--color-text-dim, #9ca3af);
+  padding: 0 16px 10px;
+  margin: 0;
+  font-style: italic;
+  border-bottom: 1px solid var(--color-hairline, #f3f4f6);
+}
+
+.dosha-papa-row {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 8px;
+  padding: 9px 16px;
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--color-hairline, #f3f4f6);
+  align-items: center;
+}
+
+.dosha-papa-row:last-child {
+  border-bottom: none;
+}
+
+.dosha-papa-row--total {
+  font-weight: 700;
+  background: var(--color-bg-panel, #f9fafb);
+}
+
+.dosha-status-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1.5px solid;
+}
+
+.dosha-status-card--clear {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #14532d;
+}
+
+.dosha-status-card--warn {
+  background: #fef9ec;
+  border-color: #fbbf24;
+  color: #78350f;
+}
+
+.dosha-status-card__icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.dosha-status-card__note {
+  font-size: 0.83rem;
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
+/* ── Coming Soon placeholder ────────────────────────────── */
+.tab-coming-soon {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border: 1.5px dashed var(--color-hairline-strong, #d1d5db);
+  border-radius: 10px;
+  color: var(--color-text-dim, #9ca3af);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.tab-coming-soon span {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.tab-coming-soon p {
+  margin: 0;
+}
