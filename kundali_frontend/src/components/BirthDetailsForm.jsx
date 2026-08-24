@@ -100,6 +100,8 @@ export default function BirthDetailsForm({
   const [isModified, setIsModified] = useState(false);
   const [savedSnapshot, setSavedSnapshot] = useState(null); // copy of the saved profile data
 
+  const [saveSuccessMessage, setSaveSuccessMessage] = useState('');
+
   function update(field, raw) {
     // If we had a saved profile loaded and a birth field changed, mark modified
     if (sourceProfileId && savedSnapshot) {
@@ -150,6 +152,7 @@ export default function BirthDetailsForm({
     setSourceProfileId(profile.id);
     setSavedSnapshot({ ...newValue, gender: profile.gender });
     setIsModified(false);
+    setSaveSuccessMessage('');
 
     setProfileSuggestions([]);
     setShowProfileDropdown(false);
@@ -159,9 +162,10 @@ export default function BirthDetailsForm({
   async function handleSaveChanges() {
     if (!sourceProfileId) return;
     try {
+      const effectiveGender = value.gender || savedSnapshot?.gender || 'male';
       await updateProfile(sourceProfileId, {
         name:         value.name,
-        gender:       value.gender,
+        gender:       effectiveGender,
         year:         Number(value.year),
         month:        Number(value.month),
         day:          Number(value.day),
@@ -172,8 +176,10 @@ export default function BirthDetailsForm({
         timezone_str: value.timezone_str,
         birth_place:  value.place_label || placeQuery || null,
       });
-      setSavedSnapshot({ ...value });
+      setSavedSnapshot({ ...value, gender: effectiveGender });
       setIsModified(false);
+      setSaveSuccessMessage('✓ Profile updated successfully in database!');
+      setTimeout(() => setSaveSuccessMessage(''), 4000);
     } catch (err) {
       console.error('Failed to update profile:', err);
     }
@@ -183,10 +189,11 @@ export default function BirthDetailsForm({
     setSourceProfileId(null);
     setIsModified(false);
     setSavedSnapshot(null);
+    setSaveSuccessMessage('');
   }
 
-  // ── Name field typeahead search ───────────────────────────────────────
-  const handleNameInput = useCallback((raw) => {
+  // ── Name field typeahead search (fresh reference, no stale closure) ──
+  function handleNameInput(raw) {
     update('name', raw);
     if (profileDebounceRef.current) clearTimeout(profileDebounceRef.current);
     if (raw.trim().length < 2) {
@@ -207,7 +214,7 @@ export default function BirthDetailsForm({
         setSearchingProfiles(false);
       }
     }, 300);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }
 
   // Collapse profile dropdown when clicking outside
   useEffect(() => {
@@ -220,11 +227,11 @@ export default function BirthDetailsForm({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // ── Debounced place search ────────────────────────────────────────────
-  const handlePlaceInput = useCallback((query) => {
+  // ── Debounced place search (fresh reference, no stale closure) ───────
+  function handlePlaceInput(query) {
     setPlaceQuery(query);
     setSelectedPlace('');
-    onChange({ ...value, place_label: query });
+    update('place_label', query);
     if (placeDebounceRef.current) clearTimeout(placeDebounceRef.current);
     if (query.trim().length < 3) {
       setSuggestions([]);
@@ -244,7 +251,7 @@ export default function BirthDetailsForm({
         setSearching(false);
       }
     }, 400);
-  }, [value, onChange]); // eslint-disable-line react-hooks/exhaustive-deps
+  }
 
   // Pick a place from the dropdown
   function handlePickPlace(place) {
@@ -389,6 +396,13 @@ export default function BirthDetailsForm({
           </div>
         </div>
       )}
+
+      {saveSuccessMessage && (
+        <div className="birth-form__success-badge">
+          <span>{saveSuccessMessage}</span>
+        </div>
+      )}
+
 
       {/* ── Date of Birth ─────────────────────────────────────────── */}
       <div className="birth-form__row">

@@ -319,8 +319,9 @@ def patch_profile(profile_id: int, request: ProfileUpdateRequest):
     if not row:
         raise HTTPException(status_code=404, detail="Profile not found")
 
-    # Build the fields to update
-    updates = {k: v for k, v in request.model_dump().items() if v is not None}
+    # Build the fields to update (ignore None and empty strings)
+    updates = {k: v for k, v in request.model_dump().items() if v is not None and v != ""}
+
 
     # If any birth data changed, recompute moon_sign, lagna, dasha, manglik
     birth_fields = {"year", "month", "day", "hour", "minute", "lat", "lon", "timezone_str"}

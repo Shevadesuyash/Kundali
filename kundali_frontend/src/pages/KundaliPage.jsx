@@ -79,10 +79,12 @@ export default function KundaliPage() {
     try {
       const payload = toApiPayload(personData);
       const data = await getKundali(payload);
-      // Attach birth_place for display in the report header
+      // Attach birth_place and gender for display in the report header
       data.birth_place = birthPlace || personData.place_label || '';
+      data.gender = personData.gender || '';
       setReport(data);
       setStatus('result');
+
     } catch (err) {
       setErrorMessage(err instanceof ApiError ? err.message : c.error);
       setStatus('error');

@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { saveProfile } from '../api/kundaliApi';
 import GenderToggle from './GenderToggle';
 import './SaveProfileButton.css';
 
 /**
  * SaveProfileButton — shown after a Kundali is generated.
- * Uses GenderToggle (male/female) and allows setting a relationship tag
- * before saving birth details to the backend profile store.
+ * Automatically adopts the gender from the birth form and provides
+ * tag selection before saving to the backend profile database.
  *
  * Props:
  *   person     {object}  — toApiPayload(person) output from BirthDetailsForm
@@ -27,13 +27,21 @@ export default function SaveProfileButton({ person, gender: propGender = '', bir
   const [tag,     setTag]     = useState('self');
   const [message, setMessage] = useState('');
 
+  // Keep gender in sync whenever propGender changes from the form
+  useEffect(() => {
+    if (propGender) {
+      setGender(propGender);
+    }
+  }, [propGender]);
+
   async function handleSave() {
-    if (!gender) return;
+    const finalGender = gender || propGender;
+    if (!finalGender) return;
     setStep('saving');
     try {
-      await saveProfile(person, gender, birthPlace || null, tag);
+      await saveProfile(person, finalGender, birthPlace || null, tag);
       setStep('done');
-      setMessage('Profile saved!');
+      setMessage('Profile saved successfully!');
     } catch {
       setStep('error');
       setMessage('Could not save. Try again.');
@@ -47,6 +55,8 @@ export default function SaveProfileButton({ person, gender: propGender = '', bir
       <button onClick={() => setStep('idle')} className="save-profile__retry" type="button">Retry</button>
     </p>
   );
+
+  const effectiveGender = gender || propGender;
 
   return (
     <div className="save-profile">
@@ -62,15 +72,30 @@ export default function SaveProfileButton({ person, gender: propGender = '', bir
 
       {(step === 'picking' || step === 'saving') && (
         <div className="save-profile__picker">
-          {/* Gender (pre-filled from form, still editable) */}
+          {/* Gender selection / display */}
           <div className="save-profile__row">
             <span className="save-profile__label">Gender:</span>
-            <GenderToggle value={gender} onChange={setGender} idPrefix="spb" />
+            {effectiveGender ? (
+              <div className="save-profile__gender-display">
+                <span className={`gender-badge gender-badge--${effectiveGender}`}>
+                  {effectiveGender === 'male' ? '♂ Male' : '♀ Female'}
+                </span>
+                <button
+                  type="button"
+                  className="btn btn--ghost save-profile__change-gender"
+                  onClick={() => setGender(effectiveGender === 'male' ? 'female' : 'male')}
+                >
+                  Switch to {effectiveGender === 'male' ? 'Female' : 'Male'}
+                </button>
+              </div>
+            ) : (
+              <GenderToggle value={gender} onChange={setGender} idPrefix="spb" />
+            )}
           </div>
 
           {/* Relationship tag */}
           <div className="save-profile__row">
-            <span className="save-profile__label">Tag:</span>
+            <span className="save-profile__label">Save as Tag:</span>
             <div className="save-profile__tags">
               {TAG_OPTIONS.map((t) => (
                 <button
@@ -90,7 +115,7 @@ export default function SaveProfileButton({ person, gender: propGender = '', bir
               type="button"
               className="btn btn--primary save-profile__confirm"
               onClick={handleSave}
-              disabled={!gender || step === 'saving'}
+              disabled={!effectiveGender || step === 'saving'}
             >
               {step === 'saving' ? 'Saving...' : 'Confirm Save'}
             </button>
