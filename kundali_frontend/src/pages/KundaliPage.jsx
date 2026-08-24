@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import BirthDetailsForm, { makeEmptyPerson, toApiPayload, isPersonComplete } from '../components/BirthDetailsForm';
 import KundaliReport from '../components/KundaliReport';
 import SaveProfileButton from '../components/SaveProfileButton';
 import { LoadingState, ErrorState } from '../components/StatusStates';
-import { getKundali, ApiError } from '../api/kundaliApi';
+import { getKundali, getProfile, ApiError } from '../api/kundaliApi';
 import { useLang } from '../context/LanguageContext';
 import './FormPage.css';
 
@@ -34,23 +35,68 @@ export default function KundaliPage() {
   const { lang } = useLang();
   const c = STR[lang];
 
+  const [searchParams] = useSearchParams();
+  const profileId = searchParams.get('profileId') ? Number(searchParams.get('profileId')) : null;
+
   const [person, setPerson] = useState(makeEmptyPerson());
+  const [placeLabel, setPlaceLabel] = useState('');
   const [status, setStatus] = useState('form');
   const [report, setReport] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  // If ?profileId= is in the URL, auto-fill and auto-submit on mount
+  useEffect(() => {
+    if (!profileId) return;
+    (async () => {
+      try {
+        const profile = await getProfile(profileId);
+        const filled = {
+          name:         profile.name,
+          gender:       profile.gender,
+          year:         String(profile.year),
+          month:        String(profile.month),
+          day:          String(profile.day),
+          hour:         String(profile.hour),
+          minute:       String(profile.minute),
+          lat:          String(parseFloat(profile.lat).toFixed(4)),
+          lon:          String(parseFloat(profile.lon).toFixed(4)),
+          timezone_str: profile.timezone_str,
+          place_label:  profile.birth_place || '',
+        };
+        setPerson(filled);
+        setPlaceLabel(profile.birth_place || '');
+        // Auto-submit
+        await submitKundali(filled, profile.birth_place);
+      } catch {
+        // silently fail — show empty form
+      }
+    })();
+  }, [profileId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function submitKundali(personData, birthPlace) {
     setStatus('loading');
     setErrorMessage('');
     try {
-      const data = await getKundali(toApiPayload(person));
+      const payload = toApiPayload(personData);
+      const data = await getKundali(payload);
+      // Attach birth_place for display in the report header
+      data.birth_place = birthPlace || personData.place_label || '';
       setReport(data);
       setStatus('result');
     } catch (err) {
       setErrorMessage(err instanceof ApiError ? err.message : c.error);
       setStatus('error');
     }
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    await submitKundali(person, person.place_label);
+  }
+
+  function handlePersonChange(newPerson) {
+    setPerson(newPerson);
+    if (newPerson.place_label) setPlaceLabel(newPerson.place_label);
   }
 
   return (
@@ -63,7 +109,13 @@ export default function KundaliPage() {
 
       {status === 'form' && (
         <form onSubmit={handleSubmit} className="form-page__form">
-          <BirthDetailsForm label={c.formLabel} value={person} onChange={setPerson} idPrefix="k" />
+          <BirthDetailsForm
+            label={c.formLabel}
+            value={person}
+            onChange={handlePersonChange}
+            idPrefix="k"
+            showGender
+          />
           <button type="submit" className="btn btn--primary btn--full" disabled={!isPersonComplete(person)}>
             {c.submit}
           </button>
@@ -85,7 +137,8 @@ export default function KundaliPage() {
             <KundaliReport report={report} />
             <SaveProfileButton
               person={toApiPayload(person)}
-              birthPlace={person.place_label}
+              gender={person.gender}
+              birthPlace={person.place_label || placeLabel}
             />
           </div>
         </div>

@@ -1,0 +1,60 @@
+.gender-toggle {
+  display: flex;
+  gap: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1.5px solid var(--border, #d1d5db);
+  width: fit-content;
+}
+
+.gender-toggle__btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  background: var(--surface, #fff);
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary, #6b7280);
+  transition: background 0.15s, color 0.15s;
+  border-right: 1.5px solid var(--border, #d1d5db);
+}
+
+.gender-toggle__btn:last-of-type {
+  border-right: none;
+}
+
+.gender-toggle__btn:hover {
+  background: var(--surface-alt, #f3f4f6);
+}
+
+.gender-toggle__btn.is-active {
+  background: var(--accent, #6366f1);
+  color: #fff;
+}
+
+.gender-toggle__btn.is-active .gender-toggle__icon {
+  color: #fff;
+}
+
+.gender-toggle__icon {
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+/* Male active = blue, Female active = pink */
+.gender-toggle__btn:first-child.is-active {
+  background: #3b82f6;
+}
+.gender-toggle__btn:last-child.is-active {
+  background: #ec4899;
+}
+
+.gender-toggle__required {
+  font-size: 0.78rem;
+  color: var(--error, #ef4444);
+  align-self: center;
+  margin-left: 8px;
+}

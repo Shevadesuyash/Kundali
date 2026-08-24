@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { geocodeSearch } from '../api/kundaliApi';
+import { geocodeSearch, searchProfilesTypeahead, updateProfile } from '../api/kundaliApi';
 import { useLang } from '../context/LanguageContext';
+import GenderToggle from './GenderToggle';
 import './BirthDetailsForm.css';
 import './PlaceSearch.css';
+
 
 const TIMEZONES = [
   { value: 'Asia/Kolkata', label: 'India (IST, UTC+5:30)' },
@@ -18,8 +20,7 @@ const TIMEZONES = [
 
 /**
  * Guesses a IANA timezone string from Nominatim's address object.
- * Falls back to Asia/Kolkata if the country is India and nothing more specific
- * can be determined. For most Indian users this is always correct.
+ * Falls back to Asia/Kolkata if the country is India.
  */
 function guessTimezone(nominatimResult) {
   const cc = nominatimResult.address?.country_code?.toLowerCase();
@@ -47,6 +48,7 @@ function searchPlaces(query) {
 
 const emptyPerson = {
   name: '',
+  gender: '',
   year: '',
   month: '',
   day: '',
@@ -55,6 +57,7 @@ const emptyPerson = {
   lat: '',
   lon: '',
   timezone_str: 'Asia/Kolkata',
+  place_label: '',
 };
 
 export function makeEmptyPerson() {
@@ -63,20 +66,55 @@ export function makeEmptyPerson() {
 
 /**
  * Controlled form for one person's birth details.
+ * Now includes:
+ *  - GenderToggle at the top
+ *  - Typeahead profile name search with auto-fill
+ *  - "Modified from Saved Profile" badge with Save/Keep options
  */
-export default function BirthDetailsForm({ label, value, onChange, idPrefix }) {
+export default function BirthDetailsForm({
+  label, value, onChange, idPrefix,
+  showGender = true,      // show gender toggle (hide for legacy compact use)
+  genderRequired = false, // mark gender as required
+}) {
   const { t } = useLang();
   const [touched, setTouched] = useState({});
+
+  // ── Place search state ────────────────────────────────────────────────
   const [placeQuery, setPlaceQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [searching, setSearching] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
-  const debounceRef = useRef(null);
-  const wrapperRef = useRef(null);
+  const placeDebounceRef = useRef(null);
+  const placeWrapperRef = useRef(null);
+
+  // ── Profile typeahead state ────────────────────────────────────────────
+  const [profileSuggestions, setProfileSuggestions] = useState([]);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [searchingProfiles, setSearchingProfiles] = useState(false);
+  const profileDebounceRef = useRef(null);
+  const nameWrapperRef = useRef(null);
+
+  // ── Modified-from-saved badge state ──────────────────────────────────
+  const [sourceProfileId, setSourceProfileId] = useState(null);
+  const [isModified, setIsModified] = useState(false);
+  const [savedSnapshot, setSavedSnapshot] = useState(null); // copy of the saved profile data
 
   function update(field, raw) {
+    // If we had a saved profile loaded and a birth field changed, mark modified
+    if (sourceProfileId && savedSnapshot) {
+      if (String(raw) !== String(savedSnapshot[field] ?? '')) {
+        setIsModified(true);
+      }
+    }
     onChange({ ...value, [field]: raw });
+  }
+
+  function updateGender(gender) {
+    if (sourceProfileId && savedSnapshot && gender !== savedSnapshot.gender) {
+      setIsModified(true);
+    }
+    onChange({ ...value, gender });
   }
 
   function markTouched(field) {
@@ -85,17 +123,115 @@ export default function BirthDetailsForm({ label, value, onChange, idPrefix }) {
 
   const id = (field) => `${idPrefix}-${field}`;
 
-  // Debounced place search
+  // ── Profile auto-fill from typeahead selection ────────────────────────
+  function handlePickProfile(profile) {
+    const newValue = {
+      ...value,
+      name:         profile.name,
+      gender:       profile.gender,
+      year:         String(profile.year),
+      month:        String(profile.month),
+      day:          String(profile.day),
+      hour:         String(profile.hour),
+      minute:       String(profile.minute),
+      lat:          String(parseFloat(profile.lat).toFixed(4)),
+      lon:          String(parseFloat(profile.lon).toFixed(4)),
+      timezone_str: profile.timezone_str,
+      place_label:  profile.birth_place || '',
+    };
+    onChange(newValue);
+
+    if (profile.birth_place) {
+      setPlaceQuery(profile.birth_place);
+      setSelectedPlace(profile.birth_place);
+    }
+
+    // Track source for modified-badge
+    setSourceProfileId(profile.id);
+    setSavedSnapshot({ ...newValue, gender: profile.gender });
+    setIsModified(false);
+
+    setProfileSuggestions([]);
+    setShowProfileDropdown(false);
+  }
+
+  // ── Save changes back to the saved profile ───────────────────────────
+  async function handleSaveChanges() {
+    if (!sourceProfileId) return;
+    try {
+      await updateProfile(sourceProfileId, {
+        name:         value.name,
+        gender:       value.gender,
+        year:         Number(value.year),
+        month:        Number(value.month),
+        day:          Number(value.day),
+        hour:         Number(value.hour),
+        minute:       Number(value.minute),
+        lat:          Number(value.lat),
+        lon:          Number(value.lon),
+        timezone_str: value.timezone_str,
+        birth_place:  value.place_label || placeQuery || null,
+      });
+      setSavedSnapshot({ ...value });
+      setIsModified(false);
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+    }
+  }
+
+  function handleKeepAsGuest() {
+    setSourceProfileId(null);
+    setIsModified(false);
+    setSavedSnapshot(null);
+  }
+
+  // ── Name field typeahead search ───────────────────────────────────────
+  const handleNameInput = useCallback((raw) => {
+    update('name', raw);
+    if (profileDebounceRef.current) clearTimeout(profileDebounceRef.current);
+    if (raw.trim().length < 2) {
+      setProfileSuggestions([]);
+      setShowProfileDropdown(false);
+      return;
+    }
+    profileDebounceRef.current = setTimeout(async () => {
+      setSearchingProfiles(true);
+      try {
+        const results = await searchProfilesTypeahead(raw.trim(), 6);
+        setProfileSuggestions(results);
+        setShowProfileDropdown(results.length > 0);
+      } catch {
+        setProfileSuggestions([]);
+        setShowProfileDropdown(false);
+      } finally {
+        setSearchingProfiles(false);
+      }
+    }, 300);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Collapse profile dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (nameWrapperRef.current && !nameWrapperRef.current.contains(e.target)) {
+        setShowProfileDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // ── Debounced place search ────────────────────────────────────────────
   const handlePlaceInput = useCallback((query) => {
     setPlaceQuery(query);
     setSelectedPlace('');
-    if (debounceRef.current) clearTimeout(debounceRef.current);
+    onChange({ ...value, place_label: query });
+    if (placeDebounceRef.current) clearTimeout(placeDebounceRef.current);
     if (query.trim().length < 3) {
       setSuggestions([]);
       setShowDropdown(false);
       return;
     }
-    debounceRef.current = setTimeout(async () => {
+    placeDebounceRef.current = setTimeout(async () => {
       setSearching(true);
       try {
         const results = await searchPlaces(query);
@@ -108,7 +244,7 @@ export default function BirthDetailsForm({ label, value, onChange, idPrefix }) {
         setSearching(false);
       }
     }, 400);
-  }, []);
+  }, [value, onChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Pick a place from the dropdown
   function handlePickPlace(place) {
@@ -127,13 +263,20 @@ export default function BirthDetailsForm({ label, value, onChange, idPrefix }) {
       lat,
       lon,
       timezone_str: tz,
+      place_label: displayName,
     });
+
+    if (sourceProfileId && savedSnapshot) {
+      if (lat !== String(savedSnapshot.lat) || lon !== String(savedSnapshot.lon)) {
+        setIsModified(true);
+      }
+    }
   }
 
-  // Collapse dropdown when clicking outside
+  // Collapse place dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(e) {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+      if (placeWrapperRef.current && !placeWrapperRef.current.contains(e.target)) {
         setShowDropdown(false);
       }
     }
@@ -145,21 +288,109 @@ export default function BirthDetailsForm({ label, value, onChange, idPrefix }) {
     <fieldset className="birth-form">
       <legend className="birth-form__legend">{label}</legend>
 
+      {/* ── Gender Toggle ──────────────────────────────────────────── */}
+      {showGender && (
+        <div className="birth-form__row">
+          <div className="birth-form__field birth-form__field--wide">
+            <span className="birth-form__label-text">Gender</span>
+            <GenderToggle
+              value={value.gender}
+              onChange={updateGender}
+              required={genderRequired}
+              idPrefix={idPrefix}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ── Name field with typeahead profile search ───────────────── */}
       <div className="birth-form__row">
-        <label className="birth-form__field birth-form__field--wide" htmlFor={id('name')}>
-          <span>{t('form.name')}</span>
-          <input
-            id={id('name')}
-            type="text"
-            value={value.name}
-            placeholder={t('form.name.placeholder')}
-            onChange={(e) => update('name', e.target.value)}
-            onBlur={() => markTouched('name')}
-            required
-          />
-        </label>
+        <div
+          className="birth-form__field birth-form__field--wide name-typeahead-wrap"
+          ref={nameWrapperRef}
+        >
+          <label htmlFor={id('name')}>
+            <span>{t('form.name')}</span>
+            <div className="place-search__input-wrap">
+              <input
+                id={id('name')}
+                type="text"
+                value={value.name}
+                placeholder={t('form.name.placeholder')}
+                autoComplete="off"
+                onChange={(e) => handleNameInput(e.target.value)}
+                onBlur={() => markTouched('name')}
+                onFocus={() => profileSuggestions.length > 0 && setShowProfileDropdown(true)}
+                required
+              />
+              {searchingProfiles && (
+                <span className="place-search__spinner" aria-label="Searching profiles…" />
+              )}
+              {sourceProfileId && !isModified && (
+                <span className="place-search__ok" title="Loaded from saved profile">👤</span>
+              )}
+            </div>
+          </label>
+
+          {/* Profile typeahead dropdown */}
+          {showProfileDropdown && profileSuggestions.length > 0 && (
+            <ul className="place-search__dropdown profile-typeahead__dropdown" role="listbox" aria-label="Saved profiles">
+              {profileSuggestions.map((profile) => {
+                const d = String(profile.day).padStart(2, '0');
+                const m = String(profile.month).padStart(2, '0');
+                return (
+                  <li
+                    key={profile.id}
+                    role="option"
+                    className="place-search__option"
+                    onMouseDown={() => handlePickProfile(profile)}
+                  >
+                    <span className="place-search__option-icon">
+                      {profile.gender === 'male' ? '♂' : '♀'}
+                    </span>
+                    <span className="place-search__option-content">
+                      <span className="place-search__option-primary">{profile.name}</span>
+                      <span className="place-search__option-secondary">
+                        {d}-{m}-{profile.year}
+                        {profile.birth_place ? ` · ${profile.birth_place.split(',')[0]}` : ''}
+                        {profile.lagna ? ` · ${profile.lagna.split(' ')[0]} Lagna` : ''}
+                      </span>
+                    </span>
+                    <span className="place-search__option-coords">
+                      {profile.gender === 'male' ? 'Male' : 'Female'}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
       </div>
 
+      {/* ── Modified from Saved Profile badge ─────────────────────── */}
+      {sourceProfileId && isModified && (
+        <div className="birth-form__modified-badge">
+          <span className="modified-badge__text">📝 Modified from Saved Profile</span>
+          <div className="modified-badge__actions">
+            <button
+              type="button"
+              className="btn btn--ghost modified-badge__btn"
+              onClick={handleSaveChanges}
+            >
+              Save Changes to Profile
+            </button>
+            <button
+              type="button"
+              className="btn btn--ghost modified-badge__btn modified-badge__btn--keep"
+              onClick={handleKeepAsGuest}
+            >
+              Keep as One-Time Override
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Date of Birth ─────────────────────────────────────────── */}
       <div className="birth-form__row">
         <span className="birth-form__group-label">{t('form.dob')}</span>
         <div className="birth-form__group">
@@ -181,6 +412,7 @@ export default function BirthDetailsForm({ label, value, onChange, idPrefix }) {
         </div>
       </div>
 
+      {/* ── Time of Birth ─────────────────────────────────────────── */}
       <div className="birth-form__row">
         <span className="birth-form__group-label">{t('form.tob')}</span>
         <div className="birth-form__group">
@@ -197,9 +429,9 @@ export default function BirthDetailsForm({ label, value, onChange, idPrefix }) {
         </div>
       </div>
 
-      {/* ── Birthplace Search ────────────────────────────────── */}
+      {/* ── Birthplace Search ─────────────────────────────────────── */}
       <div className="birth-form__row">
-        <div className="place-search-wrap" ref={wrapperRef}>
+        <div className="place-search-wrap" ref={placeWrapperRef}>
           <label className="birth-form__field birth-form__field--wide" htmlFor={id('place')}>
             <span className="place-search__label">
               {t('form.birthplace')}
@@ -224,7 +456,7 @@ export default function BirthDetailsForm({ label, value, onChange, idPrefix }) {
             </div>
           </label>
 
-          {/* Dropdown */}
+          {/* Place dropdown */}
           {showDropdown && suggestions.length > 0 && (
             <ul className="place-search__dropdown" role="listbox" aria-label="Place suggestions">
               {suggestions.map((place) => {
@@ -258,7 +490,7 @@ export default function BirthDetailsForm({ label, value, onChange, idPrefix }) {
         </div>
       </div>
 
-      {/* ── Coordinates (auto-filled or manual) ─────────────── */}
+      {/* ── Coordinates (auto-filled or manual) ───────────────────── */}
       <div className="birth-form__row">
         <span className="birth-form__group-label">
           {t('form.coords')}
@@ -302,6 +534,7 @@ export default function BirthDetailsForm({ label, value, onChange, idPrefix }) {
         </div>
       </div>
 
+      {/* ── Timezone ──────────────────────────────────────────────── */}
       <div className="birth-form__row">
         <label className="birth-form__field birth-form__field--wide" htmlFor={id('tz')}>
           <span>{t('form.tz')}</span>
