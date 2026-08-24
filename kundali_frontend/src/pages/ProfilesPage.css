@@ -1,136 +1,270 @@
-.profiles-page__header  { margin-bottom: 28px; }
-.profiles-page__intro   { color: var(--color-text-dim); font-size: 0.95rem; margin-top: 6px; }
+/* ── Header ─────────────────────────────────────────────────────────── */
+.profiles-page__header {
+  margin-bottom: 28px;
+}
 
+.profiles-page__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.profiles-page__title-row h1 {
+  margin: 0;
+}
+
+.profiles-page__add-btn {
+  font-size: 0.88rem;
+  padding: 8px 18px;
+}
+
+/* ── Stats bar ───────────────────────────────────────────────────────── */
+.profiles-page__stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 18px;
+  background: var(--color-bg-panel-raised, #f9fafb);
+  border: 1px solid var(--color-hairline-strong, #e5e7eb);
+  border-radius: 10px;
+  min-width: 60px;
+}
+
+.stat-pill__num {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+  line-height: 1;
+}
+
+.stat-pill__label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-dim, #6b7280);
+  margin-top: 3px;
+}
+
+.stat-pill--male .stat-pill__num   { color: #1d4ed8; }
+.stat-pill--female .stat-pill__num { color: #be185d; }
+
+.profiles-page__match-toggle {
+  font-size: 0.82rem;
+  margin-left: 8px;
+}
+
+/* ── Match Tray ──────────────────────────────────────────────────────── */
+.profiles-page__match-tray {
+  background: var(--color-bg-panel, #fff);
+  border: 1.5px solid var(--color-gold, #c8720a);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(200, 114, 10, 0.1);
+}
+
+.match-tray__title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-gold, #c8720a);
+  margin: 0 0 14px 0;
+}
+
+.match-tray__slots {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.match-tray__slot {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1.5px solid;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.match-tray__slot--male   { border-color: #bfdbfe; background: #eff6ff; }
+.match-tray__slot--female { border-color: #fbcfe8; background: #fdf2f8; }
+
+.match-tray__role {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-dim, #6b7280);
+}
+
+.match-tray__picked {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.match-tray__name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+  flex: 1;
+}
+
+.match-tray__clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-dim, #9ca3af);
+  font-size: 0.82rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.match-tray__clear:hover { background: #fee2e2; color: #ef4444; }
+
+.match-tray__open-match {
+  font-size: 0.76rem;
+  padding: 3px 8px;
+}
+
+.match-tray__empty {
+  font-size: 0.83rem;
+  color: var(--color-text-dim, #9ca3af);
+  font-style: italic;
+}
+
+.match-tray__vs {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-dim, #6b7280);
+}
+
+.match-tray__run-btn {
+  white-space: nowrap;
+}
+
+.match-tray__result { margin-top: 16px; }
+
+.match-tray__error {
+  color: var(--color-vermilion, #b71c1c);
+  font-size: 0.88rem;
+  margin-top: 12px;
+}
+
+/* ── Search + Filter Bar ─────────────────────────────────────────────── */
 .profiles-page__controls {
   display: flex;
   gap: 12px;
   align-items: center;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .profiles-page__search {
   flex: 1;
   min-width: 200px;
   padding: 9px 14px;
-  border: 1px solid var(--color-hairline-strong);
-  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-hairline-strong, #e5e7eb);
+  border-radius: var(--radius-sm, 6px);
   font-size: 0.92rem;
-  background: var(--color-bg-page);
-  color: var(--color-text);
+  background: var(--color-bg-page, #fff);
+  color: var(--color-text, #111827);
   outline: none;
 }
-.profiles-page__search:focus { border-color: var(--color-gold); }
+.profiles-page__search:focus { border-color: var(--color-gold, #c8720a); }
 
+/* Gender tabs */
 .profiles-page__tabs { display: flex; gap: 6px; }
 
 .profile-tab {
   padding: 6px 16px;
   border-radius: 999px;
-  border: 1px solid var(--color-hairline-strong);
+  border: 1px solid var(--color-hairline-strong, #e5e7eb);
   background: transparent;
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
-  color: var(--color-text-dim);
+  color: var(--color-text-dim, #6b7280);
   transition: background 0.15s, color 0.15s;
 }
 .profile-tab.is-active {
-  background: var(--color-gold);
-  border-color: var(--color-gold);
+  background: var(--color-gold, #c8720a);
+  border-color: var(--color-gold, #c8720a);
   color: #fff;
 }
 
-/* ── Match bar ── */
-.profiles-page__match-bar {
+/* Tag filter chips */
+.profiles-page__tag-filters {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  gap: 6px;
   flex-wrap: wrap;
-  padding: 14px 18px;
-  background: var(--color-bg-panel-raised);
-  border: 1px solid var(--color-hairline-strong);
-  border-radius: var(--radius-md);
-  margin-bottom: 20px;
-  box-shadow: var(--shadow-card);
 }
 
-.match-bar__slot  { display: flex; align-items: center; gap: 6px; }
-.match-bar__label { font-size: 0.78rem; font-weight: 700; color: var(--color-text-dim); }
-.match-bar__name  { font-size: 0.9rem;  font-weight: 600; color: var(--color-text); }
-.match-bar__vs    { font-size: 0.78rem; color: var(--color-text-dim); font-weight: 600; margin: 0 4px; }
-.match-bar__clear {
-  background: none; border: none; cursor: pointer;
-  font-size: 0.78rem; color: var(--color-text-dim);
-  padding: 0 4px;
+.tag-filter-btn {
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--color-hairline-strong, #e5e7eb);
+  background: transparent;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--color-text-dim, #6b7280);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.tag-filter-btn:hover {
+  background: var(--color-bg-panel-raised, #f9fafb);
+}
+.tag-filter-btn.is-active {
+  background: var(--color-text, #111827);
+  border-color: var(--color-text, #111827);
+  color: #fff;
 }
 
-.profiles-page__result      { margin-bottom: 28px; }
-.profiles-page__match-error { color: var(--color-vermilion); font-size: 0.9rem; margin-bottom: 16px; }
-.profiles-page__count       { font-size: 0.78rem; color: var(--color-text-dim); margin-bottom: 14px; }
-.profiles-page__empty       { color: var(--color-text-dim); font-style: italic; padding: 40px 0; text-align: center; }
-
-/* ── Profile grid ── */
-.profiles-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
+/* ── Counts & Status ─────────────────────────────────────────────────── */
+.profiles-page__count {
+  font-size: 0.78rem;
+  color: var(--color-text-dim, #6b7280);
+  margin-bottom: 16px;
 }
 
-/* ── Profile card ── */
-.profile-card {
-  background: var(--color-bg-panel-raised);
-  border: 1px solid var(--color-hairline-strong);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  box-shadow: var(--shadow-card);
+.profiles-page__empty {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  transition: border-color 0.2s;
-}
-.profile-card--picked {
-  border-color: var(--color-gold);
-  box-shadow: 0 0 0 2px rgba(200, 114, 10, 0.2);
-}
-
-.profile-card__top  { display: flex; align-items: flex-start; gap: 10px; }
-.profile-card__info { flex: 1; }
-
-.gender-dot--boy   { width:10px; height:10px; border-radius:50%; background:#3b82f6; flex-shrink:0; margin-top:5px; }
-.gender-dot--girl  { width:10px; height:10px; border-radius:50%; background:#ec4899; flex-shrink:0; margin-top:5px; }
-.gender-dot--other { width:10px; height:10px; border-radius:50%; background:var(--color-text-dim); flex-shrink:0; margin-top:5px; }
-
-.profile-card__name  { font-weight: 700; font-size: 0.95rem; color: var(--color-text); }
-.profile-card__dob   { font-size: 0.78rem; color: var(--color-text-dim); margin-top: 2px; }
-.profile-card__place { font-size: 0.74rem; color: var(--color-text-dim); }
-
-.profile-card__astro { display: flex; gap: 6px; flex-wrap: wrap; }
-.profile-card__tag {
-  font-size: 0.7rem; font-weight: 600; padding: 2px 8px;
-  border-radius: 999px;
-  background: var(--color-bg-page);
-  border: 1px solid var(--color-hairline-strong);
-  color: var(--color-text-dim);
+  align-items: center;
+  gap: 8px;
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--color-text-dim, #6b7280);
 }
 
-.profile-card__actions { display: flex; gap: 6px; margin-top: 2px; }
-.profile-card__btn     { font-size: 0.76rem; padding: 4px 10px; }
-.profile-card__btn.is-picked { color: var(--color-gold); border-color: var(--color-gold); }
+/* ── Profile Cards Grid ──────────────────────────────────────────────── */
+.profiles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
 
-/* ── Manglik pill ── */
-.profile-pill {
-  font-size: 0.66rem; font-weight: 700;
-  padding: 2px 8px; border-radius: 999px;
-  margin-left: auto; flex-shrink: 0;
-}
-.profile-pill--manglik {
-  background: var(--color-vermilion-soft);
-  color: var(--color-vermilion);
-  border: 1px solid rgba(183, 28, 28, 0.25);
-}
-.profile-pill--clear {
-  background: var(--color-jade-soft);
-  color: var(--color-jade);
-  border: 1px solid rgba(27, 110, 65, 0.25);
+@media (max-width: 600px) {
+  .profiles-grid {
+    grid-template-columns: 1fr;
+  }
+  .match-tray__slots {
+    flex-direction: column;
+  }
 }

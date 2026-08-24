@@ -1,108 +1,90 @@
 import { useState, useEffect, useCallback } from 'react';
-import { searchProfiles, matchSaved, ApiError } from '../api/kundaliApi';
+import { useNavigate } from 'react-router-dom';
+import { searchProfiles, deleteProfile, matchSaved, ApiError } from '../api/kundaliApi';
+import ProfileCard from '../components/ProfileCard';
 import GunaMilanScorecard from '../components/GunaMilanScorecard';
 import { LoadingState, ErrorState } from '../components/StatusStates';
 import './ProfilesPage.css';
 
 const GENDER_TABS = [
-  { value: '',     label: 'All'  },
-  { value: 'boy',  label: 'Boy'  },
-  { value: 'girl', label: 'Girl' },
+  { value: '',       label: 'All'    },
+  { value: 'male',   label: '♂ Male' },
+  { value: 'female', label: '♀ Female' },
 ];
 
-function ManglikPill({ active }) {
-  return active
-    ? <span className="profile-pill profile-pill--manglik">Manglik</span>
-    : <span className="profile-pill profile-pill--clear">Clear</span>;
-}
-
-function ProfileCard({ profile, onPickBoy, onPickGirl, pickedBoyId, pickedGirlId }) {
-  const d   = String(profile.day).padStart(2, '0');
-  const m   = String(profile.month).padStart(2, '0');
-  const dob = `${d}-${m}-${profile.year}`;
-
-  const isBoyPicked  = pickedBoyId  === profile.id;
-  const isGirlPicked = pickedGirlId === profile.id;
-
-  return (
-    <div className={`profile-card${isBoyPicked || isGirlPicked ? ' profile-card--picked' : ''}`}>
-      <div className="profile-card__top">
-        <span className={`profile-card__dot gender-dot--${profile.gender}`} />
-        <div className="profile-card__info">
-          <p className="profile-card__name">{profile.name}</p>
-          <p className="profile-card__dob mono">{dob}</p>
-          {profile.birth_place && <p className="profile-card__place">{profile.birth_place}</p>}
-        </div>
-        <ManglikPill active={profile.is_manglik} />
-      </div>
-
-      {(profile.moon_sign || profile.nakshatra) && (
-        <div className="profile-card__astro">
-          {profile.moon_sign  && <span className="profile-card__tag">{profile.moon_sign.split(' ')[0]}</span>}
-          {profile.nakshatra  && <span className="profile-card__tag">{profile.nakshatra}</span>}
-        </div>
-      )}
-
-      <div className="profile-card__actions">
-        <button
-          type="button"
-          className={`btn btn--ghost profile-card__btn${isBoyPicked ? ' is-picked' : ''}`}
-          onClick={() => onPickBoy(profile)}
-        >
-          {isBoyPicked ? 'Boy picked' : 'Pick as Boy'}
-        </button>
-        <button
-          type="button"
-          className={`btn btn--ghost profile-card__btn${isGirlPicked ? ' is-picked' : ''}`}
-          onClick={() => onPickGirl(profile)}
-        >
-          {isGirlPicked ? 'Girl picked' : 'Pick as Girl'}
-        </button>
-      </div>
-    </div>
-  );
-}
+const TAG_FILTERS = [
+  { value: '',        label: 'All Tags' },
+  { value: 'self',    label: 'Self'     },
+  { value: 'family',  label: 'Family'   },
+  { value: 'friend',  label: 'Friend'   },
+  { value: 'partner', label: 'Partner'  },
+  { value: 'client',  label: 'Client'   },
+];
 
 export default function ProfilesPage() {
-  const [query,    setQuery]    = useState('');
-  const [gender,   setGender]   = useState('');
-  const [profiles, setProfiles] = useState([]);
-  const [total,    setTotal]    = useState(0);
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState('');
+  const navigate = useNavigate();
 
-  const [pickedBoy,  setPickedBoy]  = useState(null);
-  const [pickedGirl, setPickedGirl] = useState(null);
+  const [query,      setQuery]      = useState('');
+  const [gender,     setGender]     = useState('');
+  const [tag,        setTag]        = useState('');
+  const [profiles,   setProfiles]   = useState([]);
+  const [total,      setTotal]      = useState(0);
+  const [maleCount,  setMaleCount]  = useState(0);
+  const [femaleCount,setFemaleCount]= useState(0);
+  const [loading,    setLoading]    = useState(true);
+  const [error,      setError]      = useState('');
 
-  const [matchStatus, setMatchStatus] = useState('idle'); // idle | loading | result | error
-  const [matchResult, setMatchResult] = useState(null);
-  const [matchError,  setMatchError]  = useState('');
+  // Match tray state
+  const [showMatchTray,  setShowMatchTray]  = useState(false);
+  const [partner1,       setPartner1]       = useState(null);
+  const [partner2,       setPartner2]       = useState(null);
+  const [matchStatus,    setMatchStatus]    = useState('idle');
+  const [matchResult,    setMatchResult]    = useState(null);
+  const [matchError,     setMatchError]     = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
-      const data = await searchProfiles({ q: query, gender });
+      const data = await searchProfiles({ q: query, gender, tag });
       setProfiles(data.profiles || []);
       setTotal(data.total || 0);
+      setMaleCount(data.male_count ?? 0);
+      setFemaleCount(data.female_count ?? 0);
     } catch {
       setError('Could not load profiles.');
     } finally {
       setLoading(false);
     }
-  }, [query, gender]);
+  }, [query, gender, tag]);
 
   useEffect(() => {
     const t = setTimeout(load, 300);
     return () => clearTimeout(t);
   }, [load]);
 
+  // ── Delete a profile ────────────────────────────────────────────────────
+  async function handleDelete(profileId) {
+    try {
+      await deleteProfile(profileId);
+      // Remove from local list immediately
+      setProfiles((prev) => prev.filter((p) => p.id !== profileId));
+      setTotal((prev) => prev - 1);
+      // Clear any match picks referencing deleted profile
+      if (partner1?.id === profileId) setPartner1(null);
+      if (partner2?.id === profileId) setPartner2(null);
+    } catch {
+      alert('Failed to delete profile. Please try again.');
+    }
+  }
+
+  // ── Guna Milan quick-match ─────────────────────────────────────────────
   async function handleMatch() {
-    if (!pickedBoy || !pickedGirl) return;
+    if (!partner1 || !partner2) return;
     setMatchStatus('loading');
     setMatchError('');
     try {
-      const result = await matchSaved(pickedBoy.id, pickedGirl.id);
+      const result = await matchSaved(partner1.id, partner2.id);
       setMatchResult(result);
       setMatchStatus('result');
     } catch (err) {
@@ -117,27 +99,142 @@ export default function ProfilesPage() {
     setMatchError('');
   }
 
-  function pickBoy(profile) {
-    setPickedBoy(profile);
+  // When a male card picks as partner1 / female as partner2
+  function handlePickPartner1(profile) {
+    setPartner1(profile);
+    setShowMatchTray(true);
     clearMatch();
   }
 
-  function pickGirl(profile) {
-    setPickedGirl(profile);
+  function handlePickPartner2(profile) {
+    setPartner2(profile);
+    setShowMatchTray(true);
     clearMatch();
   }
 
   return (
     <main className="container profiles-page">
+      {/* ── Header & Stats Bar ─────────────────────────────────────────── */}
       <header className="profiles-page__header">
-        <p className="eyebrow">Saved Profiles</p>
-        <h1>Profile Registry</h1>
-        <p className="profiles-page__intro">
-          Pick a Boy and a Girl profile, then run Guna Milan instantly — no re-entry needed.
-        </p>
+        <p className="eyebrow">Profile Registry</p>
+        <div className="profiles-page__title-row">
+          <h1>Saved Profiles</h1>
+          <button
+            type="button"
+            className="btn btn--primary profiles-page__add-btn"
+            onClick={() => navigate('/kundali')}
+          >
+            + Add New Profile
+          </button>
+        </div>
+
+        {/* Stats bar */}
+        <div className="profiles-page__stats">
+          <div className="stat-pill">
+            <span className="stat-pill__num">{total}</span>
+            <span className="stat-pill__label">Total</span>
+          </div>
+          <div className="stat-pill stat-pill--male">
+            <span className="stat-pill__num">{maleCount}</span>
+            <span className="stat-pill__label">♂ Male</span>
+          </div>
+          <div className="stat-pill stat-pill--female">
+            <span className="stat-pill__num">{femaleCount}</span>
+            <span className="stat-pill__label">♀ Female</span>
+          </div>
+          {showMatchTray && (
+            <button
+              type="button"
+              className="btn btn--ghost profiles-page__match-toggle"
+              onClick={() => { setShowMatchTray(false); clearMatch(); }}
+            >
+              ✕ Close Match Tray
+            </button>
+          )}
+          {!showMatchTray && (partner1 || partner2) && (
+            <button
+              type="button"
+              className="btn btn--ghost profiles-page__match-toggle"
+              onClick={() => setShowMatchTray(true)}
+            >
+              💞 Open Match Tray
+            </button>
+          )}
+        </div>
       </header>
 
-      {/* Search + filter */}
+      {/* ── Match Tray ─────────────────────────────────────────────────── */}
+      {showMatchTray && (
+        <div className="profiles-page__match-tray">
+          <p className="match-tray__title">Guna Milan Comparison</p>
+          <div className="match-tray__slots">
+            {/* Groom slot */}
+            <div className="match-tray__slot match-tray__slot--male">
+              <span className="match-tray__role">♂ Groom</span>
+              {partner1 ? (
+                <div className="match-tray__picked">
+                  <span className="match-tray__name">{partner1.name}</span>
+                  <button
+                    type="button"
+                    className="match-tray__clear"
+                    onClick={() => { setPartner1(null); clearMatch(); }}
+                  >✕</button>
+                  <button
+                    type="button"
+                    className="btn btn--ghost match-tray__open-match"
+                    onClick={() => navigate(`/match?partner1Id=${partner1.id}${partner2 ? `&partner2Id=${partner2.id}` : ''}`)}
+                  >Open in Match ↗</button>
+                </div>
+              ) : (
+                <span className="match-tray__empty">Pick a male profile below</span>
+              )}
+            </div>
+
+            <span className="match-tray__vs">vs</span>
+
+            {/* Bride slot */}
+            <div className="match-tray__slot match-tray__slot--female">
+              <span className="match-tray__role">♀ Bride</span>
+              {partner2 ? (
+                <div className="match-tray__picked">
+                  <span className="match-tray__name">{partner2.name}</span>
+                  <button
+                    type="button"
+                    className="match-tray__clear"
+                    onClick={() => { setPartner2(null); clearMatch(); }}
+                  >✕</button>
+                </div>
+              ) : (
+                <span className="match-tray__empty">Pick a female profile below</span>
+              )}
+            </div>
+
+            {/* Run button */}
+            <button
+              type="button"
+              className="btn btn--primary match-tray__run-btn"
+              disabled={!partner1 || !partner2 || matchStatus === 'loading'}
+              onClick={handleMatch}
+            >
+              {matchStatus === 'loading' ? 'Matching...' : '⚖️ Run Guna Milan'}
+            </button>
+          </div>
+
+          {matchStatus === 'result' && matchResult && (
+            <div className="panel match-tray__result">
+              <GunaMilanScorecard
+                gunaMilan={matchResult.guna_milan}
+                manglikAnalysis={matchResult.manglik_analysis}
+              />
+            </div>
+          )}
+          {matchStatus === 'error' && (
+            <p className="match-tray__error">{matchError}</p>
+          )}
+        </div>
+      )}
+
+      {/* ── Search + Filter Bar ────────────────────────────────────────── */}
       <div className="profiles-page__controls">
         <input
           className="profiles-page__search"
@@ -146,6 +243,8 @@ export default function ProfilesPage() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
+
+        {/* Gender tabs */}
         <div className="profiles-page__tabs">
           {GENDER_TABS.map((tab) => (
             <button
@@ -158,85 +257,63 @@ export default function ProfilesPage() {
             </button>
           ))}
         </div>
+
+        {/* Tag filter chips */}
+        <div className="profiles-page__tag-filters">
+          {TAG_FILTERS.map((t) => (
+            <button
+              key={t.value}
+              type="button"
+              className={`tag-filter-btn${tag === t.value ? ' is-active' : ''}`}
+              onClick={() => setTag(t.value)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Match bar — shown when at least one is picked */}
-      {(pickedBoy || pickedGirl) && (
-        <div className="profiles-page__match-bar">
-          <div className="match-bar__slot">
-            <span className="match-bar__label">Boy:</span>
-            <span className="match-bar__name">
-              {pickedBoy ? pickedBoy.name : <em>not picked</em>}
-            </span>
-            {pickedBoy && (
-              <button type="button" className="match-bar__clear" onClick={() => { setPickedBoy(null); clearMatch(); }}>
-                x
-              </button>
-            )}
-          </div>
-          <span className="match-bar__vs">vs</span>
-          <div className="match-bar__slot">
-            <span className="match-bar__label">Girl:</span>
-            <span className="match-bar__name">
-              {pickedGirl ? pickedGirl.name : <em>not picked</em>}
-            </span>
-            {pickedGirl && (
-              <button type="button" className="match-bar__clear" onClick={() => { setPickedGirl(null); clearMatch(); }}>
-                x
-              </button>
-            )}
-          </div>
-          <button
-            type="button"
-            className="btn btn--primary"
-            disabled={!pickedBoy || !pickedGirl || matchStatus === 'loading'}
-            onClick={handleMatch}
-          >
-            {matchStatus === 'loading' ? 'Matching...' : 'Run Guna Milan'}
-          </button>
-          {(matchStatus === 'result' || matchStatus === 'error') && (
-            <button type="button" className="btn btn--ghost" onClick={clearMatch}>
-              Clear result
-            </button>
-          )}
-        </div>
-      )}
+      {/* ── Count ─────────────────────────────────────────────────────── */}
+      <p className="profiles-page__count mono">
+        {total} profile{total !== 1 ? 's' : ''}
+        {gender && ` · ${gender}`}
+        {tag && ` · ${tag}`}
+      </p>
 
-      {/* Match result */}
-      {matchStatus === 'result' && matchResult && (
-        <div className="panel profiles-page__result">
-          <GunaMilanScorecard
-            gunaMilan={matchResult.guna_milan}
-            manglikAnalysis={matchResult.manglik_analysis}
-          />
-        </div>
-      )}
-      {matchStatus === 'error' && (
-        <p className="profiles-page__match-error">{matchError}</p>
-      )}
-
-      {/* Count */}
-      <p className="profiles-page__count mono">{total} profile{total !== 1 ? 's' : ''} found</p>
-
+      {/* ── Status States ─────────────────────────────────────────────── */}
       {loading && <LoadingState message="Loading profiles..." />}
       {error   && <ErrorState  message={error} onRetry={load} />}
 
       {!loading && !error && profiles.length === 0 && (
-        <p className="profiles-page__empty">
-          No profiles saved yet. Generate a Kundali and click &ldquo;Save to Profiles&rdquo;.
-        </p>
+        <div className="profiles-page__empty">
+          <span style={{ fontSize: '2.5rem' }}>🪐</span>
+          <p>No profiles found.</p>
+          <p style={{ fontSize: '0.88rem', opacity: 0.7 }}>
+            Generate a Kundali and click &ldquo;Save to Profiles&rdquo; to get started.
+          </p>
+          <button
+            type="button"
+            className="btn btn--primary"
+            onClick={() => navigate('/kundali')}
+            style={{ marginTop: '16px' }}
+          >
+            + Create First Profile
+          </button>
+        </div>
       )}
 
+      {/* ── Profile Cards Grid ─────────────────────────────────────────── */}
       {!loading && !error && profiles.length > 0 && (
         <div className="profiles-grid">
           {profiles.map((p) => (
             <ProfileCard
               key={p.id}
               profile={p}
-              pickedBoyId={pickedBoy?.id}
-              pickedGirlId={pickedGirl?.id}
-              onPickBoy={pickBoy}
-              onPickGirl={pickGirl}
+              onPickPartner1={handlePickPartner1}
+              onPickPartner2={handlePickPartner2}
+              onDelete={handleDelete}
+              isPartner1Picked={partner1?.id === p.id}
+              isPartner2Picked={partner2?.id === p.id}
             />
           ))}
         </div>
