@@ -23,6 +23,8 @@ from app.astro_engine import MANGLIK_HOUSES, SIGN_LORDS, VedicAstrologyEngine
 from app.chart_engine import ChartEngine
 from app.models import Person
 from app.dasha import VimshottariCalculator
+from app.yoga_engine import YogaEngine
+from app.ashtakvarga_engine import AshtakvargaEngine
 
 
 class KundaliAnalyzer:
@@ -208,7 +210,10 @@ class KundaliAnalyzer:
                 technical_profile["planets"]["Moon"]["longitude"],
                 technical_profile["moon_nakshatra_index"],
             ),
+            "yogas": YogaEngine.detect_yogas(technical_profile),
+            "ashtakvarga_sav": AshtakvargaEngine.calculate_sav(technical_profile),
         }
+
 
         if include_charts:
             report["charts"] = self.chart_engine.build_all_charts(technical_profile)

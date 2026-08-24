@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import PlanetTable from '../PlanetTable';
 import ChartGrid from '../ChartGrid';
+import AshtakvargaGrid from '../AshtakvargaGrid';
 import './tabs.css';
 
 /**
- * PlanetsTab — planetary positions table + D1/D9/Rashi chart selector.
+ * PlanetsTab — planetary positions table + D1/D9/Rashi chart selector + Ashtakvarga (SAV & on-demand BAV).
  */
 export default function PlanetsTab({ report }) {
-  const { planets, charts, ascendant } = report;
+  const { planets, charts, ascendant, ashtakvarga_sav, profile } = report;
   const [activeChart, setActiveChart] = useState('d1');
 
   const CHART_TABS = [
@@ -17,15 +18,27 @@ export default function PlanetsTab({ report }) {
     { id: 'all',   label: 'All Charts'  },
   ];
 
+  const personPayload = {
+    name:         profile?.name || '',
+    year:         profile?.year,
+    month:        profile?.month,
+    day:          profile?.day,
+    hour:         profile?.hour,
+    minute:       profile?.minute,
+    lat:          profile?.lat,
+    lon:          profile?.lon,
+    timezone_str: profile?.timezone_str,
+  };
+
   return (
     <div className="tab-panel">
-      {/* Planet positions table */}
+      {/* 1. Planet positions table */}
       <div className="tab-section">
         <p className="tab-section__title">Planetary Positions (Sidereal / Lahiri)</p>
         <PlanetTable planets={planets} />
       </div>
 
-      {/* Chart selector */}
+      {/* 2. Chart selector */}
       {charts && (
         <div className="tab-section">
           <div className="inner-tabs">
@@ -61,6 +74,14 @@ export default function PlanetsTab({ report }) {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* 3. Ashtakvarga (SAV scorecard + on-demand BAV) */}
+      {ashtakvarga_sav && (
+        <div className="tab-section">
+          <p className="tab-section__title">Ashtakvarga Strength System</p>
+          <AshtakvargaGrid savData={ashtakvarga_sav} personPayload={personPayload} />
         </div>
       )}
     </div>
