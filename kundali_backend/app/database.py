@@ -91,18 +91,23 @@ def _conn():
 def init_db() -> None:
     """
     Create tables and seed location cache. Called once at app startup.
-    Phase 1: Fresh schema — drops old profiles table and recreates with
-    new columns (lagna, active_dasha, tag). Gender is now 'male'|'female' only.
+
+    Schema strategy (safe — NEVER drops data):
+      - CREATE TABLE IF NOT EXISTS for initial setup.
+      - ALTER TABLE ADD COLUMN for each Phase-1 column if missing.
+      - SQLite ignores duplicate ADD COLUMN via try/except.
+
+    BUG FIX: The original Phase-1 init had DROP TABLE IF EXISTS profiles
+    which wiped ALL saved profiles on every server restart. This is removed.
+    Safe migration via ALTER TABLE ensures new columns exist without data loss.
     """
     with _conn() as con:
-        # Drop old profiles table to start fresh (Phase 1 decision)
-        con.execute("DROP TABLE IF EXISTS profiles")
-
+        # ── Core profiles table (safe: no-op if already exists) ──────────
         con.executescript("""
             CREATE TABLE IF NOT EXISTS profiles (
                 id           INTEGER PRIMARY KEY AUTOINCREMENT,
                 name         TEXT    NOT NULL,
-                gender       TEXT    NOT NULL CHECK(gender IN ('male','female')),
+                gender       TEXT    NOT NULL DEFAULT 'male',
                 year         INTEGER NOT NULL,
                 month        INTEGER NOT NULL,
                 day          INTEGER NOT NULL,
@@ -136,6 +141,18 @@ def init_db() -> None:
 
             CREATE INDEX IF NOT EXISTS idx_loc_query ON location_cache(query COLLATE NOCASE);
         """)
+
+        # ── Safe column migrations (ALTER TABLE IF NOT EXISTS equivalent) ─
+        # SQLite does not support IF NOT EXISTS on ADD COLUMN — use try/except.
+        for col_sql in [
+            "ALTER TABLE profiles ADD COLUMN lagna        TEXT",
+            "ALTER TABLE profiles ADD COLUMN active_dasha TEXT",
+            "ALTER TABLE profiles ADD COLUMN tag          TEXT NOT NULL DEFAULT 'self'",
+        ]:
+            try:
+                con.execute(col_sql)
+            except Exception:
+                pass  # column already exists — safe to ignore
 
         now = datetime.now(timezone.utc).isoformat()
         for display, lat, lon, cc in SEED_LOCATIONS:
