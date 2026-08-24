@@ -64,12 +64,23 @@ export default function KundaliReport({ report, compact = false }) {
 
 /** Shared header strip — name, date/time, location */
 function ReportHeader({ profile, report, t }) {
+  const gender = report.gender || profile.gender;
   return (
     <div className="kundali-report__header">
       <div className="kundali-report__profile">
         <p className="eyebrow">{t('report.eyebrow')}</p>
-        <h2 className="kundali-report__name">{profile.name}</h2>
+        <h2 className="kundali-report__name">
+          {profile.name}
+          {gender && (
+            <span className={`gender-badge gender-badge--${gender}`}>
+              {gender === 'male' ? '♂ Male' : '♀ Female'}
+            </span>
+          )}
+        </h2>
         <div className="kundali-report__meta-group mono">
+          {gender && (
+            <span>{gender === 'male' ? '♂ Male' : '♀ Female'}</span>
+          )}
           <span>📅 {profile.local}</span>
           {report.birth_place && (
             <span>🌐 {report.birth_place}</span>
@@ -81,3 +92,4 @@ function ReportHeader({ profile, report, t }) {
     </div>
   );
 }
+

@@ -121,3 +121,16 @@
   font-size: 0.88rem;
 }
 
+.save-profile__gender-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.save-profile__change-gender {
+  font-size: 0.76rem;
+  padding: 2px 8px;
+  text-decoration: underline;
+}
+
+

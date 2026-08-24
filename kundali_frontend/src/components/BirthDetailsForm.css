@@ -142,3 +142,18 @@
 .modified-badge__btn--keep {
   color: var(--color-text-dim);
 }
+
+/* Success badge after updating profile */
+.birth-form__success-badge {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border: 1.5px solid #22c55e;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #15803d;
+}
+
