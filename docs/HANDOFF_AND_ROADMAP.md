@@ -102,8 +102,9 @@ fffe9bd  Phase 3: 5-tab Kundali report layout
 | **Phase 3** | ✅ Done | 5-tab Kundali report (Overview/Planets/Dasha/Doshas/Health), ReportTabs component |
 | **Phase 2** | ✅ Done | Profile Dashboard Hub: stats bar, gender+tag filters, ProfileCard grid, match tray |
 | **Bug Fixes** | ✅ Done | Gender state stale closure, report gender badge, SaveProfileButton sync, DB wipe on restart |
-| **Phase 4** | 🔲 NEXT | Antardasha tree, Yoga detection, Ashtakvarga (lazy BAV) |
-| **Phase 5** | 🔲 Pending | Current transits (Sade Sati), PDF export, JSON backup/restore |
+| **Phase 4** | ✅ Done | Antardasha tree, Yoga detection (12 yogas), Ashtakvarga (SAV + on-demand BAV) |
+| **Phase 5** | 🔲 NEXT | Current transits (Sade Sati), PDF export, JSON backup/restore |
+
 
 ---
 
