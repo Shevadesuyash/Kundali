@@ -1,0 +1,119 @@
+.varshapal-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.varshapal-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.varshapal-year-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.year-pill {
+  background: var(--color-bg-panel, #ffffff);
+  border: 1px solid var(--color-hairline-strong, #d1d5db);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-md, 8px);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.year-pill:hover {
+  border-color: var(--color-copper, #c8720a);
+}
+
+.year-pill.is-active {
+  background: var(--color-copper, #c8720a);
+  color: #ffffff;
+  border-color: var(--color-copper, #c8720a);
+}
+
+/* Varshapal Hero Banners */
+.varshapal-hero-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.varshapal-hero-card {
+  background: var(--color-bg-panel, #ffffff);
+  border: 1px solid var(--color-hairline-strong, #e5e7eb);
+  border-radius: var(--radius-lg, 12px);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.varshapal-hero-card--pravesh {
+  border-left: 4px solid #3b82f6;
+}
+
+.varshapal-hero-card--muntha {
+  border-left: 4px solid #10b981;
+}
+
+.varshapal-hero-card--muntha-challenging {
+  border-left: 4px solid #f59e0b;
+}
+
+.varshapal-card-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-dim, #9ca3af);
+  letter-spacing: 0.05em;
+}
+
+.varshapal-card-val {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+  margin: 0;
+}
+
+.varshapal-card-sub {
+  font-size: 0.85rem;
+  color: var(--color-text-dim, #6b7280);
+  line-height: 1.4;
+}
+
+/* Mudda Dasha Table */
+.mudda-table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--color-hairline-strong, #e5e7eb);
+}
+
+.mudda-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  text-align: left;
+}
+
+.mudda-table th {
+  background: var(--color-bg-panel-raised, #f9fafb);
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: var(--color-copper-deep, #9c4b00);
+  border-bottom: 1px solid var(--color-hairline-strong, #e5e7eb);
+}
+
+.mudda-table td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--color-hairline, #f3f4f6);
+}

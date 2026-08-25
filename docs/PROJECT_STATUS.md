@@ -153,7 +153,12 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 
 ## 🗺️ Master Phased Roadmap & Confirmed Implementation Plans
 
-### ✅ Completed Phases (Phases 1–6)
+### ✅ Completed Phases (Phases 1–7)
+
+* **Phase 7: Advanced Astrological Systems (KP System, AI Q&A, Varshapal)**
+  - **7A Krishnamurti Paddhati (KP System)**: kp_engine.py (12 Placidus cusps, Sign/Star/Sub/Sub-Sub Lords, 9 Planets KP table, Ruling Planets, 4-Fold Significators), POST /api/v1/kp, KPTab.jsx/css 7th tab in Kundali report.
+  - **7B Context-Aware Interactive AI Q&A Assistant**: i_service.py (nswer_chart_question with Gemini 2.0 Flash context-aware prompt, 3-section structured response, secure .env key loading), POST /api/v1/ai-chat, AIAssistant.jsx/css interactive assistant with prompt chips.
+  - **7C Tajika Varshapal (Annual Solar Return)**: arshapal_engine.py (Binary search Solar Return JD, Varsha Pravesh IST, Varsha Lagna, Muntha Progression & Lord, 360-day Mudda Dasha timeline), POST /api/v1/varshapal, VarshapalTab.jsx/css 8th tab in Kundali report with interactive year switcher.
 
 * **Phase 6: Gemstone Engine, Dual Panchang & Kaal Sarp Variants**
   - **6A Gemstone & Rudraksha Engine**: gemstone_engine.py (Life, Fortune, Intellect, Career stones with Dusthana contraindications & Rudraksha pairing), GemstonePanel.jsx/css in DoshasTab.jsx.

@@ -113,3 +113,69 @@ def generate_match_reading(match_report: Dict) -> Optional[str]:
     except Exception:  # pragma: no cover
         logger.exception("Gemini generation failed for match reading")
         return None
+
+
+def answer_chart_question(report: Dict, question: str) -> Optional[str]:
+    """
+    Answers an interactive user question regarding a computed Kundali chart
+    using Gemini 2.0 Flash with context-aware facts.
+    """
+    model = _get_client()
+    if model is None:
+        return (
+            "Interactive AI Assistant requires a configured GEMINI_API_KEY. "
+            "Please set your GEMINI_API_KEY environment variable in .env to activate personalized AI Q&A."
+        )
+
+    # Extract relevant technical facts
+    profile = report.get("profile", {})
+    asc = report.get("ascendant", {})
+    planets = report.get("planets", {})
+    dasha = report.get("dasha_periods", [])
+    current_dasha = next((d for d in dasha if d.get("is_current")), {})
+    yogas = [y["name"] for y in report.get("yogas", []) if y.get("is_present")]
+    manglik = report.get("manglik_dosha", {})
+    transits = report.get("current_transits", {})
+    sade_sati = transits.get("sade_sati", {})
+
+    planet_summary = {
+        p: f"H{data.get('house_from_lagna')} in {data.get('sign')}{' ℞' if data.get('retrograde') else ''}"
+        for p, data in planets.items()
+    }
+
+    facts = {
+        "person_name": profile.get("name"),
+        "birth_date_time": profile.get("local"),
+        "birth_place": report.get("birth_place") or f"Lat: {profile.get('lat')}, Lon: {profile.get('lon')}",
+        "ascendant": f"{asc.get('sign')} (Nakshatra: {asc.get('nakshatra')})",
+        "moon_sign": f"{report.get('moon_sign')} (Nakshatra: {report.get('moon_nakshatra')}, Pada {report.get('moon_pada')})",
+        "planetary_placements": planet_summary,
+        "current_mahadasha": f"{current_dasha.get('planet')} Dasha ({current_dasha.get('start_date')} to {current_dasha.get('end_date')})",
+        "manglik_status": f"{'Manglik' if manglik.get('is_manglik') else 'Not Manglik'} (Severity: {manglik.get('severity', 'None')}, Papa Points: {manglik.get('papa_points', 0)})",
+        "active_yogas": yogas,
+        "sade_sati_status": f"{sade_sati.get('phase_label')} (Active: {sade_sati.get('active')})",
+        "jupiter_transit": transits.get("jupiter_gochara", {}).get("description"),
+    }
+
+    prompt = (
+        "You are an expert, compassionate Vedic Astrologer providing a personalized reading. "
+        "Using ONLY the verified chart facts below (computed with Swiss Ephemeris), "
+        "answer the user's specific question clearly, constructively, and empathetically.\n\n"
+        "Structure your response with 3 concise markdown sections:\n"
+        "### 1. 🔍 Astrological Diagnosis\n"
+        "Explain the relevant planetary placements, house rulers, active Dasha, and Gochara transits influencing this question.\n\n"
+        "### 2. 🌟 Opportunities & Timing\n"
+        "Outline practical life themes, favorable windows, and considerations without making fatalistic claims.\n\n"
+        "### 3. 🌿 Practical Remedies & Guidance\n"
+        "Suggest constructive Vedic remedies (recommended mantras, gemstones, spiritual practices, or lifestyle adjustments).\n\n"
+        f"VERIFIED CHART FACTS:\n{json.dumps(facts, indent=2)}\n\n"
+        f"USER QUESTION: {question}"
+    )
+
+    try:
+        response = model.generate_content(prompt)
+        return response.text.strip()
+    except Exception:
+        logger.exception("Gemini Q&A generation failed")
+        return "Our astrological AI service is temporarily unavailable. Please try asking again in a moment."
+

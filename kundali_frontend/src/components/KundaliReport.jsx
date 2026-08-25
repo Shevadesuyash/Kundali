@@ -5,13 +5,16 @@ import PlanetsTab  from './tabs/PlanetsTab';
 import DashaTab    from './tabs/DashaTab';
 import DoshasTab   from './tabs/DoshasTab';
 import PanchangTab from './tabs/PanchangTab';
+import KPTab       from './tabs/KPTab';
+import VarshapalTab from './tabs/VarshapalTab';
 import HealthTab   from './tabs/HealthTab';
+import AIAssistant from './AIAssistant';
 import ExportPDFButton from './ExportPDFButton';
 import { useLang } from '../context/LanguageContext';
 import './KundaliReport.css';
 
 /**
- * KundaliReport — 6-tab Kundali report viewer with one-click full PDF export.
+ * KundaliReport — 8-tab Kundali report viewer with one-click full PDF export & AI Assistant.
  *
  * Tabs:
  *   1. Overview  — stat cards, classification, house strip, D1 chart, Gochara transits
@@ -19,7 +22,9 @@ import './KundaliReport.css';
  *   3. Dasha     — Vimshottari Mahadasha & Antardasha tree + Benefic Yogas
  *   4. Doshas    — Mangal Dosha (full Papa Samyam) + Malefic Doshas + Gemstone Panel
  *   5. Panchang  — Janma Panchang (5 Limbs on birth date + Muhurtas + Choghadiya)
- *   6. Health    — Ayurvedic HealthReport
+ *   6. KP System — Placidus Cusps, Sub Lords, Sub-Sub Lords, RP, and 4-Fold Significators
+ *   7. Varshapal — Tajika Annual Solar Return, Varsha Lagna, Muntha Progression & Mudda Dasha
+ *   8. Health    — Ayurvedic HealthReport
  *
  * When compact=true (used inside the Match report), only shows the
  * Overview and Planets tabs without tab navigation.
@@ -43,13 +48,15 @@ export default function KundaliReport({ report, compact = false }) {
 
   const renderTab = () => {
     switch (activeTab) {
-      case 'overview': return <OverviewTab report={report} />;
-      case 'planets':  return <PlanetsTab  report={report} />;
-      case 'dasha':    return <DashaTab    report={report} />;
-      case 'doshas':   return <DoshasTab   report={report} />;
-      case 'panchang': return <PanchangTab report={report} />;
-      case 'health':   return <HealthTab   report={report} />;
-      default:         return <OverviewTab report={report} />;
+      case 'overview':  return <OverviewTab report={report} />;
+      case 'planets':   return <PlanetsTab  report={report} />;
+      case 'dasha':     return <DashaTab    report={report} />;
+      case 'doshas':    return <DoshasTab   report={report} />;
+      case 'panchang':  return <PanchangTab report={report} />;
+      case 'kp':        return <KPTab report={report} />;
+      case 'varshapal': return <VarshapalTab report={report} />;
+      case 'health':    return <HealthTab   report={report} />;
+      default:          return <OverviewTab report={report} />;
     }
   };
 
@@ -69,6 +76,9 @@ export default function KundaliReport({ report, compact = false }) {
       {/* Active tab content */}
       {renderTab()}
 
+      {/* Interactive AI Astrologer Assistant (Gemini 2.0 Flash) */}
+      <AIAssistant report={report} />
+
       {/* Offscreen full multi-tab document container for complete PDF export */}
       <div
         ref={exportTargetRef}
@@ -83,6 +93,8 @@ export default function KundaliReport({ report, compact = false }) {
         <DashaTab report={report} />
         <DoshasTab report={report} />
         <PanchangTab report={report} />
+        <KPTab report={report} />
+        <VarshapalTab report={report} />
         <HealthTab report={report} />
       </div>
     </div>
