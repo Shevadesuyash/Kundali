@@ -7,6 +7,8 @@ const TABS = [
   { id: 'dasha',     icon: '⏳', label: 'Dasha'    },
   { id: 'doshas',    icon: '⚖️', label: 'Doshas'   },
   { id: 'panchang',  icon: '📿', label: 'Panchang' },
+  { id: 'kp',        icon: '📐', label: 'KP System' },
+  { id: 'varshapal', icon: '☀️', label: 'Varshapal' },
   { id: 'health',    icon: '🌿', label: 'Health'   },
 ];
 

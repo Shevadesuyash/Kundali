@@ -7,7 +7,7 @@ request/response schemas used by the FastAPI layer.
 from __future__ import annotations
 
 import datetime
-from typing import List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 import pytz
 from pydantic import BaseModel, Field, field_validator
@@ -162,6 +162,16 @@ class MatchSavedRequest(BaseModel):
 class BulkMatchRequest(BaseModel):
     anchor_profile_id: int
     candidate_ids: Optional[List[int]] = None  # None = match against ALL opposite-gender profiles
+
+
+class AIChatRequest(BaseModel):
+    report: Dict[str, Any]
+    question: str
+
+
+class VarshapalRequest(BaseModel):
+    person: BirthDetails
+    target_year: int
 
 
 class ProfileListResponse(BaseModel):

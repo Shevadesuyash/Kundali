@@ -188,4 +188,29 @@ export function getPanchang({ date = '', lat = 18.5204, lon = 73.8567, tz = 'Asi
   }).then((r) => r.json());
 }
 
+// ---------------------------------------------------------------------------
+// Phase 7A: KP Astrology System
+// ---------------------------------------------------------------------------
+export function getKPSystem(person) {
+  return postJSON('/api/v1/kp', { person });
+}
+
+// ---------------------------------------------------------------------------
+// Phase 7B: Context-Aware Interactive AI Assistant
+// ---------------------------------------------------------------------------
+export function askAIChat(report, question) {
+  return postJSON('/api/v1/ai-chat', { report, question });
+}
+
+// ---------------------------------------------------------------------------
+// Phase 7C: Varshapal (Annual Solar Return / Tajika System)
+// ---------------------------------------------------------------------------
+export function getVarshapal(person, targetYear) {
+  return postJSON('/api/v1/varshapal', {
+    person,
+    target_year: targetYear,
+  });
+}
+
+
 

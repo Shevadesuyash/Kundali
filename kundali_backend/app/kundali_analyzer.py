@@ -27,6 +27,7 @@ from app.yoga_engine import YogaEngine
 from app.ashtakvarga_engine import AshtakvargaEngine
 from app.transit_engine import TransitEngine
 from app.gemstone_engine import GemstoneEngine
+from app.kp_engine import KPEngine
 
 
 class KundaliAnalyzer:
@@ -219,6 +220,11 @@ class KundaliAnalyzer:
                 natal_lagna_sign_index=technical_profile["ascendant"]["sign_index"],
             ),
             "gemstone_recommendations": GemstoneEngine.recommend(technical_profile),
+            "kp": KPEngine.calculate_kp(
+                jd=technical_profile.get("julian_day") or technical_profile["birth"].get("jd", 0.0),
+                lat=technical_profile["birth"]["lat"],
+                lon=technical_profile["birth"]["lon"],
+            ),
         }
 
 

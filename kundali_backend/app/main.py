@@ -34,10 +34,12 @@ from app.matchmaker import MatchMaker
 from app.ashtakvarga_engine import AshtakvargaEngine
 from app.transit_engine import TransitEngine
 from app.panchang_engine import PanchangEngine
+from app.kp_engine import KPEngine
+from app.varshapal_engine import VarshapalEngine
 from app.models import (
-    BirthDetails, BulkMatchRequest, ErrorResponse, KundaliRequest, MatchRequest,
+    AIChatRequest, BirthDetails, BulkMatchRequest, ErrorResponse, KundaliRequest, MatchRequest,
     MatchSavedRequest, ProfileDetail, ProfileListResponse,
-    ProfileSummary, ProfileTypeahead, SaveProfileRequest,
+    ProfileSummary, ProfileTypeahead, SaveProfileRequest, VarshapalRequest,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -193,6 +195,88 @@ def get_panchang_data(
     except Exception as exc:
         logger.exception("Panchang calculation failed")
         raise HTTPException(status_code=500, detail="Panchang calculation failed") from exc
+
+
+# ---------------------------------------------------------------------------
+# Phase 7A: KP Astrology System Endpoint
+# ---------------------------------------------------------------------------
+
+@app.post(
+    "/api/v1/kp",
+    responses={400: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
+)
+def get_kp_system(request: KundaliRequest):
+    """
+    Returns full KP Astrology data: Placidus cusps, Sub Lords, Sub-Sub Lords,
+    Planetary significators, and Ruling Planets.
+    """
+    try:
+        person = request.person.to_person()
+        tech = _astro_engine.get_technical_profile(person)
+        return KPEngine.calculate_kp(
+            jd=tech["julian_day"],
+            lat=tech["birth"]["lat"],
+            lon=tech["birth"]["lon"],
+        )
+    except Exception as exc:
+        logger.exception("KP calculation failed")
+        raise HTTPException(status_code=500, detail="KP calculation failed") from exc
+
+
+# ---------------------------------------------------------------------------
+# Phase 7B: Context-Aware Interactive AI Q&A Assistant
+# ---------------------------------------------------------------------------
+
+@app.post(
+    "/api/v1/ai-chat",
+    responses={400: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
+)
+def ask_ai_assistant(request: AIChatRequest):
+    """
+    Answers an interactive user question regarding a computed Kundali chart
+    using Gemini 2.0 Flash with context-aware astrological facts.
+    """
+    try:
+        if not request.question or not request.question.strip():
+            raise HTTPException(status_code=400, detail="Question cannot be empty")
+        answer = ai_service.answer_chart_question(request.report, request.question.strip())
+        return {"question": request.question, "answer": answer}
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("AI Chat failed")
+        raise HTTPException(status_code=500, detail="AI Chat failed") from exc
+
+
+# ---------------------------------------------------------------------------
+# Phase 7C: Varshapal (Annual Solar Return / Tajika System)
+# ---------------------------------------------------------------------------
+
+@app.post(
+    "/api/v1/varshapal",
+    responses={400: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
+)
+def get_varshapal_chart(request: VarshapalRequest):
+    """
+    Computes Tajika Varshapal solar return chart, Varsha Lagna, Muntha progression,
+    and annual Mudda Dasha for the specified target year.
+    """
+    try:
+        p = request.person
+        return VarshapalEngine.calculate_varshapal(
+            natal_year=p.year,
+            natal_month=p.month,
+            natal_day=p.day,
+            natal_hour=p.hour,
+            natal_minute=p.minute,
+            lat=p.lat,
+            lon=p.lon,
+            target_year=request.target_year,
+        )
+    except Exception as exc:
+        logger.exception("Varshapal calculation failed")
+        raise HTTPException(status_code=500, detail="Varshapal calculation failed") from exc
+
 
 
 # ---------------------------------------------------------------------------
