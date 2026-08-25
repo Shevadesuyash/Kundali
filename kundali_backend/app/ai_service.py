@@ -20,11 +20,21 @@ from __future__ import annotations
 import json
 import logging
 import os
+from pathlib import Path
 from typing import Dict, Optional
+
+try:
+    from dotenv import load_dotenv
+    # Search in current directory, parent directory, and project root
+    load_dotenv()
+    load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / ".env")
+    load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent.parent / ".env")
+except Exception:
+    pass
 
 logger = logging.getLogger(__name__)
 
-_MODEL_NAME = "gemini-2.0-flash"
+_MODEL_NAME = "gemini-2.5-flash"
 
 
 def _get_client():
@@ -160,14 +170,11 @@ def answer_chart_question(report: Dict, question: str) -> Optional[str]:
     prompt = (
         "You are an expert, compassionate Vedic Astrologer providing a personalized reading. "
         "Using ONLY the verified chart facts below (computed with Swiss Ephemeris), "
-        "answer the user's specific question clearly, constructively, and empathetically.\n\n"
-        "Structure your response with 3 concise markdown sections:\n"
-        "### 1. 🔍 Astrological Diagnosis\n"
-        "Explain the relevant planetary placements, house rulers, active Dasha, and Gochara transits influencing this question.\n\n"
-        "### 2. 🌟 Opportunities & Timing\n"
-        "Outline practical life themes, favorable windows, and considerations without making fatalistic claims.\n\n"
-        "### 3. 🌿 Practical Remedies & Guidance\n"
-        "Suggest constructive Vedic remedies (recommended mantras, gemstones, spiritual practices, or lifestyle adjustments).\n\n"
+        "answer the user's specific question clearly, concisely, and constructively.\n\n"
+        "IMPORTANT RULES:\n"
+        "1. Start with an '### ⚡ Executive Summary' section containing a direct 2-3 sentence verdict so the user gets their answer instantly.\n"
+        "2. Follow with short bulleted points under '### 🔍 Key Astrological Factors', '### 🌟 Opportunities & Timing', and '### 🌿 Vedic Remedies & Guidance'.\n"
+        "3. Keep the entire response crisp, punchy, and under 250 words total. Do not write long theoretical essays.\n\n"
         f"VERIFIED CHART FACTS:\n{json.dumps(facts, indent=2)}\n\n"
         f"USER QUESTION: {question}"
     )
