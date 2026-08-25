@@ -96,6 +96,9 @@ def get_kundali(request: KundaliRequest):
     try:
         report = _kundali_analyzer.build_report(person)
         report.pop("_technical_profile", None)
+        # Attach the original person payload so the frontend can re-use it
+        # for on-demand API calls (e.g. Load Full Ashtakvarga BAV).
+        report["person"] = request.person.model_dump()
     except Exception as exc:  # noqa: BLE001
         logger.exception("Kundali generation failed")
         raise HTTPException(status_code=500, detail="Kundali calculation failed") from exc

@@ -208,12 +208,19 @@ class VedicAstrologyEngine:
         return {
             "name": person.name,
             "birth": {
+                "year": person.year,
+                "month": person.month,
+                "day": person.day,
+                "hour": person.hour,
+                "minute": person.minute,
+                "timezone_str": person.timezone_str,
                 "local": f"{person.day:02d}-{person.month:02d}-{person.year} "
                          f"{person.hour:02d}:{person.minute:02d} {person.timezone_str}",
                 "utc": person.utc_dt.isoformat(),
                 "lat": person.lat,
                 "lon": person.lon,
             },
+
             "julian_day": jd,
             "ayanamsha": self.get_ayanamsha(jd),
             "ascendant": ascendant,

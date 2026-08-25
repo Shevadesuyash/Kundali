@@ -82,8 +82,10 @@ export default function KundaliPage() {
       // Attach birth_place and gender for display in the report header
       data.birth_place = birthPlace || personData.place_label || '';
       data.gender = personData.gender || '';
+      data.raw_person = payload;
       setReport(data);
       setStatus('result');
+
 
     } catch (err) {
       setErrorMessage(err instanceof ApiError ? err.message : c.error);

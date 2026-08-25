@@ -108,6 +108,14 @@
   background: #fdfaf3;
 }
 
+.ashtakvarga-bav-error {
+  font-size: 0.82rem;
+  color: var(--color-vermilion, #b91c1c);
+  margin: 6px 0 0 0;
+  text-align: center;
+}
+
+
 /* ── BAV Viewer Panel ────────────────────────────────────────────────── */
 .bav-viewer {
   display: flex;
