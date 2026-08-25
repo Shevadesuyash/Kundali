@@ -11,7 +11,7 @@ export default function DashaTab({ report }) {
   return (
     <div className="tab-panel">
       {/* 1. Interactive Vimshottari Dasha Tree */}
-      <div className="tab-section">
+      <div className="tab-section" data-pdf-section="dasha-tree">
         <p className="tab-section__title">Vimshottari Dasha &amp; Antardashas</p>
         <p className="tab-section__subtitle">
           Major planetary cycles (Mahadashas) and sub-periods (Antardashas). Click any cycle to expand.
@@ -20,7 +20,7 @@ export default function DashaTab({ report }) {
       </div>
 
       {/* 2. Classical Vedic Yogas */}
-      <div className="tab-section">
+      <div className="tab-section" data-pdf-section="vedic-yogas">
         <p className="tab-section__title">Vedic Yogas &amp; Planetary Combinations</p>
         <YogaList yogas={yogas} filterType="all" />
       </div>

@@ -32,19 +32,17 @@ export default function PlanetsTab({ report }) {
     timezone_str: profile?.timezone_str || 'Asia/Kolkata',
   };
 
-
-
   return (
     <div className="tab-panel">
       {/* 1. Planet positions table */}
-      <div className="tab-section">
+      <div className="tab-section" data-pdf-section="planet-positions">
         <p className="tab-section__title">Planetary Positions (Sidereal / Lahiri)</p>
         <PlanetTable planets={planets} />
       </div>
 
       {/* 2. Chart selector */}
       {charts && (
-        <div className="tab-section">
+        <div className="tab-section" data-pdf-section="charts-grid">
           <div className="inner-tabs">
             {CHART_TABS.map((ct) => (
               <button
@@ -58,36 +56,32 @@ export default function PlanetsTab({ report }) {
             ))}
           </div>
 
-          <div className="charts-grid-wrap">
-            {(activeChart === 'd1' || activeChart === 'all') && (
-              <div className="chart-block">
-                <p className="chart-block__label">D1 Rāśi (Lagna Chart)</p>
-                <ChartGrid houses={charts.D1_lagna} title="D1 Rāśi" ascendantSignIndex={ascendant.sign_index} />
-              </div>
+          <div className="chart-wrapper">
+            {activeChart === 'd1' && charts.D1_lagna && (
+              <ChartGrid houses={charts.D1_lagna} title="D1 Rāśi Chart (Lagna)" ascendantSignIndex={ascendant.sign_index} />
             )}
-            {(activeChart === 'd9' || activeChart === 'all') && (
-              <div className="chart-block">
-                <p className="chart-block__label">D9 Navāṁśa (Marriage / Soul)</p>
-                <ChartGrid houses={charts.D9_navamsa} title="D9 Navāṁśa" ascendantSignIndex={ascendant.sign_index} />
-              </div>
+            {activeChart === 'd9' && charts.D9_navamsha && (
+              <ChartGrid houses={charts.D9_navamsha} title="D9 Navāṁśa Chart" ascendantSignIndex={ascendant.sign_index} />
             )}
-            {(activeChart === 'rashi' || activeChart === 'all') && charts.rashi_moon_chart && (
-              <div className="chart-block">
-                <p className="chart-block__label">Chandra Rāśi (Moon Chart)</p>
-                <ChartGrid houses={charts.rashi_moon_chart} title="Chandra" ascendantSignIndex={charts.rashi_moon_chart[0]?.sign_index} />
+            {activeChart === 'rashi' && charts.rashi_moon_chart && (
+              <ChartGrid houses={charts.rashi_moon_chart} title="Chandra Rāśi Chart" ascendantSignIndex={ascendant.sign_index} />
+            )}
+            {activeChart === 'all' && (
+              <div className="all-charts-grid">
+                {charts.D1_lagna && <ChartGrid houses={charts.D1_lagna} title="D1 Rāśi" ascendantSignIndex={ascendant.sign_index} />}
+                {charts.D9_navamsha && <ChartGrid houses={charts.D9_navamsha} title="D9 Navāṁśa" ascendantSignIndex={ascendant.sign_index} />}
+                {charts.rashi_moon_chart && <ChartGrid houses={charts.rashi_moon_chart} title="Chandra Rāśi" ascendantSignIndex={ascendant.sign_index} />}
               </div>
             )}
           </div>
         </div>
       )}
 
-      {/* 3. Ashtakvarga (SAV scorecard + on-demand BAV) */}
-      {ashtakvarga_sav && (
-        <div className="tab-section">
-          <p className="tab-section__title">Ashtakvarga Strength System</p>
-          <AshtakvargaGrid savData={ashtakvarga_sav} personPayload={personPayload} />
-        </div>
-      )}
+      {/* 3. Ashtakvarga SAV Heatmap & On-demand BAV */}
+      <div className="tab-section" data-pdf-section="ashtakvarga">
+        <p className="tab-section__title">Ashtakvarga Strength System</p>
+        <AshtakvargaGrid savData={ashtakvarga_sav} personPayload={personPayload} />
+      </div>
     </div>
   );
 }

@@ -153,7 +153,12 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 
 ## 🗺️ Master Phased Roadmap & Confirmed Implementation Plans
 
-### ✅ Completed Phases (Phases 1–4)
+### ✅ Completed Phases (Phases 1–5)
+
+* **Phase 5: Real-Time Transits, All-in-One PDF & Bulk Compatibility**
+  - **5A Transits & Sade Sati**: 	ransit_engine.py (live Gochara for 9 grahas, 3 Sade Sati phases, Dhaiya, Jupiter Gochara), GET /api/v1/transits/live, TransitTracker.jsx full view on OverviewTab & compact badge on ProfileCard.
+  - **5B Client-Side PDF Export**: pdfExport.js + ExportPDFButton.jsx in KundaliReport header, data-pdf-section across all 5 tabs exporting a single comprehensive high-resolution parchment PDF.
+  - **5C Multi-Profile Bulk Match Matrix**: POST /api/v1/match-bulk (opposite-gender automated scoring against all candidates), BulkMatchMatrix.jsx leaderboard modal with score progress bars & direct match links, '⚡ Match All' trigger on ProfileCard in ProfilesPage.
 
 * **Phase 1: Gender Toggle, Profile Auto-Fill & Match Redesign** (`7cf6e52`)
   - Thin SQLite schema, typeahead search, `GenderToggle`, `PartnerSlot` redesign with instant swap.
@@ -166,7 +171,7 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 
 ---
 
-### 🚀 Phase 5: Transits, PDF Export & Bulk Match (READY FOR IMPLEMENTATION)
+### 🚀 Phase 5: Transits, PDF Export & Bulk Match (✅ COMPLETED)
 
 #### Stream 5A: Sade Sati & Gochara Transit Tracker
 * **Algorithm**:

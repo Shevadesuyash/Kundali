@@ -1,0 +1,219 @@
+.bulk-matrix-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.bulk-matrix-modal {
+  background: var(--color-bg-panel, #ffffff);
+  border: 1px solid var(--color-hairline-strong, #e5e7eb);
+  border-radius: var(--radius-lg, 12px);
+  width: 100%;
+  max-width: 850px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.bulk-matrix-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-hairline-strong, #e5e7eb);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-bg-panel-raised, #f9fafb);
+}
+
+.bulk-matrix-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--color-copper-deep, #9c4b00);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bulk-matrix-subtitle {
+  font-size: 0.85rem;
+  color: var(--color-text-dim, #6b7280);
+  margin-top: 0.25rem;
+}
+
+.bulk-matrix-close {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--color-text-dim, #9ca3af);
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+.bulk-matrix-close:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.bulk-matrix-body {
+  padding: 1.25rem 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.bulk-matrix-loading {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--color-copper, #c8720a);
+  font-size: 1.1rem;
+}
+
+.bulk-matrix-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--color-text-dim, #6b7280);
+}
+
+/* Leaderboard Table */
+.bulk-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.bulk-table th {
+  background: var(--color-bg-panel-raised, #f9fafb);
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: var(--color-copper-deep, #9c4b00);
+  border-bottom: 1px solid var(--color-hairline-strong, #e5e7eb);
+  text-align: left;
+}
+
+.bulk-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--color-hairline, #f3f4f6);
+  vertical-align: middle;
+}
+
+.bulk-table tr:hover {
+  background: rgba(200, 114, 10, 0.03);
+}
+
+.bulk-rank {
+  font-weight: 700;
+  color: var(--color-text-dim, #9ca3af);
+  font-family: var(--font-mono);
+  width: 40px;
+}
+
+.bulk-rank--1 {
+  color: #d97706;
+}
+
+.bulk-rank--2 {
+  color: #64748b;
+}
+
+.bulk-rank--3 {
+  color: #b45309;
+}
+
+.bulk-candidate-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.bulk-candidate-name {
+  font-weight: 600;
+  color: var(--color-text, #111827);
+}
+
+.bulk-candidate-meta {
+  font-size: 0.75rem;
+  color: var(--color-text-dim, #6b7280);
+}
+
+.bulk-score-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 160px;
+}
+
+.bulk-score-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bulk-score-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.bulk-score-bar-fill--high {
+  background: #16a34a;
+}
+
+.bulk-score-bar-fill--mid {
+  background: #f59e0b;
+}
+
+.bulk-score-bar-fill--low {
+  background: #ef4444;
+}
+
+.bulk-score-val {
+  font-weight: 700;
+  font-family: var(--font-mono);
+  min-width: 48px;
+  text-align: right;
+}
+
+.bulk-manglik-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.bulk-manglik-tag--ok {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.bulk-manglik-tag--warn {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.bulk-btn-open {
+  background: var(--color-copper, #c8720a);
+  color: #fff;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.bulk-btn-open:hover {
+  background: var(--color-copper-deep, #9c4b00);
+}

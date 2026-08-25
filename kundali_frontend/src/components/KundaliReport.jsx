@@ -1,22 +1,23 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import ReportTabs from './ReportTabs';
 import OverviewTab from './tabs/OverviewTab';
 import PlanetsTab  from './tabs/PlanetsTab';
 import DashaTab    from './tabs/DashaTab';
 import DoshasTab   from './tabs/DoshasTab';
 import HealthTab   from './tabs/HealthTab';
+import ExportPDFButton from './ExportPDFButton';
 import { useLang } from '../context/LanguageContext';
 import './KundaliReport.css';
 
 /**
- * KundaliReport — 5-tab Kundali report viewer.
+ * KundaliReport — 5-tab Kundali report viewer with one-click full PDF export.
  *
  * Tabs:
- *   1. Overview  — stat cards, classification, house strip, D1 chart
- *   2. Planets   — planet table + chart selector (D1/D9/Rashi)
- *   3. Dasha     — Vimshottari Mahadasha table
- *   4. Doshas    — Mangal Dosha (full), Kaal Sarp, Pitra placeholder
- *   5. Health    — existing HealthReport component
+ *   1. Overview  — stat cards, classification, house strip, D1 chart, Gochara transits
+ *   2. Planets   — planet table + chart selector (D1/D9/Rashi) + Ashtakvarga (SAV & BAV)
+ *   3. Dasha     — Vimshottari Mahadasha & Antardasha tree + Benefic Yogas
+ *   4. Doshas    — Mangal Dosha (full Papa Samyam) + Malefic Doshas
+ *   5. Health    — Ayurvedic HealthReport
  *
  * When compact=true (used inside the Match report), only shows the
  * Overview and Planets tabs without tab navigation.
@@ -24,11 +25,12 @@ import './KundaliReport.css';
 export default function KundaliReport({ report, compact = false }) {
   const { t } = useLang();
   const [activeTab, setActiveTab] = useState('overview');
+  const exportTargetRef = useRef(null);
 
   const { profile } = report;
 
   if (compact) {
-    // Compact mode: just the header + planet table, no tabs
+    // Compact mode: just the header + overview tab, no tabs
     return (
       <div className="kundali-report kundali-report--compact">
         <ReportHeader profile={profile} report={report} t={t} />
@@ -51,19 +53,40 @@ export default function KundaliReport({ report, compact = false }) {
   return (
     <div className="kundali-report">
       {/* Report Header — always visible */}
-      <ReportHeader profile={profile} report={report} t={t} />
+      <ReportHeader
+        profile={profile}
+        report={report}
+        t={t}
+        exportBtn={<ExportPDFButton reportRef={exportTargetRef} personName={profile.name} />}
+      />
 
       {/* Tab navigation */}
       <ReportTabs activeTab={activeTab} onChange={setActiveTab} />
 
       {/* Active tab content */}
       {renderTab()}
+
+      {/* Offscreen full multi-tab document container for complete PDF export */}
+      <div
+        ref={exportTargetRef}
+        className="kundali-pdf-document-source"
+        aria-hidden="true"
+      >
+        <div data-pdf-section="header">
+          <ReportHeader profile={profile} report={report} t={t} hideExportBtn />
+        </div>
+        <OverviewTab report={report} />
+        <PlanetsTab report={report} />
+        <DashaTab report={report} />
+        <DoshasTab report={report} />
+        <HealthTab report={report} />
+      </div>
     </div>
   );
 }
 
-/** Shared header strip — name, date/time, location */
-function ReportHeader({ profile, report, t }) {
+/** Shared header strip — name, date/time, location, and optional action buttons */
+function ReportHeader({ profile, report, t, exportBtn = null, hideExportBtn = false }) {
   const gender = report.gender || profile.gender;
   return (
     <div className="kundali-report__header">
@@ -89,7 +112,14 @@ function ReportHeader({ profile, report, t }) {
           {profile.utc && <span>⏱️ UTC: {new Date(profile.utc).toUTCString()}</span>}
         </div>
       </div>
+
+      {!hideExportBtn && exportBtn && (
+        <div className="kundali-report__header-actions">
+          {exportBtn}
+        </div>
+      )}
     </div>
   );
 }
+
 

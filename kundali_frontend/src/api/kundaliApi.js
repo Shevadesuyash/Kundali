@@ -153,3 +153,23 @@ export function matchSaved(boyId, girlId, includeAiReading = false) {
     include_ai_reading: includeAiReading,
   });
 }
+
+// ---------------------------------------------------------------------------
+// Phase 5A: Live Transits / Sade Sati
+// ---------------------------------------------------------------------------
+export function getLiveTransits(moonSignIndex, lagnaSignIndex) {
+  return fetch(`${API_BASE}/api/v1/transits/live?moon_sign_index=${moonSignIndex}&lagna_sign_index=${lagnaSignIndex}`, {
+    headers: { Accept: 'application/json' },
+  }).then((r) => r.json());
+}
+
+// ---------------------------------------------------------------------------
+// Phase 5C: Multi-Profile Bulk Matching
+// ---------------------------------------------------------------------------
+export function matchBulk(anchorProfileId, candidateIds = null) {
+  return postJSON('/api/v1/match-bulk', {
+    anchor_profile_id: anchorProfileId,
+    ...(candidateIds && { candidate_ids: candidateIds }),
+  });
+}
+

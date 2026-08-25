@@ -6,7 +6,7 @@ import './tabs.css';
  */
 export default function HealthTab({ report }) {
   return (
-    <div className="tab-panel">
+    <div className="tab-panel" data-pdf-section="ayurveda-health">
       <HealthReport report={report} />
     </div>
   );

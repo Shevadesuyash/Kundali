@@ -159,6 +159,11 @@ class MatchSavedRequest(BaseModel):
     include_ai_reading: bool = False
 
 
+class BulkMatchRequest(BaseModel):
+    anchor_profile_id: int
+    candidate_ids: Optional[List[int]] = None  # None = match against ALL opposite-gender profiles
+
+
 class ProfileListResponse(BaseModel):
     profiles: List[ProfileSummary]
     total: int

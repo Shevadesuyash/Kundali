@@ -169,23 +169,64 @@
   color: #16a34a;
 }
 
+.profile-astro-pill--danger {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.profile-astro-pill--danger .profile-astro-pill__val {
+  color: #dc2626;
+}
+
+.profile-astro-pill--warning,
+.profile-astro-pill--caution {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.profile-astro-pill--warning .profile-astro-pill__val,
+.profile-astro-pill--caution .profile-astro-pill__val {
+  color: #d97706;
+}
+
+.profile-astro-pill--info {
+  background: #f0fdfa;
+  border-color: #99f6e4;
+}
+
+.profile-astro-pill--info .profile-astro-pill__val {
+  color: #0d9488;
+}
+
 /* Actions */
 .profile-card__actions {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   margin-top: 4px;
 }
 
 .profile-card__view-btn {
   flex: 1;
-  font-size: 0.82rem;
-  padding: 7px 12px;
+  font-size: 0.8rem;
+  padding: 6px 10px;
+}
+
+.profile-card__bulk-btn {
+  font-size: 0.8rem;
+  padding: 6px 10px;
+  color: #d97706;
+  border-color: rgba(217, 119, 6, 0.3);
+}
+
+.profile-card__bulk-btn:hover {
+  background: #fffbeb;
+  border-color: #d97706;
 }
 
 .profile-card__match-btn {
   flex: 1;
-  font-size: 0.82rem;
-  padding: 7px 12px;
+  font-size: 0.8rem;
+  padding: 6px 10px;
 }
 
 .profile-card__match-btn.is-picked {
@@ -193,3 +234,4 @@
   color: #fff;
   border-color: var(--color-gold, #c8720a);
 }
+

@@ -1,5 +1,6 @@
 import ChartGrid from '../ChartGrid';
 import ManglikBadge from '../ManglikBadge';
+import TransitTracker from '../TransitTracker';
 import { CLASSIFICATION_INFO } from '../../utils/astrology';
 import { useLang } from '../../context/LanguageContext';
 import './tabs.css';
@@ -7,13 +8,14 @@ import './tabs.css';
 /**
  * OverviewTab — Summary panel shown on the first tab.
  * Contains: stat cards, classification (Varna/Gana/Nadi),
- * house strip, and D1 chart.
+ * house strip, D1 chart, and Real-Time Gochara / Sade Sati Tracker.
  */
 export default function OverviewTab({ report }) {
   const { t, lang } = useLang();
   const {
     ascendant, moon_sign, moon_nakshatra, moon_pada,
     classification, manglik_dosha, charts, ayanamsha_used,
+    current_transits,
     _technical_profile,
   } = report;
 
@@ -36,7 +38,7 @@ export default function OverviewTab({ report }) {
   return (
     <div className="tab-panel">
       {/* Stat Cards */}
-      <dl className="kundali-report__stats-grid">
+      <dl className="kundali-report__stats-grid" data-pdf-section="stats">
         <div className="stat-card">
           <dt>{t('report.ascendant')}</dt>
           <dd className="stat-card__val">{ascendant.sign}</dd>
@@ -76,7 +78,7 @@ export default function OverviewTab({ report }) {
       </dl>
 
       {/* Classification Row */}
-      <div className="kundali-report__classifications">
+      <div className="kundali-report__classifications" data-pdf-section="classifications">
         <div className="class-card">
           <span className="class-card__title">{t('report.varna')}</span>
           <h4 className="class-card__name">{classification.varna}</h4>
@@ -114,7 +116,7 @@ export default function OverviewTab({ report }) {
 
       {/* House Strip */}
       {charts?.D1_lagna && (
-        <div className="kundali-report__house-strip">
+        <div className="kundali-report__house-strip" data-pdf-section="house-strip">
           <span className="house-strip__label">{t('report.house.strip')}</span>
           <div className="house-strip__items">
             {housePills.map((item) => (
@@ -130,11 +132,15 @@ export default function OverviewTab({ report }) {
 
       {/* D1 Chart */}
       {charts?.D1_lagna && (
-        <div className="tab-section">
+        <div className="tab-section" data-pdf-section="d1-chart">
           <p className="tab-section__title">D1 Rāśi Chart (Lagna)</p>
           <ChartGrid houses={charts.D1_lagna} title="D1 Rāśi" ascendantSignIndex={ascendant.sign_index} />
         </div>
       )}
+
+      {/* Real-Time Gochara / Sade Sati Tracker */}
+      <TransitTracker data={current_transits} compact={false} />
     </div>
   );
 }
+

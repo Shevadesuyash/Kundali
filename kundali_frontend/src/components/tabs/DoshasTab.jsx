@@ -12,7 +12,7 @@ export default function DoshasTab({ report }) {
   return (
     <div className="tab-panel">
       {/* ── 1. Mangal Dosha & Papa Samyam ────────────────────────────── */}
-      <div className="tab-section">
+      <div className="tab-section" data-pdf-section="mangal-dosha">
         <p className="tab-section__title">Mangal (Kuja) Dosha &amp; Papa Samyam</p>
         <p className="tab-section__subtitle">
           Evaluated from Lagna, Moon, and Venus using standard Parashari houses (1, 4, 7, 8, 12).
@@ -55,7 +55,7 @@ export default function DoshasTab({ report }) {
       </div>
 
       {/* ── 2. Other Classical Doshas & Karmic Influences ──────────────── */}
-      <div className="tab-section">
+      <div className="tab-section" data-pdf-section="special-doshas">
         <p className="tab-section__title">Special Doshas &amp; Planetary Afflictions</p>
         <YogaList yogas={yogas} filterType="malefic" />
       </div>

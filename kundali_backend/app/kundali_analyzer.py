@@ -25,6 +25,7 @@ from app.models import Person
 from app.dasha import VimshottariCalculator
 from app.yoga_engine import YogaEngine
 from app.ashtakvarga_engine import AshtakvargaEngine
+from app.transit_engine import TransitEngine
 
 
 class KundaliAnalyzer:
@@ -212,6 +213,10 @@ class KundaliAnalyzer:
             ),
             "yogas": YogaEngine.detect_yogas(technical_profile),
             "ashtakvarga_sav": AshtakvargaEngine.calculate_sav(technical_profile),
+            "current_transits": TransitEngine.get_current_transits(
+                natal_moon_sign_index=moon_rashi_idx,
+                natal_lagna_sign_index=technical_profile["ascendant"]["sign_index"],
+            ),
         }
 
 

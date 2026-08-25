@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { searchProfiles, deleteProfile, matchSaved, ApiError } from '../api/kundaliApi';
 import ProfileCard from '../components/ProfileCard';
 import GunaMilanScorecard from '../components/GunaMilanScorecard';
+import BulkMatchMatrix from '../components/BulkMatchMatrix';
 import { LoadingState, ErrorState } from '../components/StatusStates';
 import './ProfilesPage.css';
 
@@ -35,12 +36,13 @@ export default function ProfilesPage() {
   const [error,      setError]      = useState('');
 
   // Match tray state
-  const [showMatchTray,  setShowMatchTray]  = useState(false);
-  const [partner1,       setPartner1]       = useState(null);
-  const [partner2,       setPartner2]       = useState(null);
-  const [matchStatus,    setMatchStatus]    = useState('idle');
-  const [matchResult,    setMatchResult]    = useState(null);
-  const [matchError,     setMatchError]     = useState('');
+  const [showMatchTray,      setShowMatchTray]      = useState(false);
+  const [partner1,           setPartner1]           = useState(null);
+  const [partner2,           setPartner2]           = useState(null);
+  const [matchStatus,        setMatchStatus]        = useState('idle');
+  const [matchResult,        setMatchResult]        = useState(null);
+  const [matchError,         setMatchError]         = useState('');
+  const [bulkAnchorProfile,  setBulkAnchorProfile]  = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -312,11 +314,20 @@ export default function ProfilesPage() {
               onPickPartner1={handlePickPartner1}
               onPickPartner2={handlePickPartner2}
               onDelete={handleDelete}
+              onBulkMatch={(prof) => setBulkAnchorProfile(prof)}
               isPartner1Picked={partner1?.id === p.id}
               isPartner2Picked={partner2?.id === p.id}
             />
           ))}
         </div>
+      )}
+
+      {/* ── Bulk Compatibility Matrix Modal ─────────────────────────────── */}
+      {bulkAnchorProfile && (
+        <BulkMatchMatrix
+          anchorProfile={bulkAnchorProfile}
+          onClose={() => setBulkAnchorProfile(null)}
+        />
       )}
     </main>
   );

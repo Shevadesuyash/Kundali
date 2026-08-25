@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TagBadge from './TagBadge';
+import { getSadeSatiBadge } from '../utils/astrology';
 import './ProfileCard.css';
 
 /**
@@ -11,6 +12,7 @@ import './ProfileCard.css';
  *   onPickPartner1: (profile) => void
  *   onPickPartner2: (profile) => void
  *   onDelete:       (profileId) => void
+ *   onBulkMatch:    (profile) => void
  *   isPartner1Picked: boolean
  *   isPartner2Picked: boolean
  */
@@ -19,6 +21,7 @@ export default function ProfileCard({
   onPickPartner1,
   onPickPartner2,
   onDelete,
+  onBulkMatch,
   isPartner1Picked = false,
   isPartner2Picked = false,
 }) {
@@ -29,6 +32,8 @@ export default function ProfileCard({
   const m   = String(profile.month).padStart(2, '0');
   const dob = `${d}-${m}-${profile.year}`;
   const isMale = profile.gender === 'male';
+
+  const sadeSati = profile.moon_sign ? getSadeSatiBadge(profile.moon_sign) : null;
 
   function handleViewKundali() {
     navigate(`/kundali?profileId=${profile.id}`);
@@ -107,6 +112,12 @@ export default function ProfileCard({
           <span className="profile-astro-pill__label">Dosha</span>
           <span className="profile-astro-pill__val">{profile.is_manglik ? 'Manglik' : 'Clear'}</span>
         </div>
+        {sadeSati && (
+          <div className={`profile-astro-pill profile-astro-pill--${sadeSati.type}`}>
+            <span className="profile-astro-pill__label">Transit</span>
+            <span className="profile-astro-pill__val">{sadeSati.label}</span>
+          </div>
+        )}
       </div>
 
       {/* Action buttons */}
@@ -116,8 +127,19 @@ export default function ProfileCard({
           className="btn btn--primary profile-card__view-btn"
           onClick={handleViewKundali}
         >
-          📜 View Kundali
+          📜 Kundali
         </button>
+
+        {onBulkMatch && (
+          <button
+            type="button"
+            className="btn btn--ghost profile-card__bulk-btn"
+            onClick={() => onBulkMatch(profile)}
+            title="Match this profile against all saved opposite-gender candidates"
+          >
+            ⚡ Match All
+          </button>
+        )}
 
         {isMale ? (
           <button
@@ -125,7 +147,7 @@ export default function ProfileCard({
             className={`btn btn--ghost profile-card__match-btn${isPartner1Picked ? ' is-picked' : ''}`}
             onClick={() => onPickPartner1(profile)}
           >
-            {isPartner1Picked ? '✓ Groom Picked' : '♂ Pick as Groom'}
+            {isPartner1Picked ? '✓ Groom' : '♂ Pick Groom'}
           </button>
         ) : (
           <button
@@ -133,10 +155,11 @@ export default function ProfileCard({
             className={`btn btn--ghost profile-card__match-btn${isPartner2Picked ? ' is-picked' : ''}`}
             onClick={() => onPickPartner2(profile)}
           >
-            {isPartner2Picked ? '✓ Bride Picked' : '♀ Pick as Bride'}
+            {isPartner2Picked ? '✓ Bride' : '♀ Pick Bride'}
           </button>
         )}
       </div>
     </div>
   );
 }
+
