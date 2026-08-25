@@ -272,13 +272,19 @@ class YogaEngine:
             if all_fwd or all_bwd:
                 rahu_house = planets["Rahu"].get("house_from_lagna", 1)
                 ketu_house = planets["Ketu"].get("house_from_lagna", 7)
+                kaal_sarp_variants = [
+                    "Anant", "Kulik", "Vasuki", "Shankhpal", "Padma", "Mahapadma",
+                    "Takshak", "Karkotak", "Shankachood", "Ghatak", "Vishdhar", "Sheshnag"
+                ]
+                variant_name = kaal_sarp_variants[(rahu_house - 1) % 12]
                 detected.append({
-                    "name": "Kaal Sarp Yoga",
+                    "name": f"{variant_name} Kaal Sarp Yoga",
                     "type": "malefic",
                     "category": "Karmic Axis",
+                    "variant": variant_name,
                     "planets_involved": ["Rahu", "Ketu"],
                     "description": (
-                        f"All classical planets are encompassed within the Rahu (H{rahu_house}) – Ketu (H{ketu_house}) axis. "
+                        f"All classical planets are encompassed within the Rahu (House {rahu_house}) – Ketu (House {ketu_house}) axis ({variant_name} variant). "
                         "Creates intense karmic cycles with early struggles leading to substantial perseverance and eventual breakthroughs."
                     ),
                     "is_present": True,

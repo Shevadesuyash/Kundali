@@ -67,6 +67,7 @@ export default function HomePage() {
             <div className="hero__actions">
               <Link to="/kundali" className="btn btn--primary">{c.cta1}</Link>
               <Link to="/match"   className="btn btn--ghost">{c.cta2}</Link>
+              <Link to="/panchang" className="btn btn--ghost">📿 Daily Panchang</Link>
             </div>
           </div>
           <div className="hero__chart">

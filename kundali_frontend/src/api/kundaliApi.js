@@ -173,3 +173,19 @@ export function matchBulk(anchorProfileId, candidateIds = null) {
   });
 }
 
+// ---------------------------------------------------------------------------
+// Phase 6B: Daily Hindu Panchang
+// ---------------------------------------------------------------------------
+export function getPanchang({ date = '', lat = 18.5204, lon = 73.8567, tz = 'Asia/Kolkata' } = {}) {
+  const params = new URLSearchParams();
+  if (date) params.set('date', date);
+  params.set('lat', String(lat));
+  params.set('lon', String(lon));
+  params.set('tz', tz);
+
+  return fetch(`${API_BASE}/api/v1/panchang?${params}`, {
+    headers: { Accept: 'application/json' },
+  }).then((r) => r.json());
+}
+
+

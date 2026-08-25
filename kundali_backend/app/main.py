@@ -13,8 +13,7 @@ FastAPI application. Primary endpoints:
 Runs identically locally (uvicorn) and inside AWS Lambda (via Mangum,
 see lambda_handler.py).
 """
-from __future__ import annotations
-
+import datetime
 import logging
 from typing import List, Optional
 
@@ -34,6 +33,7 @@ from app.kundali_analyzer import KundaliAnalyzer
 from app.matchmaker import MatchMaker
 from app.ashtakvarga_engine import AshtakvargaEngine
 from app.transit_engine import TransitEngine
+from app.panchang_engine import PanchangEngine
 from app.models import (
     BirthDetails, BulkMatchRequest, ErrorResponse, KundaliRequest, MatchRequest,
     MatchSavedRequest, ProfileDetail, ProfileListResponse,
@@ -157,6 +157,42 @@ def get_live_transits(
     except Exception as exc:
         logger.exception("Transit calculation failed")
         raise HTTPException(status_code=500, detail="Transit calculation failed") from exc
+
+
+# ---------------------------------------------------------------------------
+# Phase 6B: Daily Hindu Panchang & Muhurta Endpoint
+# ---------------------------------------------------------------------------
+
+@app.get(
+    "/api/v1/panchang",
+    responses={400: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
+)
+def get_panchang_data(
+    date: Optional[str] = Query(None, description="Date in YYYY-MM-DD format (defaults to today)"),
+    lat: float = Query(18.5204, ge=-90, le=90, description="Latitude (defaults to Pune)"),
+    lon: float = Query(73.8567, ge=-180, le=180, description="Longitude (defaults to Pune)"),
+    tz: str = Query("Asia/Kolkata", description="Timezone name"),
+):
+    """
+    Computes complete 5-limb Vedic Panchang, Brahma/Abhijit Muhurtas, Rahu Kaal,
+    Day Choghadiya slots, and Daily Devotional Deity & Mantra.
+    """
+    try:
+        parsed_date = None
+        if date:
+            parsed_date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+
+        return PanchangEngine.get_panchang(
+            target_date=parsed_date,
+            lat=lat,
+            lon=lon,
+            timezone_str=tz,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid date format (expected YYYY-MM-DD): {exc}") from exc
+    except Exception as exc:
+        logger.exception("Panchang calculation failed")
+        raise HTTPException(status_code=500, detail="Panchang calculation failed") from exc
 
 
 # ---------------------------------------------------------------------------

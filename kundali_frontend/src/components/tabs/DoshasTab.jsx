@@ -1,13 +1,14 @@
 import ManglikBadge from '../ManglikBadge';
 import YogaList from '../YogaList';
+import GemstonePanel from '../GemstonePanel';
 import './tabs.css';
 
 /**
  * DoshasTab — Comprehensive Doshas analysis including Mangal Dosha (Papa Samyam),
- * Kaal Sarp, Guru Chandal, Pitra Dosha, and Kemadruma.
+ * Kaal Sarp, Guru Chandal, Pitra Dosha, Kemadruma, and Gemstone / Rudraksha Remedies.
  */
 export default function DoshasTab({ report }) {
-  const { manglik_dosha, yogas } = report;
+  const { manglik_dosha, yogas, gemstone_recommendations } = report;
 
   return (
     <div className="tab-panel">
@@ -59,6 +60,9 @@ export default function DoshasTab({ report }) {
         <p className="tab-section__title">Special Doshas &amp; Planetary Afflictions</p>
         <YogaList yogas={yogas} filterType="malefic" />
       </div>
+
+      {/* ── 3. Vedic Gemstone & Rudraksha Remedies ─────────────────────── */}
+      <GemstonePanel data={gemstone_recommendations} />
     </div>
   );
 }

@@ -1,0 +1,297 @@
+.panchang-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem 0 4rem;
+}
+
+.panchang-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  border-bottom: 1px solid var(--color-hairline-strong, #e5e7eb);
+  padding-bottom: 1.5rem;
+}
+
+.panchang-page__title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.panchang-page__title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-copper-deep, #9c4b00);
+  margin: 0;
+}
+
+.panchang-page__date-display {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-text, #111827);
+  margin-top: 0.2rem;
+}
+
+.panchang-page__controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.panchang-date-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--color-bg-panel-raised, #f9fafb);
+  border: 1px solid var(--color-hairline-strong, #d1d5db);
+  border-radius: var(--radius-md, 8px);
+  padding: 0.45rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+.panchang-date-picker input[type="date"] {
+  border: none;
+  background: transparent;
+  font-family: var(--font-sans, inherit);
+  font-size: 0.9rem;
+  color: var(--color-text, #111827);
+  outline: none;
+  cursor: pointer;
+}
+
+/* 5 Limbs Big Hero Cards */
+.panchang-limbs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+}
+
+.limb-card {
+  background: var(--color-bg-panel, #ffffff);
+  border: 1px solid var(--color-hairline-strong, #e5e7eb);
+  border-radius: var(--radius-lg, 12px);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border-top: 4px solid var(--color-copper, #c8720a);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.limb-card__label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-copper, #c8720a);
+  letter-spacing: 0.06em;
+}
+
+.limb-card__val {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+  margin: 0;
+}
+
+.limb-card__sub {
+  font-size: 0.82rem;
+  color: var(--color-text-dim, #6b7280);
+}
+
+/* Devotional Deity & Daily Mantra Card */
+.panchang-deity-card {
+  background: linear-gradient(135deg, rgba(200, 114, 10, 0.08) 0%, rgba(245, 158, 11, 0.04) 100%);
+  border: 1.5px solid rgba(200, 114, 10, 0.25);
+  border-radius: var(--radius-lg, 12px);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.panchang-deity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panchang-deity-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--color-copper-deep, #9c4b00);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.panchang-mantra-box {
+  background: #ffffff;
+  border-left: 4px solid var(--color-copper, #c8720a);
+  border-radius: 0 var(--radius-md, 8px) var(--radius-md, 8px) 0;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.panchang-mantra-text {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #78350f;
+  line-height: 1.5;
+}
+
+.panchang-rituals-text {
+  font-size: 0.88rem;
+  color: var(--color-text-dim, #4b5563);
+  margin: 0;
+}
+
+/* Muhurtas Dual Section */
+.panchang-muhurtas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .panchang-muhurtas-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.muhurta-box {
+  background: var(--color-bg-panel, #ffffff);
+  border: 1px solid var(--color-hairline-strong, #e5e7eb);
+  border-radius: var(--radius-lg, 12px);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.muhurta-box--auspicious {
+  border-left: 4px solid #16a34a;
+}
+
+.muhurta-box--inauspicious {
+  border-left: 4px solid #dc2626;
+}
+
+.muhurta-box__title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.muhurta-box--auspicious .muhurta-box__title {
+  color: #15803d;
+}
+
+.muhurta-box--inauspicious .muhurta-box__title {
+  color: #b91c1c;
+}
+
+.muhurta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.muhurta-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-bg-panel-raised, #f9fafb);
+  border-radius: 6px;
+  font-size: 0.88rem;
+}
+
+.muhurta-item__label {
+  font-weight: 600;
+  color: var(--color-text, #374151);
+}
+
+.muhurta-item__time {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+/* Choghadiya Table */
+.choghadiya-section {
+  background: var(--color-bg-panel, #ffffff);
+  border: 1px solid var(--color-hairline-strong, #e5e7eb);
+  border-radius: var(--radius-lg, 12px);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.choghadiya-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--color-copper-deep, #9c4b00);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.choghadiya-table-wrapper {
+  overflow-x: auto;
+}
+
+.choghadiya-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.choghadiya-table th {
+  background: var(--color-bg-panel-raised, #f9fafb);
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: var(--color-copper-deep, #9c4b00);
+  border-bottom: 1px solid var(--color-hairline-strong, #e5e7eb);
+  text-align: left;
+}
+
+.choghadiya-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-hairline, #f3f4f6);
+}
+
+.choghadiya-badge {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+}
+
+.choghadiya-badge--Auspicious {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.choghadiya-badge--Neutral {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.choghadiya-badge--Inauspicious {
+  background: #fee2e2;
+  color: #b91c1c;
+}

@@ -4,20 +4,22 @@ import OverviewTab from './tabs/OverviewTab';
 import PlanetsTab  from './tabs/PlanetsTab';
 import DashaTab    from './tabs/DashaTab';
 import DoshasTab   from './tabs/DoshasTab';
+import PanchangTab from './tabs/PanchangTab';
 import HealthTab   from './tabs/HealthTab';
 import ExportPDFButton from './ExportPDFButton';
 import { useLang } from '../context/LanguageContext';
 import './KundaliReport.css';
 
 /**
- * KundaliReport — 5-tab Kundali report viewer with one-click full PDF export.
+ * KundaliReport — 6-tab Kundali report viewer with one-click full PDF export.
  *
  * Tabs:
  *   1. Overview  — stat cards, classification, house strip, D1 chart, Gochara transits
  *   2. Planets   — planet table + chart selector (D1/D9/Rashi) + Ashtakvarga (SAV & BAV)
  *   3. Dasha     — Vimshottari Mahadasha & Antardasha tree + Benefic Yogas
- *   4. Doshas    — Mangal Dosha (full Papa Samyam) + Malefic Doshas
- *   5. Health    — Ayurvedic HealthReport
+ *   4. Doshas    — Mangal Dosha (full Papa Samyam) + Malefic Doshas + Gemstone Panel
+ *   5. Panchang  — Janma Panchang (5 Limbs on birth date + Muhurtas + Choghadiya)
+ *   6. Health    — Ayurvedic HealthReport
  *
  * When compact=true (used inside the Match report), only shows the
  * Overview and Planets tabs without tab navigation.
@@ -45,6 +47,7 @@ export default function KundaliReport({ report, compact = false }) {
       case 'planets':  return <PlanetsTab  report={report} />;
       case 'dasha':    return <DashaTab    report={report} />;
       case 'doshas':   return <DoshasTab   report={report} />;
+      case 'panchang': return <PanchangTab report={report} />;
       case 'health':   return <HealthTab   report={report} />;
       default:         return <OverviewTab report={report} />;
     }
@@ -79,6 +82,7 @@ export default function KundaliReport({ report, compact = false }) {
         <PlanetsTab report={report} />
         <DashaTab report={report} />
         <DoshasTab report={report} />
+        <PanchangTab report={report} />
         <HealthTab report={report} />
       </div>
     </div>
