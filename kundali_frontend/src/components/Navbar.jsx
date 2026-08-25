@@ -19,6 +19,9 @@ export default function Navbar() {
           <NavLink to="/match" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>
             {t('nav.match')}
           </NavLink>
+          <NavLink to="/panchang" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>
+            Panchang
+          </NavLink>
           <NavLink to="/profiles" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>
             Profiles
           </NavLink>

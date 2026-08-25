@@ -153,7 +153,12 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 
 ## 🗺️ Master Phased Roadmap & Confirmed Implementation Plans
 
-### ✅ Completed Phases (Phases 1–5)
+### ✅ Completed Phases (Phases 1–6)
+
+* **Phase 6: Gemstone Engine, Dual Panchang & Kaal Sarp Variants**
+  - **6A Gemstone & Rudraksha Engine**: gemstone_engine.py (Life, Fortune, Intellect, Career stones with Dusthana contraindications & Rudraksha pairing), GemstonePanel.jsx/css in DoshasTab.jsx.
+  - **6B Dual Panchang Architecture**: panchang_engine.py (5 Limbs: Tithi, Vara, Nakshatra, Yoga, Karana; Brahma/Abhijit Muhurtas, Rahu Kaal, Day Choghadiya, Daily Deity & Mantra), GET /api/v1/panchang, PanchangPage.jsx/css standalone page, PanchangTab.jsx 6th tab in Kundali report with Short / Full Detail toggle.
+  - **6C 12 Kaal Sarp Variants**: yoga_engine.py enhanced with classical names (Anant, Kulik, Vasuki, Shankhpal, Padma, Mahapadma, Takshak, Karkotak, Shankachood, Ghatak, Vishdhar, Sheshnag).
 
 * **Phase 5: Real-Time Transits, All-in-One PDF & Bulk Compatibility**
   - **5A Transits & Sade Sati**: 	ransit_engine.py (live Gochara for 9 grahas, 3 Sade Sati phases, Dhaiya, Jupiter Gochara), GET /api/v1/transits/live, TransitTracker.jsx full view on OverviewTab & compact badge on ProfileCard.
@@ -196,7 +201,7 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 
 ---
 
-### 🔮 Phase 6: Gemstone Engine, Dual Panchang & Kaal Sarp Variants
+### 🔮 Phase 6: Gemstone Engine, Dual Panchang & Kaal Sarp Variants (✅ COMPLETED)
 
 * **6A: Gemstone & Rudraksha Recommendation Engine**:
   - `kundali_backend/app/gemstone_engine.py`: Maps Lagna lord (Life stone), 5th lord (Intellect stone), 9th lord (Fortune stone), 10th lord (Career stone) with dusthana/enemy sign safety contraindications.

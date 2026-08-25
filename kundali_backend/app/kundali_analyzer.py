@@ -26,6 +26,7 @@ from app.dasha import VimshottariCalculator
 from app.yoga_engine import YogaEngine
 from app.ashtakvarga_engine import AshtakvargaEngine
 from app.transit_engine import TransitEngine
+from app.gemstone_engine import GemstoneEngine
 
 
 class KundaliAnalyzer:
@@ -217,6 +218,7 @@ class KundaliAnalyzer:
                 natal_moon_sign_index=moon_rashi_idx,
                 natal_lagna_sign_index=technical_profile["ascendant"]["sign_index"],
             ),
+            "gemstone_recommendations": GemstoneEngine.recommend(technical_profile),
         }
 
 
