@@ -47,3 +47,39 @@ export const CLASSIFICATION_INFO = {
     'Antya (Kapha)': { en: { constitution: 'Earth & Water (Kapha)',  position: 'End'       }, mr: { constitution: 'पृथ्वी आणि जल (कफ)',      position: 'अंत' } },
   },
 };
+export const RASI_LIST = [
+  'Aries', 'Taurus', 'Gemini', 'Cancer',
+  'Leo', 'Virgo', 'Libra', 'Scorpio',
+  'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces',
+];
+
+export function getSignIndex(signName) {
+  if (!signName) return -1;
+  const clean = signName.split(' ')[0].trim().toLowerCase();
+  return RASI_LIST.findIndex((s) => s.toLowerCase() === clean);
+}
+
+/**
+ * Computes quick Sade Sati status for a Moon sign against current Saturn transit (Pisces/Meena).
+ */
+export function getSadeSatiBadge(moonSign) {
+  const moonIdx = getSignIndex(moonSign);
+  if (moonIdx === -1) return null;
+
+  // Current Saturn in sidereal Pisces (index 11)
+  const saturnSignIdx = 11;
+  const prev = (moonIdx - 1 + 12) % 12;
+  const nxt  = (moonIdx + 1) % 12;
+  const houseFromMoon = (saturnSignIdx - moonIdx + 12) % 12 + 1;
+
+  if (saturnSignIdx === moonIdx) {
+    return { active: true, label: 'Sade Sati · Peak (P2)', type: 'danger' };
+  } else if (saturnSignIdx === prev) {
+    return { active: true, label: 'Sade Sati · Rising (P1)', type: 'warning' };
+  } else if (saturnSignIdx === nxt) {
+    return { active: true, label: 'Sade Sati · Setting (P3)', type: 'info' };
+  } else if (houseFromMoon === 4 || houseFromMoon === 8) {
+    return { active: true, label: `Dhaiya (H${houseFromMoon})`, type: 'caution' };
+  }
+  return { active: false, label: 'Transits Clear', type: 'clear' };
+}

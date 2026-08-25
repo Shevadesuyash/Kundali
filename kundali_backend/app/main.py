@@ -33,8 +33,9 @@ from app.geocode_service import search_locations
 from app.kundali_analyzer import KundaliAnalyzer
 from app.matchmaker import MatchMaker
 from app.ashtakvarga_engine import AshtakvargaEngine
+from app.transit_engine import TransitEngine
 from app.models import (
-    BirthDetails, ErrorResponse, KundaliRequest, MatchRequest,
+    BirthDetails, BulkMatchRequest, ErrorResponse, KundaliRequest, MatchRequest,
     MatchSavedRequest, ProfileDetail, ProfileListResponse,
     ProfileSummary, ProfileTypeahead, SaveProfileRequest,
 )
@@ -74,6 +75,7 @@ def read_root():
         "endpoints": [
             "/api/v1/kundali", "/api/v1/match",
             "/api/v1/profiles", "/api/v1/geocode",
+            "/api/v1/transits/live", "/api/v1/match-bulk",
         ]
     }
 
@@ -130,6 +132,118 @@ def get_ashtakvarga(request: KundaliRequest):
         logger.exception("Ashtakvarga calculation failed")
         raise HTTPException(status_code=500, detail="Ashtakvarga calculation failed") from exc
 
+
+# ---------------------------------------------------------------------------
+# Phase 5A: Live Gochara / Sade Sati Transit Tracker
+# ---------------------------------------------------------------------------
+
+@app.get(
+    "/api/v1/transits/live",
+    responses={400: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
+)
+def get_live_transits(
+    moon_sign_index: int = Query(..., ge=0, le=11, description="Natal Moon sign index (0=Aries)"),
+    lagna_sign_index: int = Query(..., ge=0, le=11, description="Natal Lagna sign index (0=Aries)"),
+):
+    """
+    Returns current planetary positions (sidereal Lahiri) with Sade Sati phase,
+    Dhaiya, and Jupiter Gochara status relative to natal Moon and Lagna.
+    """
+    try:
+        return TransitEngine.get_current_transits(
+            natal_moon_sign_index=moon_sign_index,
+            natal_lagna_sign_index=lagna_sign_index,
+        )
+    except Exception as exc:
+        logger.exception("Transit calculation failed")
+        raise HTTPException(status_code=500, detail="Transit calculation failed") from exc
+
+
+# ---------------------------------------------------------------------------
+# Phase 5C: Bulk Compatibility Matrix
+# ---------------------------------------------------------------------------
+
+@app.post(
+    "/api/v1/match-bulk",
+    responses={400: {"model": ErrorResponse}, 404: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
+)
+def match_bulk(request: BulkMatchRequest):
+    """
+    Matches one anchor profile against all saved opposite-gender profiles.
+    Returns a leaderboard sorted by Guna score (descending).
+    """
+    anchor_row = get_profile_by_id(request.anchor_profile_id)
+    if not anchor_row:
+        raise HTTPException(status_code=404, detail="Anchor profile not found")
+
+    try:
+        if request.candidate_ids:
+            cand_rows = [get_profile_by_id(cid) for cid in request.candidate_ids]
+            cand_rows = [r for r in cand_rows if r is not None]
+        else:
+            all_profiles = search_profiles(q="", page=1, per_page=500)
+            cand_rows = [
+                get_profile_by_id(r["id"])
+                for r in all_profiles
+                if r["id"] != request.anchor_profile_id
+            ]
+            cand_rows = [r for r in cand_rows if r is not None]
+
+        def row_to_person(row):
+            return BirthDetails(
+                name=row["name"],
+                year=row["year"], month=row["month"], day=row["day"],
+                hour=row["hour"], minute=row["minute"],
+                lat=row["lat"], lon=row["lon"],
+                timezone_str=row["timezone_str"],
+            ).to_person()
+
+        results = []
+        for cand in cand_rows:
+            if cand["gender"] == anchor_row["gender"]:
+                continue  # Ashtakoot requires opposite gender
+            try:
+                if anchor_row["gender"] == "male":
+                    boy_row, girl_row = anchor_row, cand
+                else:
+                    boy_row, girl_row = cand, anchor_row
+
+                match_result = _matchmaker.match_profiles(
+                    row_to_person(boy_row),
+                    row_to_person(girl_row),
+                )
+                guna = match_result["guna_milan"]
+                papa = match_result.get("papa_samyam", {})
+
+                results.append({
+                    "profile_id":         cand["id"],
+                    "name":               cand["name"],
+                    "gender":             cand["gender"],
+                    "birth_place":        cand.get("birth_place"),
+                    "total_score":        guna["total_score"],
+                    "out_of":             36,
+                    "percent":            round((guna["total_score"] / 36) * 100, 1),
+                    "verdict":            guna["verdict"],
+                    "manglik_compatible": match_result.get("manglik_analysis", {}).get("combined_verdict", "N/A"),
+                    "papa_anchor":        papa.get("male_score" if anchor_row["gender"] == "male" else "female_score"),
+                    "papa_candidate":     papa.get("female_score" if anchor_row["gender"] == "male" else "male_score"),
+                })
+            except Exception:
+                continue
+
+        results.sort(key=lambda r: r["total_score"], reverse=True)
+        return {
+            "anchor_id":        anchor_row["id"],
+            "anchor_name":      anchor_row["name"],
+            "anchor_gender":    anchor_row["gender"],
+            "total_candidates": len(results),
+            "results":          results,
+        }
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Bulk match failed")
+        raise HTTPException(status_code=500, detail="Bulk match calculation failed") from exc
 
 
 @app.post(
