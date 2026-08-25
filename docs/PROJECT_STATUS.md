@@ -218,6 +218,7 @@ Stream C: Bulk Compatibility Matrix
 
 | Date | Commit | What Changed |
 |---|---|---|
+| 2026-08-25 | — | Decisions confirmed: PDF=all tabs; Panchang=dual mode; Transit=both locations; AI key gitignored |
 | 2026-08-25 | 4df6453 | Removed stale PLAN.md, FRONTEND_PLAN.md, implementation_plan phase new.md |
 | 2026-08-25 | 1af232a | Full README.md rewrite — all Phases 1-4 features documented |
 | 2026-08-25 | a63a622 | BAV fix — report.person injected in backend; PlanetsTab uses it; bavError shown to user |
@@ -227,3 +228,4 @@ Stream C: Bulk Compatibility Matrix
 | 2026-08-24 | 0695ed3 | Bug fixes — gender state, report badge, SaveProfileButton sync, PATCH integrity, Manglik mode |
 | 2026-08-24 | fffe9bd | Phase 3 — 5-tab layout: ReportTabs + 5 tab panels |
 | 2026-08-24 | 7cf6e52 | Phase 1 — GenderToggle, BirthDetailsForm typeahead, PartnerSlot, fresh thin DB schema |
+
