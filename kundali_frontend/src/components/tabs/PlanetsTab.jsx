@@ -18,17 +18,21 @@ export default function PlanetsTab({ report }) {
     { id: 'all',   label: 'All Charts'  },
   ];
 
-  const personPayload = {
+  // 'person' is injected by the backend into every /api/v1/kundali response.
+  // 'raw_person' is attached by KundaliPage.jsx as a local fallback.
+  const personPayload = report.person || report.raw_person || {
     name:         profile?.name || '',
-    year:         profile?.year,
-    month:        profile?.month,
-    day:          profile?.day,
-    hour:         profile?.hour,
-    minute:       profile?.minute,
-    lat:          profile?.lat,
-    lon:          profile?.lon,
-    timezone_str: profile?.timezone_str,
+    year:         parseInt(profile?.year, 10),
+    month:        parseInt(profile?.month, 10),
+    day:          parseInt(profile?.day, 10),
+    hour:         parseInt(profile?.hour, 10),
+    minute:       parseInt(profile?.minute, 10),
+    lat:          parseFloat(profile?.lat),
+    lon:          parseFloat(profile?.lon),
+    timezone_str: profile?.timezone_str || 'Asia/Kolkata',
   };
+
+
 
   return (
     <div className="tab-panel">

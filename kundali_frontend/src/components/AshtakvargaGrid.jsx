@@ -32,6 +32,7 @@ export default function AshtakvargaGrid({ savData, personPayload }) {
   const [bavData, setBavData] = useState(null);
   const [loadingBav, setLoadingBav] = useState(false);
   const [bavExpanded, setBavExpanded] = useState(false);
+  const [bavError, setBavError] = useState('');
   const [selectedPlanet, setSelectedPlanet] = useState('Sun');
 
   if (!savData || !savData.sav_by_house) return null;
@@ -48,16 +49,19 @@ export default function AshtakvargaGrid({ savData, personPayload }) {
     }
 
     setLoadingBav(true);
+    setBavError('');
     try {
       const data = await getAshtakvarga(personPayload);
       setBavData(data);
       setBavExpanded(true);
     } catch (err) {
       console.error('Failed to fetch Ashtakvarga:', err);
+      setBavError(err?.message || 'Failed to load Ashtakvarga details.');
     } finally {
       setLoadingBav(false);
     }
   }
+
 
   return (
     <div className="ashtakvarga-section">
@@ -106,7 +110,11 @@ export default function AshtakvargaGrid({ savData, personPayload }) {
             '▾ Load Full Ashtakvarga (7-Planet BAV Tables)'
           )}
         </button>
+        {bavError && (
+          <p className="ashtakvarga-bav-error">⚠ {bavError}</p>
+        )}
       </div>
+
 
       {/* ── Full BAV Interactive Matrix Viewer (On-demand) ────────────── */}
       {bavExpanded && bavData && (
