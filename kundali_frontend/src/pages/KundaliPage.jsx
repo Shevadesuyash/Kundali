@@ -29,11 +29,31 @@ const STR = {
     edit: '← तपशील बदला',
     error: 'काहीतरी चुकले. कृपया पुन्हा प्रयत्न करा.',
   },
+  hi: {
+    eyebrow: 'व्यक्तिगत विवरण',
+    title: 'कुंडली बनाएं',
+    intro: 'एक व्यक्ति का सटीक जन्म विवरण दर्ज करें — लग्न, ग्रह स्थिति, D1/D9 कुंडलियां, वर्ण/गण/नाड़ी वर्गीकरण और मांगलिक दोष स्थिति देखने के लिए।',
+    formLabel: 'जन्म विवरण',
+    submit: 'कुंडली बनाएं',
+    loading: 'ग्रह स्थिति की गणना हो रही है…',
+    edit: '← विवरण बदलें',
+    error: 'कुछ गलत हो गया। कृपया पुनः प्रयास करें।',
+  },
+  gu: {
+    eyebrow: 'વ્યક્તિગત અહેવાલ',
+    title: 'કુંડળી બનાવો',
+    intro: 'વ્યક્તિની ચોક્કસ જન્મ વિગતો દાખલ કરો — લગ્ન, ગ્રહ સ્થિતિ, D1/D9 કુંડળી, વર્ણ/ગણ/નાડી અને માંગલિક સ્થિતિ જોવા માટે.',
+    formLabel: 'જન્મ વિગતો',
+    submit: 'કુંડળી બનાવો',
+    loading: 'ગ્રહ સ્થિતિની ગણતરી થઈ રહી છે…',
+    edit: '← વિગતો બદલો',
+    error: 'કંઈક ખોટું થયું. કૃપા કરીને ફરી પ્રયાસ કરો.',
+  },
 };
 
 export default function KundaliPage() {
   const { lang } = useLang();
-  const c = STR[lang];
+  const c = STR[lang] || STR.en;
 
   const [searchParams] = useSearchParams();
   const profileId = searchParams.get('profileId') ? Number(searchParams.get('profileId')) : null;
