@@ -6,6 +6,7 @@ import KundaliPage from './pages/KundaliPage';
 import MatchPage from './pages/MatchPage';
 import ProfilesPage from './pages/ProfilesPage';
 import PanchangPage from './pages/PanchangPage';
+import GuidePage from './pages/GuidePage';
 
 function AppFooter() {
   const { t } = useLang();
@@ -28,6 +29,7 @@ function AppRoutes() {
         <Route path="/match"    element={<MatchPage />} />
         <Route path="/panchang" element={<PanchangPage />} />
         <Route path="/profiles" element={<ProfilesPage />} />
+        <Route path="/guide"    element={<GuidePage />} />
       </Routes>
       <AppFooter />
     </BrowserRouter>

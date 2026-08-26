@@ -25,6 +25,9 @@ export default function Navbar() {
           <NavLink to="/profiles" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>
             Profiles
           </NavLink>
+          <NavLink to="/guide" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>
+            📖 Guide
+          </NavLink>
 
           {/* Language Toggle */}
           <div className="lang-toggle" role="group" aria-label="Language">

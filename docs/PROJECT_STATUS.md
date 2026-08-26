@@ -153,7 +153,12 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 
 ## 🗺️ Master Phased Roadmap & Confirmed Implementation Plans
 
-### ✅ Completed Phases (Phases 1–8)
+### ✅ Completed Phases (Phases 1–9)
+
+* **Phase 9: Dynamic Panchang Geocoding, Vedic Astrology Knowledge Center & Jyotish Matchmaking Deep-Dive**
+  - **9A Dynamic Panchang Location Selector**: Added interactive location geocoding and preset city quick-select chips in PanchangPage.jsx/css to recalculate Sun/Moon timings and Choghadiya for any city.
+  - **9B Vedic Astrology Knowledge Center & Tooltips**: Created AstroTooltip.jsx/css with contextual ? badges across chart tabs and a comprehensive visual GuidePage.jsx/css (/guide) covering 12 Bhavas, 9 Grahas, SAV benchmarks, Dashas, and Guna Milan rules.
+  - **9C Professional Jyotish Matchmaking Deep-Dive**: Created JyotishMatchMatrix.jsx/css in MatchPage.jsx providing side-by-side planetary comparison, Sambandha mutual house axes (1-7, 5-9, 3-11, 6-8, 2-12), and Papa Samyam differential balance.
 
 * **Phase 8: 3-Way Regional Charts, Multi-Language Vedic Localization & Matchmaking AI/PDF**
   - **8A 3-Way Regional Chart Formats**: Created EastIndianChart.jsx/css (authentic Bengali/Odia fixed-sign rectangular layout in SVG). Updated ChartGrid.jsx with an intuitive 3-way toggle (North Indian Diamond, South Indian Box, East Indian Bengali) across D1, D9, and Chandra charts.
