@@ -153,7 +153,12 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 
 ## 🗺️ Master Phased Roadmap & Confirmed Implementation Plans
 
-### ✅ Completed Phases (Phases 1–7)
+### ✅ Completed Phases (Phases 1–8)
+
+* **Phase 8: 3-Way Regional Charts, Multi-Language Vedic Localization & Matchmaking AI/PDF**
+  - **8A 3-Way Regional Chart Formats**: Created EastIndianChart.jsx/css (authentic Bengali/Odia fixed-sign rectangular layout in SVG). Updated ChartGrid.jsx with an intuitive 3-way toggle (North Indian Diamond, South Indian Box, East Indian Bengali) across D1, D9, and Chandra charts.
+  - **8B Multi-Language Vedic Astrological Localization**: Expanded i18n.js with comprehensive English, Marathi, Hindi (hi), and Gujarati (gu) dictionaries. Added 4-language pill selector (EN, मराठी, हिंदी, ગુજરાતી) to Navbar.jsx.
+  - **8C Matchmaking AI Compatibility & PDF Suite**: Extended client-side PDF export (ExportPDFButton) to MatchPage.jsx and added opt-in Gemini AI compatibility narrative analysis for 36-point Guna Milan.
 
 * **Phase 7: Advanced Astrological Systems (KP System, AI Q&A, Varshapal)**
   - **7A Krishnamurti Paddhati (KP System)**: kp_engine.py (12 Placidus cusps, Sign/Star/Sub/Sub-Sub Lords, 9 Planets KP table, Ruling Planets, 4-Fold Significators), POST /api/v1/kp, KPTab.jsx/css 7th tab in Kundali report.
