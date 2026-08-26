@@ -1,0 +1,96 @@
+/* ===========================================================================
+   HelpAccordion — Expandable Beginner & Astrologer Guide Cards
+   =========================================================================== */
+
+.help-accordion {
+  background: #fdfbf7;
+  border: 1px solid #e7dfd1;
+  border-left: 4px solid var(--color-copper, #c8720a);
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.help-accordion:hover {
+  border-color: #d6cbb8;
+  border-left-color: var(--color-copper-deep, #9c4b00);
+}
+
+.help-accordion__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  background: #fbf8f2;
+}
+
+.help-accordion__title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.help-accordion__icon {
+  font-size: 1.1rem;
+}
+
+.help-accordion__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text, #2c251e);
+}
+
+.help-accordion__toggle-btn {
+  background: transparent;
+  border: 1px solid #dcd3c3;
+  border-radius: 4px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-copper-deep, #9c4b00);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.help-accordion__toggle-btn:hover {
+  background: #f4ede1;
+}
+
+.help-accordion__body {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid #eee7db;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #4b3f33;
+}
+
+.help-grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem;
+  margin-top: 0.75rem;
+}
+
+.help-card-item {
+  background: #ffffff;
+  border: 1px solid #eedec7;
+  border-radius: 6px;
+  padding: 0.75rem 0.85rem;
+}
+
+.help-card-item h5 {
+  margin: 0 0 0.35rem 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-copper-deep, #9c4b00);
+}
+
+.help-card-item p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #594a3a;
+}

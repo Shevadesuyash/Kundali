@@ -239,7 +239,11 @@ def ask_ai_assistant(request: AIChatRequest):
     try:
         if not request.question or not request.question.strip():
             raise HTTPException(status_code=400, detail="Question cannot be empty")
-        answer = ai_service.answer_chart_question(request.report, request.question.strip())
+        answer = ai_service.answer_chart_question(
+            request.report,
+            request.question.strip(),
+            request.language or "en",
+        )
         return {"question": request.question, "answer": answer}
     except HTTPException:
         raise

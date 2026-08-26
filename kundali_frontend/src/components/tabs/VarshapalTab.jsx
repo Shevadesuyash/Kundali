@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { getVarshapal } from '../../api/kundaliApi';
+import HelpAccordion from '../HelpAccordion';
+import { useLang } from '../../context/LanguageContext';
 import './VarshapalTab.css';
 import './tabs.css';
 
 /**
  * VarshapalTab — Tajika Annual Solar Return chart & Mudda Dasha panel.
  * Allows selecting target year, displays Varsha Pravesh, Varsha Lagna,
- * Muntha sign progression, and annual Mudda Dasha timeline.
+ * Muntha sign progression, annual Mudda Dasha timeline, and beginner guide.
  */
 export default function VarshapalTab({ report }) {
   const { profile } = report;
+  const { lang, t } = useLang();
   const currentYear = new Date().getFullYear();
   const [targetYear, setTargetYear] = useState(currentYear);
   const [data, setData] = useState(null);
@@ -57,8 +60,46 @@ export default function VarshapalTab({ report }) {
     currentYear + 1, currentYear + 2, currentYear + 3, currentYear + 4,
   ];
 
+  const guideTitle = lang === 'mr' ? 'ताजिक वर्षफळ, मुंथा व मुद्द दशा कशी समजून घ्यावी?' :
+                     lang === 'hi' ? 'ताजिक वर्षफल, मुंथा और मुद्धा दशा को कैसे समझें?' :
+                     lang === 'gu' ? 'તાજિક વર્ષફળ, મુંથા અને મુદ્દા દશા કેવી રીતે સમજવું?' :
+                     'How to Read Tajika Varshapal, Muntha & Mudda Dasha';
+
   return (
     <div className="tab-panel varshapal-tab" data-pdf-section="varshapal">
+      {/* Beginner & Astrologer Guide */}
+      <HelpAccordion id="varshapal-help" title={guideTitle} defaultOpen={false}>
+        <div className="help-grid-cards">
+          <div className="help-card-item">
+            <h5>{lang === 'mr' ? '१. वर्ष प्रवेश (Solar Return)' : lang === 'hi' ? '१. वर्ष प्रवेश (Solar Return)' : lang === 'gu' ? '૧. વર્ષ પ્રવેશ' : '1. Varsha Pravesh'}</h5>
+            <p>
+              {lang === 'mr' ? 'गोचर सूर्य जन्मकालीन सूर्याच्या अचूक अंशावर ज्या क्षणी परत येतो, तो त्या वर्षाचा वार्षिक जन्मक्षण मानला जातो.' :
+               lang === 'hi' ? 'गोचर सूर्य जिस क्षण जन्मकालीन सूर्य के सटीक अंश पर आता है, वह उस वर्ष का वार्षिक प्रवेश काल होता है।' :
+               lang === 'gu' ? 'ગોચર સૂર્ય જન્મ સમયના સૂર્યના અંશ પર આવે તે ક્ષણે વાર્ષિક કુંડળી બને છે.' :
+               'The exact astronomical second transit Sun returns to your natal Sun longitude.'}
+            </p>
+          </div>
+          <div className="help-card-item">
+            <h5>{lang === 'mr' ? '२. मुंथा प्रगती (Muntha)' : lang === 'hi' ? '२. मुंथा प्रगति (Muntha)' : lang === 'gu' ? '૨. મુંથા પ્રગતિ' : '2. Muntha Progression'}</h5>
+            <p>
+              {lang === 'mr' ? 'मुंथा दरवर्षी १ राशी पुढे सरकते. मुंथा ९, १०, ११ भावात असल्यास यश, पदोन्नती व धनलाभाचे वर्ष ठरते; ६, ८, १२ भावात असल्यास आरोग्याची काळजी घ्यावी.' :
+               lang === 'hi' ? 'मुंथा प्रतिवर्ष १ राशि आगे बढ़ती है। ९, १०, ११ भाव में मुंथा भाग्यवर्धक और पदोन्नति देती है; ६, ८, १२ में सावधानी रखें।' :
+               lang === 'gu' ? 'મુંથા દર વર્ષે ૧ રાશિ આગળ વધે છે. ૯, ૧૦, ૧૧ ભાવમાં તે સફળતા અને ધનલાભ આપે છે.' :
+               'Advances 1 sign/year. In houses 9, 10, 11 brings promotion & triumph; in houses 6, 8, 12 calls for health caution.'}
+            </p>
+          </div>
+          <div className="help-card-item">
+            <h5>{lang === 'mr' ? '३. मुद्द दशा (Mudda Dasha)' : lang === 'hi' ? '३. मुद्धा दशा (Mudda Dasha)' : lang === 'gu' ? '૩. મુદ્દા દશા' : '3. Mudda Dasha'}</h5>
+            <p>
+              {lang === 'mr' ? '३६० दिवसांची वार्षिक ताजिक दशा. त्या वर्षातील प्रत्येक महिन्याचे स्वतंत्र आर्थिक व कौटुंबिक फळ दाखवते.' :
+               lang === 'hi' ? '३६० दिन का वार्षिक चक्र जो उस वर्ष के प्रत्येक माह के करियर व वित्तीय परिणाम स्पष्ट करता है।' :
+               lang === 'gu' ? '૩૬૦ દિવસનું વાર્ષિક ચક્ર જે વર્ષના દરેક મહિનાનું પરિણામ દર્શાવે છે.' :
+               '360-day annual planetary timeline revealing month-by-month financial, career, and personal milestones.'}
+            </p>
+          </div>
+        </div>
+      </HelpAccordion>
+
       {/* Year Selection Controls */}
       <div className="tab-section varshapal-controls">
         <div>

@@ -1,4 +1,6 @@
 import React from 'react';
+import HelpAccordion from './HelpAccordion';
+import { useLang } from '../context/LanguageContext';
 import './JyotishMatchMatrix.css';
 
 const PLANET_KEYS = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'];
@@ -28,12 +30,19 @@ function getMutualSambandha(boySignIdx, girlSignIdx) {
 /**
  * JyotishMatchMatrix — Professional Astrological Breakdown Component.
  * Compares planetary placements, mutual house axes (Sambandha), and Papa Samyam balance.
+ * Includes interactive beginner & Jyotishi guide.
  */
 export default function JyotishMatchMatrix({ boy, girl, papaSamyam }) {
+  const { lang, t } = useLang();
   if (!boy || !girl) return null;
 
   const boyPlanets = boy.planets || {};
   const girlPlanets = girl.planets || {};
+
+  const guideTitle = lang === 'mr' ? 'ग्रह संबंध (संबंध) व पाप साम्य तुलना कशी समजून घ्यावी?' :
+                     lang === 'hi' ? 'ग्रह संबंध (संबंध) और पाप साम्य तुलना को कैसे समझें?' :
+                     lang === 'gu' ? 'ગ્રહ સંબંધ અને પાપ સામ્ય સરખામણી કેવી રીતે સમજવી?' :
+                     'How to Read Planetary Sambandha & Papa Samyam Comparison';
 
   return (
     <section className="jyotish-matrix-panel" data-pdf-section="jyotish-deep-dive">
@@ -43,6 +52,30 @@ export default function JyotishMatchMatrix({ boy, girl, papaSamyam }) {
         </h3>
         <span className="jyotish-matrix-badge">Parashari Sambandha</span>
       </div>
+
+      {/* Beginner & Astrologer Guide */}
+      <HelpAccordion id="jyotish-matrix-help" title={guideTitle} defaultOpen={false}>
+        <div className="help-grid-cards">
+          <div className="help-card-item">
+            <h5>{lang === 'mr' ? '१. परस्पर संबंध (Sambandha)' : lang === 'hi' ? '१. परस्पर संबंध (Sambandha)' : lang === 'gu' ? '૧. પરસ્પર સંબંધ' : '1. Mutual House Axes'}</h5>
+            <p>
+              {lang === 'mr' ? '१-७ (सप्तम) आणि ५-९ (नवपंचम) अक्ष अत्यंत शुभ व प्रेमळ मानले जातात. ६-८ (षडाष्टक) आणि २-१२ (द्विर्द्वादश) अक्षांमध्ये समजूतदारपणा हवा.' :
+               lang === 'hi' ? '१-७ (सप्तम) और ५-९ (नवपंचम) अक्ष अत्यंत शुभ व पूरक होते हैं। ६-८ (षडाष्टक) और २-१२ (द्विर्द्वादश) में धैर्य की आवश्यकता होती है।' :
+               lang === 'gu' ? '૧-૭ અને ૫-૯ અક્ષ અત્યંત શુભ અને સુમેળભર્યા હોય છે. ૬-૮ અને ૨-૧૨ માં ધીરજ જરૂરી છે.' :
+               '1-7 (Saptama) and 5-9 (Navapanchama) axes provide natural romance and spiritual luck. 6-8 and 2-12 require patience.'}
+            </p>
+          </div>
+          <div className="help-card-item">
+            <h5>{lang === 'mr' ? '२. पाप साम्य संतुलन' : lang === 'hi' ? '२. पाप साम्य संतुलन' : lang === 'gu' ? '૨. પાપ સામ્ય સંતુલન' : '2. Papa Samyam Balance'}</h5>
+            <p>
+              {lang === 'mr' ? 'दोघांमधील पाप गुणांचा फरक २५ पेक्षा कमी असल्यास मंगळ दोषाचे दुष्परिणाम आपोआप निष्प्रभ होतात.' :
+               lang === 'hi' ? 'दोनों के पाप अंकों में २५ से कम का अंतर होने पर मांगलिक प्रभाव स्वतः संतुलित हो जाता है।' :
+               lang === 'gu' ? 'બંનેના પાપ ગુણમાં ૨૫ થી ઓછો તફાવત માંગલિક પ્રભાવને સંતુલિત કરે છે.' :
+               'A differential balance under 25 points neutralizes standalone Manglik afflictions harmoniously.'}
+            </p>
+          </div>
+        </div>
+      </HelpAccordion>
 
       {/* 1. Papa Samyam Malefic Absorption Balance Card */}
       {papaSamyam && (
