@@ -181,16 +181,37 @@ class PanchangEngine:
             movable_idx = (half_tithi - 1) % 7
             karana_name = KARANA_NAMES[movable_idx]
 
-        # ── 6. Sunrise / Sunset / Muhurtas ────────────────────────────────
-        # Simplified standard solar calculation for local day
-        # Approximate sunrise 06:15, sunset 18:30 adjusted for latitude
-        day_of_year = target_date.timetuple().tm_yday
-        declination = 23.45 * (3.14159 / 180.0) * datetime.datetime.fromordinal(1).year  # baseline
-        # Standard robust sunrise approximation
-        sunrise_dt = tz.localize(datetime.datetime(target_date.year, target_date.month, target_date.day, 6, 15))
-        sunset_dt  = tz.localize(datetime.datetime(target_date.year, target_date.month, target_date.day, 18, 30))
+        # ── 6. Sunrise / Sunset / Muhurtas (Swiss Ephemeris exact) ─────────
+        jd_midnight = swe.julday(target_date.year, target_date.month, target_date.day, 0.0)
+        geopos = (float(lon), float(lat), 0.0)
 
-        day_duration_sec = (sunset_dt - sunrise_dt).total_seconds()
+        try:
+            _, tret_rise = swe.rise_trans(jd_midnight, swe.SUN, swe.CALC_RISE | swe.BIT_DISC_CENTER, geopos)
+            _, tret_set  = swe.rise_trans(jd_midnight, swe.SUN, swe.CALC_SET | swe.BIT_DISC_CENTER, geopos)
+
+            def jd_to_tz_dt(jd_val: float) -> datetime.datetime:
+                y, m, d, h_dec = swe.revjul(jd_val)
+                hour = int(h_dec)
+                min_dec = (h_dec - hour) * 60.0
+                minute = int(min_dec)
+                sec = int(round((min_dec - minute) * 60.0))
+                if sec >= 60:
+                    sec = 0
+                    minute += 1
+                if minute >= 60:
+                    minute = 0
+                    hour += 1
+                dt_utc = datetime.datetime(y, m, d, hour, minute, sec, tzinfo=pytz.utc)
+                return dt_utc.astimezone(tz)
+
+            sunrise_dt = jd_to_tz_dt(tret_rise[0])
+            sunset_dt  = jd_to_tz_dt(tret_set[0])
+        except Exception:
+            # Fallback in case of extreme polar latitudes
+            sunrise_dt = tz.localize(datetime.datetime(target_date.year, target_date.month, target_date.day, 6, 15))
+            sunset_dt  = tz.localize(datetime.datetime(target_date.year, target_date.month, target_date.day, 18, 30))
+
+        day_duration_sec = max((sunset_dt - sunrise_dt).total_seconds(), 3600.0)
         part_sec = day_duration_sec / 8.0
 
         def part_time(part_idx: int) -> Tuple[str, str]:

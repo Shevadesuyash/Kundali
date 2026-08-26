@@ -159,7 +159,7 @@ export default function PanchangPage() {
                 <li
                   key={idx}
                   className="panchang-loc-option"
-                  onClick={() => handleSelectLocation(loc)}
+                  onMouseDown={() => handleSelectLocation(loc)}
                 >
                   <strong>{loc.display_name.split(',')[0]}</strong>
                   <span className="panchang-loc-sub">{loc.display_name}</span>
