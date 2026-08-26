@@ -1,6 +1,7 @@
 import ChartGrid from '../ChartGrid';
 import ManglikBadge from '../ManglikBadge';
 import TransitTracker from '../TransitTracker';
+import AstroTooltip from '../AstroTooltip';
 import { CLASSIFICATION_INFO } from '../../utils/astrology';
 import { useLang } from '../../context/LanguageContext';
 import './tabs.css';
@@ -40,7 +41,10 @@ export default function OverviewTab({ report }) {
       {/* Stat Cards */}
       <dl className="kundali-report__stats-grid" data-pdf-section="stats">
         <div className="stat-card">
-          <dt>{t('report.ascendant')}</dt>
+          <dt>
+            {t('report.ascendant')}
+            <AstroTooltip title="Ascendant (Lagna)" content="The sign rising on the eastern horizon at your birth. Represents your physical vitality, personality, and foundational life path." learnMoreId="houses" />
+          </dt>
           <dd className="stat-card__val">{ascendant.sign}</dd>
           <dd className="stat-card__sub mono">{ascendant.degree_str}</dd>
         </div>
@@ -50,7 +54,10 @@ export default function OverviewTab({ report }) {
           <dd className="stat-card__sub mono">{t('report.pada')} {ascendant.pada}</dd>
         </div>
         <div className="stat-card">
-          <dt>{t('report.moon.sign')}</dt>
+          <dt>
+            {t('report.moon.sign')}
+            <AstroTooltip title="Moon Sign (Rashi)" content="The sign occupied by the Moon at birth. Governs your emotional core, mind (Manas), intuition, and perceptual reactions." learnMoreId="planets" />
+          </dt>
           <dd className="stat-card__val">{moon_sign}</dd>
           <dd className="stat-card__sub">{t('report.lord')}: <strong>{classification.moon_sign_lord}</strong></dd>
         </div>
@@ -67,20 +74,23 @@ export default function OverviewTab({ report }) {
           </dd>
         </div>
         <div className="stat-card">
-          <dt>{t('report.manglik')}</dt>
+          <dt>
+            {t('report.manglik')}
+            <AstroTooltip title="Manglik Dosha" content="Evaluated from Mars placements in houses 1, 4, 7, 8, 12. Indicates high energetic drive requiring balance in partnerships." learnMoreId="doshas" />
+          </dt>
           <dd className="stat-card__val">
-            {manglik_dosha.is_manglik
-              ? (manglik_dosha.is_cancelled ? t('report.cancelled') : 'Yes')
-              : t('report.clear')}
+            <ManglikBadge manglik={manglik_dosha} />
           </dd>
-          <dd className="stat-card__sub">Mars in H{manglik_dosha.mars_house_lagna}</dd>
         </div>
       </dl>
 
       {/* Classification Row */}
       <div className="kundali-report__classifications" data-pdf-section="classifications">
         <div className="class-card">
-          <span className="class-card__title">{t('report.varna')}</span>
+          <span className="class-card__title">
+            {t('report.varna')}
+            <AstroTooltip title="Varna" content="Spiritual temperaments: Brahmin (intellectual), Kshatriya (leader), Vaishya (commercial), Shudra (productive)." learnMoreId="matchmaking" />
+          </span>
           <h4 className="class-card__name">{classification.varna}</h4>
           {varnaInfo && (
             <p className="class-card__desc">

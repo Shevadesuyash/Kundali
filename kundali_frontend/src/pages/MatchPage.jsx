@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import PartnerSlot from '../components/PartnerSlot';
 import KundaliReport from '../components/KundaliReport';
 import GunaMilanScorecard from '../components/GunaMilanScorecard';
+import JyotishMatchMatrix from '../components/JyotishMatchMatrix';
 import ExportPDFButton from '../components/ExportPDFButton';
 import { LoadingState, ErrorState } from '../components/StatusStates';
 import { getMatch, ApiError } from '../api/kundaliApi';
@@ -190,6 +191,13 @@ export default function MatchPage() {
           <div className="panel" data-pdf-section="guna-milan">
             <GunaMilanScorecard gunaMilan={result.guna_milan} manglikAnalysis={result.manglik_analysis} />
           </div>
+
+          {/* Jyotish Astrologer's Comparative Matrix */}
+          <JyotishMatchMatrix
+            boy={result.boy}
+            girl={result.girl}
+            papaSamyam={result.papa_samyam}
+          />
 
           {/* Optional Gemini AI Compatibility Narrative Reading */}
           {result.ai_reading && (

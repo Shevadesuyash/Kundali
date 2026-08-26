@@ -1,26 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { getPanchang } from '../api/kundaliApi';
+import React, { useState, useEffect, useRef } from 'react';
+import { getPanchang, geocodeSearch } from '../api/kundaliApi';
 import { LoadingState, ErrorState } from '../components/StatusStates';
 import './PanchangPage.css';
+
+const PRESET_CITIES = [
+  { name: 'Pune', lat: 18.5204, lon: 73.8567, tz: 'Asia/Kolkata' },
+  { name: 'Mumbai', lat: 19.0760, lon: 72.8777, tz: 'Asia/Kolkata' },
+  { name: 'New Delhi', lat: 28.6139, lon: 77.2090, tz: 'Asia/Kolkata' },
+  { name: 'Bengaluru', lat: 12.9716, lon: 77.5946, tz: 'Asia/Kolkata' },
+  { name: 'Kolkata', lat: 22.5726, lon: 88.3639, tz: 'Asia/Kolkata' },
+  { name: 'Chennai', lat: 13.0827, lon: 80.2707, tz: 'Asia/Kolkata' },
+  { name: 'Ahmedabad', lat: 23.0225, lon: 72.5714, tz: 'Asia/Kolkata' },
+  { name: 'London', lat: 51.5074, lon: -0.1278, tz: 'Europe/London' },
+  { name: 'New York', lat: 40.7128, lon: -74.0060, tz: 'America/New_York' },
+  { name: 'Dubai', lat: 25.2048, lon: 55.2708, tz: 'Asia/Dubai' },
+];
 
 /**
  * PanchangPage — Standalone Daily Hindu Panchang & Muhurta page.
  * Displays the 5 Limbs, Auspicious & Inauspicious timings, Choghadiya slots,
- * and Daily Devotional Deity & Vedic Mantra.
+ * Daily Devotional Deity & Vedic Mantra with dynamic date and location search.
  */
 export default function PanchangPage() {
   const todayStr = new Date().toISOString().slice(0, 10);
   const [selectedDate, setSelectedDate] = useState(todayStr);
+  const [currentCity, setCurrentCity] = useState(PRESET_CITIES[0]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const searchTimeoutRef = useRef(null);
 
+  // Load Panchang data whenever date or city coordinates change
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
     setError('');
 
-    getPanchang({ date: selectedDate })
+    getPanchang({
+      date: selectedDate,
+      lat: currentCity.lat,
+      lon: currentCity.lon,
+      tz: currentCity.tz,
+    })
       .then((res) => {
         if (isMounted) {
           setData(res);
@@ -37,25 +63,64 @@ export default function PanchangPage() {
     return () => {
       isMounted = false;
     };
-  }, [selectedDate]);
+  }, [selectedDate, currentCity]);
+
+  // Geocoding search debouncer
+  const handleSearchChange = (e) => {
+    const q = e.target.value;
+    setSearchQuery(q);
+
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+
+    if (q.trim().length < 2) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    setIsSearching(true);
+    searchTimeoutRef.current = setTimeout(async () => {
+      try {
+        const results = await geocodeSearch(q.trim());
+        setSearchResults(results || []);
+        setShowDropdown(true);
+      } catch (err) {
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 350);
+  };
+
+  const handleSelectLocation = (loc) => {
+    const cityName = loc.display_name.split(',')[0];
+    setCurrentCity({
+      name: cityName,
+      lat: loc.lat,
+      lon: loc.lon,
+      tz: loc.timezone_str || 'Asia/Kolkata',
+    });
+    setSearchQuery('');
+    setShowDropdown(false);
+  };
 
   return (
     <main className="container panchang-page">
-      {/* Header & Date Controls */}
+      {/* Header & Date / Location Controls */}
       <header className="panchang-page__header">
         <div className="panchang-page__title-wrap">
           <p className="eyebrow">Dainik Vedic Panchang</p>
           <h1 className="panchang-page__title">Daily Hindu Panchang</h1>
           {data && (
             <p className="panchang-page__date-display">
-              📅 {data.formatted_date} · 📍 Pune, India (IST)
+              📅 {data.formatted_date} · 📍 <strong>{currentCity.name}</strong> ({currentCity.lat.toFixed(2)}°N, {currentCity.lon.toFixed(2)}°E)
             </p>
           )}
         </div>
 
         <div className="panchang-page__controls">
           <div className="panchang-date-picker">
-            <span>📅 Select Date:</span>
+            <span>📅 Date:</span>
             <input
               type="date"
               value={selectedDate}
@@ -74,8 +139,54 @@ export default function PanchangPage() {
         </div>
       </header>
 
+      {/* Location Selector Bar */}
+      <section className="panchang-location-bar">
+        <div className="panchang-location-search-wrap">
+          <span className="panchang-loc-icon">📍</span>
+          <input
+            type="text"
+            className="panchang-loc-input"
+            placeholder="Search any city or village for local sunrise/timings..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            onFocus={() => searchResults.length > 0 && setShowDropdown(true)}
+          />
+          {isSearching && <span className="panchang-loc-spinner">⏳</span>}
+
+          {showDropdown && searchResults.length > 0 && (
+            <ul className="panchang-loc-dropdown">
+              {searchResults.map((loc, idx) => (
+                <li
+                  key={idx}
+                  className="panchang-loc-option"
+                  onClick={() => handleSelectLocation(loc)}
+                >
+                  <strong>{loc.display_name.split(',')[0]}</strong>
+                  <span className="panchang-loc-sub">{loc.display_name}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Preset City Chips */}
+        <div className="panchang-city-presets">
+          <span className="panchang-presets-label">Popular:</span>
+          {PRESET_CITIES.map((c) => (
+            <button
+              key={c.name}
+              type="button"
+              className={`panchang-city-chip${currentCity.name === c.name ? ' is-active' : ''}`}
+              onClick={() => setCurrentCity(c)}
+            >
+              {c.name}
+            </button>
+          ))}
+        </div>
+      </section>
+
       {/* Loading / Error States */}
-      {loading && <LoadingState message="Calculating astronomical Panchang coordinates..." />}
+      {loading && <LoadingState message={`Calculating astronomical Panchang coordinates for ${currentCity.name}...`} />}
       {error && <ErrorState message={error} onRetry={() => setSelectedDate(selectedDate)} />}
 
       {/* Main Content */}
@@ -141,7 +252,7 @@ export default function PanchangPage() {
             {/* Auspicious */}
             <div className="muhurta-box muhurta-box--auspicious">
               <h3 className="muhurta-box__title">
-                <span>✦</span> Auspicious Muhurtas (Shubha Kaal)
+                <span>✦</span> Auspicious Muhurtas ({currentCity.name})
               </h3>
               <div className="muhurta-list">
                 <div className="muhurta-item">
@@ -162,7 +273,7 @@ export default function PanchangPage() {
             {/* Inauspicious */}
             <div className="muhurta-box muhurta-box--inauspicious">
               <h3 className="muhurta-box__title">
-                <span>⚠️</span> Inauspicious Timings (Ashubha Kaal)
+                <span>⚠️</span> Inauspicious Timings ({currentCity.name})
               </h3>
               <div className="muhurta-list">
                 <div className="muhurta-item">
@@ -184,7 +295,7 @@ export default function PanchangPage() {
           {/* 4. Daytime Choghadiya Table */}
           <section className="choghadiya-section">
             <h3 className="choghadiya-title">
-              <span>⏱️</span> Daytime Choghadiya (Day Muhurta Timings)
+              <span>⏱️</span> Daytime Choghadiya Muhurtas for {currentCity.name}
             </h3>
             <div className="choghadiya-table-wrapper">
               <table className="choghadiya-table">
