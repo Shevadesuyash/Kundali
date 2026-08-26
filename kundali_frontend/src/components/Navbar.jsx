@@ -44,6 +44,22 @@ export default function Navbar() {
             >
               मराठी
             </button>
+            <button
+              type="button"
+              className={`lang-btn${lang === 'hi' ? ' is-active' : ''}`}
+              onClick={() => setLang('hi')}
+              aria-pressed={lang === 'hi'}
+            >
+              हिंदी
+            </button>
+            <button
+              type="button"
+              className={`lang-btn${lang === 'gu' ? ' is-active' : ''}`}
+              onClick={() => setLang('gu')}
+              aria-pressed={lang === 'gu'}
+            >
+              ગુજરાતી
+            </button>
           </div>
         </nav>
       </div>

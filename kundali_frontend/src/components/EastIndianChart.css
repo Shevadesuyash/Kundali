@@ -1,0 +1,70 @@
+.east-chart-wrap {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.east-chart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  font-family: var(--font-sans, system-ui, sans-serif);
+}
+
+.east-chart-bg {
+  fill: #fffdfa;
+}
+
+.east-chart-border {
+  fill: none;
+  stroke: var(--color-copper-deep, #9c4b00);
+  stroke-width: 2.5;
+}
+
+.east-chart-line {
+  stroke: var(--color-copper, #c8720a);
+  stroke-width: 1.5;
+}
+
+.east-chart-lagna-fill {
+  fill: rgba(200, 114, 10, 0.12);
+}
+
+.east-chart-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  fill: var(--color-copper-deep, #9c4b00);
+}
+
+.east-chart-subtitle {
+  font-size: 11px;
+  fill: var(--color-text-dim, #6b7280);
+}
+
+.east-sign-label {
+  font-size: 11px;
+  font-weight: 700;
+  fill: var(--color-copper-deep, #9c4b00);
+}
+
+.is-lagna-sign {
+  fill: #b45309;
+  font-weight: 800;
+}
+
+.east-lagna-marker {
+  font-size: 10px;
+  font-weight: 800;
+  fill: #dc2626;
+}
+
+.east-planet-name {
+  font-size: 11px;
+  font-weight: 700;
+  fill: #1f2937;
+}
+
+.east-planet-name.is-retro {
+  fill: #b91c1c;
+}

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import NorthIndianChart from './NorthIndianChart';
+import EastIndianChart from './EastIndianChart';
 import { useLang } from '../context/LanguageContext';
 import { signAbbr } from '../utils/i18n';
 import './ChartGrid.css';
@@ -43,7 +44,6 @@ export default function ChartGrid({ houses, title, ascendantSignIndex, allowTogg
           style={{ gridRow: row + 1, gridColumn: col + 1 }}
         >
           <div className="chart-grid__header">
-            {/* Sign abbreviation in selected language */}
             <span className="chart-grid__sign">{signAbbr(signIdx, lang)}</span>
             {houseData && <span className="chart-grid__house-num">{t('chart.lagna.label').slice(0, 1)}{houseData.house}</span>}
           </div>
@@ -54,7 +54,6 @@ export default function ChartGrid({ houses, title, ascendantSignIndex, allowTogg
                 className={`chart-grid__planet${p.retrograde ? ' is-retro' : ''}`}
                 title={`${p.planet} ${p.degree_str}${p.retrograde ? ` (${t('chart.retrograde')})` : ''}`}
               >
-                {/* Use language-appropriate abbreviation */}
                 {lang === 'mr' ? getMrAbbr(p.abbr) : p.abbr}
                 {p.retrograde && <sup>व</sup>}
               </span>
@@ -83,11 +82,20 @@ export default function ChartGrid({ houses, title, ascendantSignIndex, allowTogg
           >
             {t('chart.north.btn')}
           </button>
+          <button
+            type="button"
+            className={`chart-style-btn${chartStyle === 'east' ? ' is-active' : ''}`}
+            onClick={() => setChartStyle('east')}
+          >
+            {t('chart.east.btn') || 'East (Bengali)'}
+          </button>
         </div>
       )}
 
       {chartStyle === 'north' ? (
         <NorthIndianChart houses={houses} title={title} lang={lang} />
+      ) : chartStyle === 'east' ? (
+        <EastIndianChart houses={houses} title={title} ascendantSignIndex={ascendantSignIndex} lang={lang} />
       ) : (
         <div className="chart-grid-wrap">
           <div className="chart-grid">
