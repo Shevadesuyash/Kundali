@@ -1,9 +1,11 @@
+import React from 'react';
 import { NavLink } from 'react-router-dom';
+import GoogleTranslate from './GoogleTranslate';
 import { useLang } from '../context/LanguageContext';
 import './Navbar.css';
 
 export default function Navbar() {
-  const { lang, setLang, t } = useLang();
+  const { t } = useLang();
 
   return (
     <header className="navbar">
@@ -29,41 +31,8 @@ export default function Navbar() {
             📖 Guide
           </NavLink>
 
-          {/* Language Toggle */}
-          <div className="lang-toggle" role="group" aria-label="Language">
-            <button
-              type="button"
-              className={`lang-btn${lang === 'en' ? ' is-active' : ''}`}
-              onClick={() => setLang('en')}
-              aria-pressed={lang === 'en'}
-            >
-              EN
-            </button>
-            <button
-              type="button"
-              className={`lang-btn${lang === 'mr' ? ' is-active' : ''}`}
-              onClick={() => setLang('mr')}
-              aria-pressed={lang === 'mr'}
-            >
-              मराठी
-            </button>
-            <button
-              type="button"
-              className={`lang-btn${lang === 'hi' ? ' is-active' : ''}`}
-              onClick={() => setLang('hi')}
-              aria-pressed={lang === 'hi'}
-            >
-              हिंदी
-            </button>
-            <button
-              type="button"
-              className={`lang-btn${lang === 'gu' ? ' is-active' : ''}`}
-              onClick={() => setLang('gu')}
-              aria-pressed={lang === 'gu'}
-            >
-              ગુજરાતી
-            </button>
-          </div>
+          {/* Full-Site Real-Time Google Translation Bar */}
+          <GoogleTranslate />
         </nav>
       </div>
     </header>
