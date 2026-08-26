@@ -1,24 +1,25 @@
-import { useState } from 'react';
+import React from 'react';
+import { useLang } from '../context/LanguageContext';
 import './ReportTabs.css';
 
 const TABS = [
-  { id: 'overview',  icon: '🪐', label: 'Overview' },
-  { id: 'planets',   icon: '☿',  label: 'Planets'  },
-  { id: 'dasha',     icon: '⏳', label: 'Dasha'    },
-  { id: 'doshas',    icon: '⚖️', label: 'Doshas'   },
-  { id: 'panchang',  icon: '📿', label: 'Panchang' },
-  { id: 'kp',        icon: '📐', label: 'KP System' },
-  { id: 'varshapal', icon: '☀️', label: 'Varshapal' },
-  { id: 'health',    icon: '🌿', label: 'Health'   },
+  { id: 'overview',  icon: '🪐' },
+  { id: 'planets',   icon: '☿'  },
+  { id: 'dasha',     icon: '⏳' },
+  { id: 'doshas',    icon: '⚖️' },
+  { id: 'panchang',  icon: '📿' },
+  { id: 'kp',        icon: '📐' },
+  { id: 'varshapal', icon: '☀️' },
+  { id: 'health',    icon: '🌿' },
 ];
 
 /**
- * ReportTabs — top-level 5-tab navigator for the Kundali Report.
- * Props:
- *   activeTab: string  — current active tab id
- *   onChange: (id) => void
+ * ReportTabs — top-level 8-tab navigator for the Kundali Report.
+ * Localized dynamically via useLang().
  */
 export default function ReportTabs({ activeTab, onChange }) {
+  const { t } = useLang();
+
   return (
     <nav className="report-tabs" role="tablist" aria-label="Kundali report sections">
       {TABS.map((tab) => (
@@ -31,7 +32,7 @@ export default function ReportTabs({ activeTab, onChange }) {
           onClick={() => onChange(tab.id)}
         >
           <span className="report-tab__icon">{tab.icon}</span>
-          <span className="report-tab__label">{tab.label}</span>
+          <span className="report-tab__label">{t(`tab.${tab.id}`) || tab.id}</span>
         </button>
       ))}
     </nav>
