@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { askAIChat } from '../api/kundaliApi';
+import { useLang } from '../context/LanguageContext';
 import './AIAssistant.css';
 
 const QUICK_CHIPS = [
@@ -92,6 +93,7 @@ export default function AIAssistant({ report }) {
   const [loading, setLoading] = useState(false);
   const bodyRef = useRef(null);
 
+  const { lang, t } = useLang();
   const { profile, ascendant, moon_sign } = report || {};
   const personName = profile?.name || 'Friend';
 
@@ -113,7 +115,7 @@ export default function AIAssistant({ report }) {
     setLoading(true);
 
     try {
-      const res = await askAIChat(report, q);
+      const res = await askAIChat(report, q, lang);
       setMessages([...newMessages, { sender: 'bot', text: res.answer || 'Reading unavailable.' }]);
     } catch (err) {
       setMessages([

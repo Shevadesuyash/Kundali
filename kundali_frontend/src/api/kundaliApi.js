@@ -198,8 +198,8 @@ export function getKPSystem(person) {
 // ---------------------------------------------------------------------------
 // Phase 7B: Context-Aware Interactive AI Assistant
 // ---------------------------------------------------------------------------
-export function askAIChat(report, question) {
-  return postJSON('/api/v1/ai-chat', { report, question });
+export function askAIChat(report, question, language = 'en') {
+  return postJSON('/api/v1/ai-chat', { report, question, language });
 }
 
 // ---------------------------------------------------------------------------

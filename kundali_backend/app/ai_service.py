@@ -125,10 +125,10 @@ def generate_match_reading(match_report: Dict) -> Optional[str]:
         return None
 
 
-def answer_chart_question(report: Dict, question: str) -> Optional[str]:
+def answer_chart_question(report: Dict, question: str, language: str = "en") -> Optional[str]:
     """
     Answers an interactive user question regarding a computed Kundali chart
-    using Gemini 2.0 Flash with context-aware facts.
+    using Gemini 2.5 Flash with context-aware facts in the user's preferred language.
     """
     model = _get_client()
     if model is None:
@@ -167,6 +167,14 @@ def answer_chart_question(report: Dict, question: str) -> Optional[str]:
         "jupiter_transit": transits.get("jupiter_gochara", {}).get("description"),
     }
 
+    lang_instruction = ""
+    if language == "mr":
+        lang_instruction = "\n4. MANDATORY: Write the ENTIRE response in authentic, fluent Marathi (मराठी) using proper Vedic Jyotish terminology (e.g. ग्रह, दशा, महादशा, लग्न, राशी, उपाय, रत्न).\n"
+    elif language == "hi":
+        lang_instruction = "\n4. MANDATORY: Write the ENTIRE response in authentic, fluent Hindi (हिंदी) using proper Vedic Jyotish terminology (e.g. ग्रह, दशा, महादशा, लग्न, राशि, उपाय, रत्न).\n"
+    elif language == "gu":
+        lang_instruction = "\n4. MANDATORY: Write the ENTIRE response in authentic, fluent Gujarati (ગુજરાતી) using proper Vedic Jyotish terminology (e.g. ગ્રહ, દશા, મહાદશા, લગ્ન, રાશિ, ઉપાય, રત્ન).\n"
+
     prompt = (
         "You are an expert, compassionate Vedic Astrologer providing a personalized reading. "
         "Using ONLY the verified chart facts below (computed with Swiss Ephemeris), "
@@ -174,7 +182,8 @@ def answer_chart_question(report: Dict, question: str) -> Optional[str]:
         "IMPORTANT RULES:\n"
         "1. Start with an '### ⚡ Executive Summary' section containing a direct 2-3 sentence verdict so the user gets their answer instantly.\n"
         "2. Follow with short bulleted points under '### 🔍 Key Astrological Factors', '### 🌟 Opportunities & Timing', and '### 🌿 Vedic Remedies & Guidance'.\n"
-        "3. Keep the entire response crisp, punchy, and under 250 words total. Do not write long theoretical essays.\n\n"
+        "3. Keep the entire response crisp, punchy, and under 250 words total. Do not write long theoretical essays."
+        f"{lang_instruction}\n\n"
         f"VERIFIED CHART FACTS:\n{json.dumps(facts, indent=2)}\n\n"
         f"USER QUESTION: {question}"
     )

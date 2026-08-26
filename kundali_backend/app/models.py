@@ -167,6 +167,7 @@ class BulkMatchRequest(BaseModel):
 class AIChatRequest(BaseModel):
     report: Dict[str, Any]
     question: str
+    language: Optional[str] = "en"
 
 
 class VarshapalRequest(BaseModel):
