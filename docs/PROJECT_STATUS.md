@@ -262,6 +262,128 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 
 ---
 
+### [2026-08-26 17:20 IST] — Commit `c346198` / Contextual Beginner Help Guides & Native Multi-Language AI
+- **Summary**: Implemented contextual beginner & astrologer guide cards across all tabs and switched to a zero-overhead native multi-language architecture with multi-lingual Gemini AI responses.
+- **Status**: Completed & Verified.
+- **Files Modified / Created**:
+  - `kundali_frontend/src/components/HelpAccordion.jsx` (Created)
+  - `kundali_frontend/src/components/HelpAccordion.css` (Created)
+  - `kundali_frontend/src/components/tabs/PlanetsTab.jsx` (Modified - added Dignities, Pada & SAV guide)
+  - `kundali_frontend/src/components/tabs/DashaTab.jsx` (Modified - added Vimshottari & Raj Yoga guide)
+  - `kundali_frontend/src/components/tabs/DoshasTab.jsx` (Modified - added Mangal Dosha & Papa Samyam guide)
+  - `kundali_frontend/src/components/tabs/KPTab.jsx` (Modified - added KP Sub Lord & Placidus Cusps guide)
+  - `kundali_frontend/src/components/tabs/VarshapalTab.jsx` (Modified - added Varsha Pravesh & Muntha guide)
+  - `kundali_frontend/src/components/JyotishMatchMatrix.jsx` (Modified - added Sambandha house axes guide)
+  - `kundali_frontend/src/components/Navbar.jsx` (Modified - removed Google script, added native language pills)
+  - `kundali_frontend/src/components/AIAssistant.jsx` (Modified - passed active language to AI)
+  - `kundali_backend/app/ai_service.py` (Modified - added multi-lingual prompt directives for Gemini 2.5 Flash)
+  - `kundali_backend/app/main.py` & `models.py` (Modified - accepted language parameter in `/api/v1/ai-chat`)
+- **Details & Decisions**:
+  1. Per-Object Help: Added expandable `HelpAccordion` to all 8 tabs and match matrix so beginner users understand what numbers, bindus, and dignities mean without prior astrological knowledge.
+  2. Native Zero-Overhead Localization: Eliminated external Google Translate iframe/script overhead, removing the intrusive top bar overlay and ensuring 100% authentic Vedic terms.
+  3. Multi-Lingual AI: Gemini generates executive summaries and astrological readings directly in Marathi, Hindi, Gujarati, or English based on the active language pill.
+
+---
+
+### [2026-08-26 16:50 IST] — Commit `d107084` / Real-Time Full-Site Google Translation Integration
+- **Summary**: Tested Google Translate Element integration; identified script overhead, tracking, and top banner overlay issues that led to building the native Vedic dictionary + multi-lingual Gemini AI architecture in `c346198`.
+- **Status**: Completed & Subsequently Optimized.
+- **Files Modified / Created**: `kundali_frontend/src/components/GoogleTranslate.jsx/css`, `kundali_frontend/src/components/Navbar.jsx`.
+
+---
+
+### [2026-08-26 16:45 IST] — Commit `6b8e4f5` & `217c4e9` / Phase 10: Full-Suite Deep Multi-Language Translation
+- **Summary**: Implemented dynamic 8-tab report localization and expanded `i18n.js` with full English, Marathi, Hindi (`hi`), and Gujarati (`gu`) dictionaries.
+- **Status**: Completed & Verified.
+- **Files Modified**:
+  - `kundali_frontend/src/components/ReportTabs.jsx` (Localized all 8 tabs via `useLang()`)
+  - `kundali_frontend/src/utils/i18n.js` (Expanded with Planet table headers, 9 Dignities, 27 Nakshatras, 12 Signs, Form inputs, and Guna Milan scores)
+- **Details & Decisions**:
+  - Tab keys (`tab.overview`, `tab.planets`, `tab.dasha`, `tab.doshas`, `tab.panchang`, `tab.kp`, `tab.varshapal`, `tab.health`) dynamically translated.
+  - Planet table column headers translated into Devanagari and Gujarati.
+
+---
+
+### [2026-08-26 16:40 IST] — Commit `a0a0b3b` / Fix: String Coordinates in Panchang Location Search
+- **Summary**: Resolved blank screen crash when selecting a searched city from the Panchang dropdown.
+- **Status**: Completed & Verified.
+- **Root Cause**: Geocoding results from OpenStreetMap/Nominatim return `lat` and `lon` as strings (e.g. `'19.0760'`), which caused `.toFixed(2)` in React JSX to throw `TypeError: currentCity.lat.toFixed is not a function`.
+- **Fix**: Wrapped coordinates in `parseFloat()` in `handleSelectLocation` and `displayLat`/`displayLon` helpers; added safety checks for all Panchang sub-objects.
+- **Files Modified**: `kundali_frontend/src/pages/PanchangPage.jsx`.
+
+---
+
+### [2026-08-26 15:58 IST] — Commit `dd85039` / Panchang Precision & Location Event Fix
+- **Summary**: Upgraded Panchang engine to Swiss Ephemeris astronomical calculations and improved dropdown click handling.
+- **Status**: Completed & Verified.
+- **Files Modified**:
+  - `kundali_backend/app/panchang_engine.py`: Replaced fixed hour approximations with Swiss Ephemeris `swe.rise_trans` for exact local astronomical Sunrise, Sunset, Brahma Muhurta, Abhijit, and Choghadiya calculations worldwide.
+  - `kundali_frontend/src/pages/PanchangPage.jsx`: Used `onMouseDown` for search dropdown item selection to prevent blur dismissal before state update.
+- **Verification**: Verified via Python client across Pune (06:19 AM - 06:52 PM), New York (06:18 AM - 07:36 PM), London (06:04 AM - 07:58 PM), and Dubai (05:58 AM - 06:43 PM).
+
+---
+
+### [2026-08-26 15:50 IST] — Commit `6b9ca5b` / Phase 9: Dynamic Panchang, Astro Guide & Jyotish Match Matrix
+- **Summary**: Implemented all 3 Phase 9 streams: Dynamic Panchang Location Geocoding with City Presets (9A), Vedic Knowledge Base & Contextual Tooltips (9B), and Professional Jyotish Matchmaking Deep-Dive with Sambandha axes (9C).
+- **Status**: Completed & Verified end-to-end.
+- **Files Modified / Created**:
+  - `kundali_frontend/src/pages/PanchangPage.jsx/css` (Modified - dynamic location search & 10 preset cities)
+  - `kundali_frontend/src/components/AstroTooltip.jsx/css` (Created - interactive `?` popovers)
+  - `kundali_frontend/src/pages/GuidePage.jsx/css` (Created - Vedic Knowledge Center at `/guide`)
+  - `kundali_frontend/src/components/JyotishMatchMatrix.jsx/css` (Created - professional comparative matchmaking matrix)
+  - `kundali_frontend/src/pages/MatchPage.jsx` (Modified - rendered JyotishMatchMatrix)
+  - `kundali_frontend/src/components/tabs/OverviewTab.jsx` (Modified - attached AstroTooltips)
+  - `kundali_frontend/src/components/Navbar.jsx` (Modified - added Guide link)
+  - `kundali_frontend/src/App.jsx` (Modified - added `/guide` route)
+
+---
+
+### [2026-08-26 15:30 IST] — Commit `d7176a1` / Phase 8: 3-Way Regional Charts, Multi-Language i18n, Match PDF/AI
+- **Summary**: Implemented all 3 Phase 8 streams: East Indian (Bengali/Odia) SVG Chart and 3-way chart style switcher (8A), Expanded 4-Language Localization for English, Marathi, Hindi, Gujarati (8B), and Matchmaking PDF export + AI compatibility reading (8C).
+- **Status**: Completed & Verified end-to-end.
+- **Files Modified / Created**:
+  - `kundali_frontend/src/components/EastIndianChart.jsx/css` (Created)
+  - `kundali_frontend/src/components/ChartGrid.jsx` (Modified - 3-way chart style switcher)
+  - `kundali_frontend/src/utils/i18n.js` (Modified - added Hindi, Gujarati, and chart labels)
+  - `kundali_frontend/src/components/Navbar.jsx` (Modified - 4-language toggle buttons)
+  - `kundali_frontend/src/pages/MatchPage.jsx` (Modified - added PDF export, AI narrative, and localization)
+
+---
+
+### [2026-08-25 18:45 IST] — Commit `c70b5c5` & `f75d6bf` / Phase 7: Advanced Astrological Systems (KP System, AI Q&A, Varshapal)
+- **Summary**: Implemented all 3 Phase 7 streams: KP System with Placidus Cusps & Sub Lords (7A), Context-Aware Interactive AI Q&A Assistant with Gemini 2.5 Flash (7B), and Tajika Varshapal with Annual Solar Return & Muntha Progression (7C).
+- **Status**: Completed & Verified.
+- **Files Created / Modified**:
+  - `kundali_backend/app/kp_engine.py` (Created - Placidus cusps, Sub Lords, Ruling Planets, Significators)
+  - `kundali_backend/app/varshapal_engine.py` (Created - Solar Return binary search, Muntha, Mudda Dasha)
+  - `kundali_backend/app/ai_service.py` (Modified - context-aware chart Q&A prompts)
+  - `kundali_backend/app/main.py` (Added `/api/v1/kp`, `/api/v1/ai-chat`, `/api/v1/varshapal`)
+  - `kundali_frontend/src/components/tabs/KPTab.jsx/css` (Created - 7th tab)
+  - `kundali_frontend/src/components/tabs/VarshapalTab.jsx/css` (Created - 8th tab)
+  - `kundali_frontend/src/components/AIAssistant.jsx/css` (Created - interactive chat drawer)
+  - `kundali_frontend/src/components/KundaliReport.jsx` & `ReportTabs.jsx` (Updated to 8-tab suite)
+
+---
+
+### [2026-08-25 15:30 IST] — Commit `0b75fdc` / Phase 5 & Phase 6: Transits, PDF Export, Bulk Match, Gemstones, Dual Panchang & Kaal Sarp
+- **Summary**: Implemented Phase 5 (Real-time Transits/Sade Sati, Client-side PDF Export, Bulk Match Matrix) and Phase 6 (Gemstone/Rudraksha Recommendation Engine, Dual Panchang Architecture, 12 Kaal Sarp Variants).
+- **Status**: Completed & Verified.
+- **Files Created / Modified**:
+  - `kundali_backend/app/transit_engine.py` (Created - live Gochara & Sade Sati)
+  - `kundali_backend/app/gemstone_engine.py` (Created - Lagna/5th/9th/10th stones & Rudraksha)
+  - `kundali_backend/app/panchang_engine.py` (Created - 5 Limbs, Muhurtas, Choghadiya)
+  - `kundali_backend/app/yoga_engine.py` (Updated - 12 Kaal Sarp variants)
+  - `kundali_backend/app/main.py` (Added `/transits/live`, `/match-bulk`, `/panchang`)
+  - `kundali_frontend/src/utils/pdfExport.js` (Created - multi-tab high-resolution PDF generator)
+  - `kundali_frontend/src/components/ExportPDFButton.jsx/css` (Created)
+  - `kundali_frontend/src/components/TransitTracker.jsx/css` (Created)
+  - `kundali_frontend/src/components/BulkMatchMatrix.jsx/css` (Created)
+  - `kundali_frontend/src/components/GemstonePanel.jsx/css` (Created)
+  - `kundali_frontend/src/pages/PanchangPage.jsx/css` (Created)
+  - `kundali_frontend/src/components/tabs/PanchangTab.jsx` (Created - 6th tab)
+
+---
+
 ### [2026-08-25 12:15 IST] — Session `bb79b74f` / Phase 5-7 Roadmap Lock & Status Directives
 - **Summary**: Confirmed user decisions on PDF export, dual Panchang, transit tracker locations, and gitignored AI keys; initialized `.agents` directives and living status ledger.
 - **Status**: Completed & Ready for Phase 5 Execution.
@@ -271,8 +393,8 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
   - `GEMINI.md` (Created)
   - `docs/PROJECT_STATUS.md` (Updated & Expanded)
 - **Details & Decisions**:
-  1. PDF Export confirmed as single comprehensive document including all 5 tabs.
-  2. Panchang confirmed as dual-mode: standalone daily `/panchang` page + 6th tab in Kundali report with Short/Full toggle.
+  1. PDF Export confirmed as single comprehensive document including all tabs.
+  2. Panchang confirmed as dual-mode: standalone daily `/panchang` page + tab in Kundali report with Short/Full toggle.
   3. Transit Tracker confirmed for both Overview tab (detailed) and Profile Card (compact real-time badge).
   4. Created Antigravity customization skill and rules to enforce append-only status logging on every future change.
 
