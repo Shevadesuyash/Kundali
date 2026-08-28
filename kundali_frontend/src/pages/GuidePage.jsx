@@ -1,142 +1,71 @@
 import React from 'react';
+import { useLang } from '../context/LanguageContext';
+import { GUIDE_CONTENT } from '../utils/guideTranslations';
 import './GuidePage.css';
 
 /**
  * GuidePage — Comprehensive Vedic Astrology Knowledge Center & Reference.
- * Helps beginner and intermediate users understand planets, houses, Ashtakvarga,
- * Dasha systems, Guna Milan matchmaking, and classical Doshas.
+ * Provides 100% localized reference guides in English, Marathi, Hindi, and Gujarati.
  */
 export default function GuidePage() {
+  const { lang } = useLang();
+  const h = GUIDE_CONTENT.header;
+  const n = GUIDE_CONTENT.nav;
+
   return (
     <main className="container guide-page">
       {/* Header */}
       <header className="guide-header">
-        <p className="eyebrow">Jyotish Vidya Knowledge Center</p>
-        <h1 className="guide-title">Vedic Astrology Reference Guide</h1>
-        <p className="guide-intro">
-          A structured guide to understanding how planetary positions, 12 Bhavas (houses),
-          Ashtakvarga scores, Vimshottari Dashas, and Guna Milan matchmaking are computed and interpreted.
-        </p>
+        <p className="eyebrow">{h.eyebrow[lang] || h.eyebrow.en}</p>
+        <h1 className="guide-title">{h.title[lang] || h.title.en}</h1>
+        <p className="guide-intro">{h.intro[lang] || h.intro.en}</p>
       </header>
 
       {/* Anchor Navigation Bar */}
       <nav className="guide-nav-bar" aria-label="Guide topics">
-        <a href="#houses" className="guide-nav-link">1. The 12 Bhavas (Houses)</a>
-        <a href="#planets" className="guide-nav-link">2. The 9 Grahas (Planets)</a>
-        <a href="#ashtakvarga" className="guide-nav-link">3. Ashtakvarga &amp; SAV Points</a>
-        <a href="#dashas" className="guide-nav-link">4. Vimshottari Dasha System</a>
-        <a href="#matchmaking" className="guide-nav-link">5. Ashtakoot Guna Milan</a>
-        <a href="#doshas" className="guide-nav-link">6. Doshas &amp; Remedies</a>
-        <a href="#kp" className="guide-nav-link">7. KP System &amp; Varshapal</a>
+        <a href="#houses" className="guide-nav-link">{n.houses[lang] || n.houses.en}</a>
+        <a href="#planets" className="guide-nav-link">{n.planets[lang] || n.planets.en}</a>
+        <a href="#ashtakvarga" className="guide-nav-link">{n.ashtakvarga[lang] || n.ashtakvarga.en}</a>
+        <a href="#dashas" className="guide-nav-link">{n.dashas[lang] || n.dashas.en}</a>
+        <a href="#matchmaking" className="guide-nav-link">{n.matchmaking[lang] || n.matchmaking.en}</a>
+        <a href="#doshas" className="guide-nav-link">{n.doshas[lang] || n.doshas.en}</a>
       </nav>
 
       {/* Section 1: The 12 Houses */}
       <section id="houses" className="guide-section">
         <div className="guide-section-header">
           <h2 className="guide-section-title">
-            <span>🏠</span> 1. The 12 Bhavas (Houses of Destiny)
+            <span>🏠</span> {n.houses[lang] || n.houses.en}
           </h2>
-          <span className="guide-section-badge">Foundations</span>
+          <span className="guide-section-badge">{lang === 'mr' ? 'मूलभूत पाया' : lang === 'hi' ? 'मूल आधार' : lang === 'gu' ? 'મૂળ આધાર' : 'Foundations'}</span>
         </div>
         <p className="guide-text">
-          In Vedic astrology (Parashari system), your Kundali is divided into 12 Bhavas (houses) beginning from your <strong>Ascendant (Lagna)</strong>, which is the exact zodiac constellation rising on the eastern horizon at your birth moment.
+          {lang === 'mr' ? 'वैदिक ज्योतिष शास्त्रानुसार (पाराशरी पद्धत) जन्मकुंडली १२ भावात (स्थानांत) विभागलेली असते. पूर्व क्षितिजावर जन्मसमयी उदित होणारी राशी म्हणजेच आपले लग्न (१ ला भाव) होय.' :
+           lang === 'hi' ? 'वैदिक ज्योतिष (पाराशरी प्रणाली) के अनुसार जन्म कुंडली १२ भावों (स्थानों) में विभाजित होती है। जन्म के समय पूर्वी क्षितिज पर उदित राशि को लग्न (प्रथम भाव) कहा जाता है।' :
+           lang === 'gu' ? 'વૈદિક જ્યોતિષ મુજબ જન્મકુંડળી ૧૨ ભાવોમાં વિભાજિત હોય છે. જન્મ સમયે પૂર્વ ક્ષિતિજ પર ઉદિત રાશિને લગ્ન કહે છે.' :
+           'In Vedic astrology (Parashari system), your Kundali is divided into 12 Bhavas (houses) beginning from your Ascendant (Lagna), which is the exact zodiac constellation rising on the eastern horizon at your birth moment.'}
         </p>
         <div className="guide-table-wrapper">
           <table className="guide-table">
             <thead>
               <tr>
-                <th>House</th>
-                <th>Sanskrit Name</th>
-                <th>Classification</th>
-                <th>Key Life Domains &amp; Significations</th>
-                <th>Karaka (Significator)</th>
+                <th>{lang === 'mr' ? 'भाव' : lang === 'hi' ? 'भाव' : lang === 'gu' ? 'ભાવ' : 'House'}</th>
+                <th>{lang === 'mr' ? 'संस्कृत नाव' : lang === 'hi' ? 'संस्कृत नाम' : lang === 'gu' ? 'સંસ્કૃત નામ' : 'Sanskrit Name'}</th>
+                <th>{lang === 'mr' ? 'प्रकार / वर्गीकरण' : lang === 'hi' ? 'वर्गीकरण' : lang === 'gu' ? 'વર્ગીકરણ' : 'Classification'}</th>
+                <th>{lang === 'mr' ? 'मुख्य कारकत्व व जीवन क्षेत्र' : lang === 'hi' ? 'मुख्य कारकत्व एवं जीवन क्षेत्र' : lang === 'gu' ? 'મુખ્ય કારકત્વ અને ક્ષેત્ર' : 'Key Life Domains & Significations'}</th>
+                <th>{lang === 'mr' ? 'कारक ग्रह' : lang === 'hi' ? 'कारक ग्रह' : lang === 'gu' ? 'કારક ગ્રહ' : 'Karaka (Significator)'}</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td><strong>1st House</strong></td>
-                <td>Tanu Bhava (Lagna)</td>
-                <td>Kendra &amp; Trikona</td>
-                <td>Self, physical vitality, appearance, character, head, life direction</td>
-                <td>Sun (Surya)</td>
-              </tr>
-              <tr>
-                <td><strong>2nd House</strong></td>
-                <td>Dhana Bhava</td>
-                <td>Maraka / Wealth</td>
-                <td>Accumulated wealth, family lineage, speech, eyes, eating habits</td>
-                <td>Jupiter (Guru)</td>
-              </tr>
-              <tr>
-                <td><strong>3rd House</strong></td>
-                <td>Sahaja Bhava</td>
-                <td>Upachaya</td>
-                <td>Younger siblings, courage, enterprise, short travels, hands/arms</td>
-                <td>Mars (Mangal)</td>
-              </tr>
-              <tr>
-                <td><strong>4th House</strong></td>
-                <td>Sukha Bhava</td>
-                <td>Kendra (Heart)</td>
-                <td>Mother, home, real estate, vehicles, inner peace, formal education</td>
-                <td>Moon (Chandra)</td>
-              </tr>
-              <tr>
-                <td><strong>5th House</strong></td>
-                <td>Putra Bhava</td>
-                <td>Trikona (Dharma)</td>
-                <td>Children, intellect, creativity, speculative gains, Purva Punya (past karmas)</td>
-                <td>Jupiter (Guru)</td>
-              </tr>
-              <tr>
-                <td><strong>6th House</strong></td>
-                <td>Ripu/Roga Bhava</td>
-                <td>Dusthana / Upachaya</td>
-                <td>Daily work, enemies, diseases, debts, litigation, service, immunity</td>
-                <td>Mars &amp; Saturn</td>
-              </tr>
-              <tr>
-                <td><strong>7th House</strong></td>
-                <td>Jaya Bhava</td>
-                <td>Kendra &amp; Maraka</td>
-                <td>Spouse, marriage, business partnerships, public relations, foreign trade</td>
-                <td>Venus (Shukra)</td>
-              </tr>
-              <tr>
-                <td><strong>8th House</strong></td>
-                <td>Ayur Bhava</td>
-                <td>Dusthana (Moksha)</td>
-                <td>Longevity, transformation, occult, unexpected inheritance, hidden matters</td>
-                <td>Saturn (Shani)</td>
-              </tr>
-              <tr>
-                <td><strong>9th House</strong></td>
-                <td>Bhagya Bhava</td>
-                <td>Trikona (Fortune)</td>
-                <td>Father, guru, higher wisdom, dharma, pilgrimage, destiny and luck</td>
-                <td>Jupiter &amp; Sun</td>
-              </tr>
-              <tr>
-                <td><strong>10th House</strong></td>
-                <td>Karma Bhava</td>
-                <td>Kendra (Peak)</td>
-                <td>Career, profession, social status, leadership, fame, government honors</td>
-                <td>Sun, Merc, Jup, Sat</td>
-              </tr>
-              <tr>
-                <td><strong>11th House</strong></td>
-                <td>Labha Bhava</td>
-                <td>Upachaya (Gains)</td>
-                <td>Financial gains, fulfillment of desires, elder siblings, social networks</td>
-                <td>Jupiter (Guru)</td>
-              </tr>
-              <tr>
-                <td><strong>12th House</strong></td>
-                <td>Vyaya Bhava</td>
-                <td>Dusthana (Moksha)</td>
-                <td>Expenditures, foreign residence, spiritual liberation (Moksha), sleep, dreams</td>
-                <td>Saturn &amp; Ketu</td>
-              </tr>
+              {GUIDE_CONTENT.houses.map((house) => (
+                <tr key={house.num}>
+                  <td><strong>{lang === 'mr' ? `${house.num} ला भाव` : lang === 'hi' ? `${house.num}वां भाव` : lang === 'gu' ? `${house.num}મો ભાવ` : `${house.num} House`}</strong></td>
+                  <td>{house.sanskrit[lang] || house.sanskrit.en}</td>
+                  <td>{house.type[lang] || house.type.en}</td>
+                  <td>{house.significations[lang] || house.significations.en}</td>
+                  <td>{house.karaka[lang] || house.karaka.en}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

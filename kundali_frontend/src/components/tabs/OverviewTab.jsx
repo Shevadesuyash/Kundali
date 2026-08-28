@@ -25,9 +25,9 @@ export default function OverviewTab({ report }) {
   const ganaInfo  = classification?.gana ? CLASSIFICATION_INFO.gana?.[classification.gana] : null;
   const nadiInfo  = classification?.nadi ? CLASSIFICATION_INFO.nadi?.[classification.nadi] : null;
 
-  const v_entry = varnaInfo ? ((lang === 'mr' ? varnaInfo.mr : varnaInfo.en) || varnaInfo.en || varnaInfo.mr) : null;
-  const g_entry = ganaInfo  ? ((lang === 'mr' ? ganaInfo.mr : ganaInfo.en) || ganaInfo.en || ganaInfo.mr) : null;
-  const n_entry = nadiInfo  ? ((lang === 'mr' ? nadiInfo.mr : nadiInfo.en) || nadiInfo.en || nadiInfo.mr) : null;
+  const v_entry = varnaInfo ? (varnaInfo[lang] || varnaInfo.en) : null;
+  const g_entry = ganaInfo  ? (ganaInfo[lang] || ganaInfo.en) : null;
+  const n_entry = nadiInfo  ? (nadiInfo[lang] || nadiInfo.en) : null;
 
   const housePills = Array.from({ length: 12 }, (_, i) => {
     const houseNum = i + 1;

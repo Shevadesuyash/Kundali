@@ -1,4 +1,6 @@
 import React from 'react';
+import { useLang } from '../context/LanguageContext';
+import { planetName } from '../utils/i18n';
 import './GemstonePanel.css';
 
 /**
@@ -9,19 +11,39 @@ import './GemstonePanel.css';
  *   data: gemstone_recommendations object from backend
  */
 export default function GemstonePanel({ data }) {
+  const { lang } = useLang();
   if (!data) return null;
 
   const { recommendations = [], general_safety = [] } = data;
+
+  const titleText =
+    lang === 'mr' ? 'रत्न व रुद्राक्ष शिफारसी' :
+    lang === 'hi' ? 'रत्न एवं रुद्राक्ष परामर्श' :
+    lang === 'gu' ? 'રત્ન અને રુદ્રાક્ષ માર્ગદર્શન' :
+    'Gemstone & Rudraksha Recommendations';
+
+  const subtitleText =
+    lang === 'mr' ? 'लग्नेश, पंचमेश, भाग्येश आणि दशमेश यांच्या बळावर आधारित शास्त्रोक्त रत्न सल्ला.' :
+    lang === 'hi' ? 'लग्नेश, पंचमेश, नवमेश एवं दशमेश के बल पर आधारित शास्त्रीय रत्न परामर्श।' :
+    lang === 'gu' ? 'લગ્નેશ, પંચમેશ, ભાગ્યેશ અને દશમેશ પર આધારિત રત્ન સલાહ.' :
+    'Based on your Lagna lord, 5th, 9th, and 10th functional house rulers with safety contraindications.';
+
+  const metalLabel = lang === 'mr' ? 'योग्य धातू' : lang === 'hi' ? 'उपयुक्त धातु' : lang === 'gu' ? 'યોગ્ય ધાતુ' : 'Ideal Metal';
+  const fingerLabel = lang === 'mr' ? 'बोट' : lang === 'hi' ? 'अंगुली' : lang === 'gu' ? 'આંગળી' : 'Finger';
+  const weightLabel = lang === 'mr' ? 'वजन (कॅरट)' : lang === 'hi' ? 'वजन (कैरेट)' : lang === 'gu' ? 'વજન (કેરેટ)' : 'Weight';
+  const wearingDayLabel = lang === 'mr' ? 'धारण वार/वेळ' : lang === 'hi' ? 'धारण दिन/समय' : lang === 'gu' ? 'ધારણ વાર/સમય' : 'Wearing Day';
+  const alternateLabel = lang === 'mr' ? 'पर्यायी उप-रत्न:' : lang === 'hi' ? 'वैकल्पिक उप-रत्न:' : lang === 'gu' ? 'વૈકલ્પિક રત્ન:' : 'Alternate Stone:';
+  const rudrakshaLabel = lang === 'mr' ? '📿 उपयुक्त रुद्राक्ष:' : lang === 'hi' ? '📿 अनुशंसित रुद्राक्ष:' : lang === 'gu' ? '📿 ભલામણ કરેલ રુદ્રાક્ષ:' : '📿 Recommended Rudraksha:';
+  const mantraTitle = lang === 'mr' ? 'अभिमंत्रित प्राण-प्रतिष्ठा मंत्र' : lang === 'hi' ? 'प्राण-प्रतिष्ठा बीज मंत्र' : lang === 'gu' ? 'અભિમંત્રિત પ્રાણ-પ્રતિષ્ઠા મંત્ર' : 'Energizing Mantra';
+  const safetyTitle = lang === 'mr' ? 'शास्त्रोक्त रत्न नियम व प्राण-प्रतिष्ठा विधी' : lang === 'hi' ? 'शास्त्रोक्त रत्न नियम एवं प्राण-प्रतिष्ठा विधि' : lang === 'gu' ? 'શાસ્ત્રોક્ત રત્ન નિયમો અને પ્રાણ-પ્રતિષ્ઠા વિધિ' : 'Classical Gemstone Rules & Prana Pratishtha';
 
   return (
     <section className="gemstone-panel" data-pdf-section="gemstones">
       <div className="gemstone-panel__title-wrap">
         <h3 className="gemstone-panel__title">
-          <span>💎</span> Gemstone &amp; Rudraksha Recommendations
+          <span>💎</span> {titleText}
         </h3>
-        <p className="gemstone-panel__subtitle">
-          Based on your Lagna lord, 5th, 9th, and 10th functional house rulers with safety contraindications.
-        </p>
+        <p className="gemstone-panel__subtitle">{subtitleText}</p>
       </div>
 
       <div className="gemstones-grid">
@@ -37,16 +59,16 @@ export default function GemstonePanel({ data }) {
                 <p className="gemstone-card__purpose">{gem.purpose}</p>
               </div>
               <span className="gemstone-card__planet-pill">
-                {gem.ruling_planet}
+                {planetName(gem.ruling_planet, lang)}
               </span>
             </div>
 
             {/* Contraindications if any */}
-            {!gem.is_safe && gem.contraindications.length > 0 && (
+            {!gem.is_safe && gem.contraindications?.length > 0 && (
               <div className="gemstone-card__warning">
                 <span>⚠️</span>
                 <div>
-                  <strong>Precaution:</strong> {gem.contraindications.join(' ')}
+                  <strong>{lang === 'mr' ? 'सावधगिरी:' : lang === 'hi' ? 'सावधानी:' : lang === 'gu' ? 'સાવચેતી:' : 'Precaution:'}</strong> {gem.contraindications.join(' ')}
                 </div>
               </div>
             )}
@@ -54,19 +76,19 @@ export default function GemstonePanel({ data }) {
             {/* Specifications Grid */}
             <div className="gemstone-card__specs">
               <div className="gemstone-spec">
-                <span className="gemstone-spec__label">Ideal Metal</span>
+                <span className="gemstone-spec__label">{metalLabel}</span>
                 <span className="gemstone-spec__val">{gem.metal}</span>
               </div>
               <div className="gemstone-spec">
-                <span className="gemstone-spec__label">Finger</span>
+                <span className="gemstone-spec__label">{fingerLabel}</span>
                 <span className="gemstone-spec__val">{gem.finger}</span>
               </div>
               <div className="gemstone-spec">
-                <span className="gemstone-spec__label">Weight</span>
+                <span className="gemstone-spec__label">{weightLabel}</span>
                 <span className="gemstone-spec__val">{gem.carats}</span>
               </div>
               <div className="gemstone-spec">
-                <span className="gemstone-spec__label">Wearing Day</span>
+                <span className="gemstone-spec__label">{wearingDayLabel}</span>
                 <span className="gemstone-spec__val">{gem.day_time}</span>
               </div>
             </div>
@@ -74,20 +96,20 @@ export default function GemstonePanel({ data }) {
             {/* Substitute */}
             {gem.substitute_gemstone && (
               <div className="gemstone-rudraksha">
-                <strong>Alternate Stone:</strong> {gem.substitute_gemstone}
+                <strong>{alternateLabel}</strong> {gem.substitute_gemstone}
               </div>
             )}
 
             {/* Rudraksha Option */}
             {gem.rudraksha && (
               <div className="gemstone-rudraksha">
-                <strong>📿 Recommended Rudraksha:</strong> {gem.rudraksha}
+                <strong>{rudrakshaLabel}</strong> {gem.rudraksha}
               </div>
             )}
 
             {/* Mantra Box */}
             <div className="gemstone-card__mantra-box">
-              <span className="gemstone-mantra-title">Energizing Mantra</span>
+              <span className="gemstone-mantra-title">{mantraTitle}</span>
               <span className="gemstone-mantra-text">{gem.mantra}</span>
             </div>
           </div>
@@ -98,7 +120,7 @@ export default function GemstonePanel({ data }) {
       {general_safety.length > 0 && (
         <div className="gemstone-safety-card">
           <h4 className="gemstone-safety-title">
-            <span>🛡️</span> Classical Gemstone Rules &amp; Prana Pratishtha
+            <span>🛡️</span> {safetyTitle}
           </h4>
           <ul className="gemstone-safety-list">
             {general_safety.map((rule, idx) => (

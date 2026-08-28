@@ -31,20 +31,70 @@ export function getPlanetaryDignity(planetName, signIndex) {
 
 export const CLASSIFICATION_INFO = {
   varna: {
-    Brahmin:   { en: { meaning: 'Intellectual / Spiritual',  element: 'Water signs' }, mr: { meaning: 'बौद्धिक / आध्यात्मिक', element: 'जल राशी' } },
-    Kshatriya: { en: { meaning: 'Leader / Protector',        element: 'Fire signs'  }, mr: { meaning: 'नेता / रक्षक',          element: 'अग्नी राशी' } },
-    Vaishya:   { en: { meaning: 'Trader / Commerce',         element: 'Air signs'   }, mr: { meaning: 'व्यापारी / वाणिज्य',    element: 'वायू राशी' } },
-    Shudra:    { en: { meaning: 'Service / Skilled labor',   element: 'Earth signs' }, mr: { meaning: 'सेवा / कुशल श्रम',      element: 'पृथ्वी राशी' } },
+    Brahmin:   {
+      en: { meaning: 'Intellectual / Spiritual',  element: 'Water signs' },
+      mr: { meaning: 'बौद्धिक / आध्यात्मिक', element: 'जल राशी' },
+      hi: { meaning: 'बौद्धिक / आध्यात्मिक', element: 'जल राशि' },
+      gu: { meaning: 'બૌદ્ધિક / આધ્યાત્મિક', element: 'જળ રાશિ' },
+    },
+    Kshatriya: {
+      en: { meaning: 'Leader / Protector',        element: 'Fire signs'  },
+      mr: { meaning: 'नेता / रक्षक',          element: 'अग्नी राशी' },
+      hi: { meaning: 'नेतृत्व / रक्षक',          element: 'अग्नि राशि' },
+      gu: { meaning: 'નેતૃત્વ / રક્ષક',          element: 'અગ્નિ રાશિ' },
+    },
+    Vaishya:   {
+      en: { meaning: 'Trader / Commerce',         element: 'Air signs'   },
+      mr: { meaning: 'व्यापारी / वाणिज्य',    element: 'वायू राशी' },
+      hi: { meaning: 'व्यापारी / वाणिज्य',    element: 'वायु राशि' },
+      gu: { meaning: 'વેપારી / વાણિજ્ય',    element: 'વાયુ રાશિ' },
+    },
+    Shudra:    {
+      en: { meaning: 'Service / Skilled labor',   element: 'Earth signs' },
+      mr: { meaning: 'सेवा / कुशल श्रम',      element: 'पृथ्वी राशी' },
+      hi: { meaning: 'सेवा / कुशल श्रम',      element: 'पृथ्वी राशि' },
+      gu: { meaning: 'સેવા / કુશળ શ્રમ',      element: 'પૃથ્વી રાશિ' },
+    },
   },
   gana: {
-    Deva:      { en: { meaning: 'Divine / Gentle / Peaceful',          temperament: 'Sattvic'  }, mr: { meaning: 'दैवी / सौम्य / शांत',          temperament: 'सात्त्विक' } },
-    Manushya:  { en: { meaning: 'Human / Balanced / Practical',        temperament: 'Rajasic'  }, mr: { meaning: 'मानवी / संतुलित / व्यावहारिक',  temperament: 'राजसिक' } },
-    Rakshasa:  { en: { meaning: 'Dynamic / Aggressive / Independent',  temperament: 'Tamasic'  }, mr: { meaning: 'गतिमान / आक्रमक / स्वतंत्र',   temperament: 'तामसिक' } },
+    Deva:      {
+      en: { meaning: 'Divine / Gentle / Peaceful',          temperament: 'Sattvic'  },
+      mr: { meaning: 'दैवी / सौम्य / शांत',          temperament: 'सात्त्विक' },
+      hi: { meaning: 'दैवीय / सौम्य / शांत',          temperament: 'सात्विक' },
+      gu: { meaning: 'દૈવી / સૌમ્ય / શાંત',          temperament: 'સાત્વિક' },
+    },
+    Manushya:  {
+      en: { meaning: 'Human / Balanced / Practical',        temperament: 'Rajasic'  },
+      mr: { meaning: 'मानवी / संतुलित / व्यावहारिक',  temperament: 'राजसिक' },
+      hi: { meaning: 'मानवीय / संतुलित / व्यावहारिक',  temperament: 'राजसिक' },
+      gu: { meaning: 'માનવીય / સંતુલિત / વ્યવહારુ',  temperament: 'રાજસિક' },
+    },
+    Rakshasa:  {
+      en: { meaning: 'Dynamic / Aggressive / Independent',  temperament: 'Tamasic'  },
+      mr: { meaning: 'गतिमान / आक्रमक / स्वतंत्र',   temperament: 'तामसिक' },
+      hi: { meaning: 'ऊर्जावान / आक्रामक / स्वतंत्र',   temperament: 'तामसिक' },
+      gu: { meaning: 'ઊર્જાવાન / આક્રમક / સ્વતંત્ર',   temperament: 'તામસિક' },
+    },
   },
   nadi: {
-    'Aadi (Vata)':   { en: { constitution: 'Air & Ether (Vata)',     position: 'Beginning' }, mr: { constitution: 'वायू आणि आकाश (वात)',    position: 'प्रारंभ' } },
-    'Madhya (Pitta)':{ en: { constitution: 'Fire & Water (Pitta)',   position: 'Middle'    }, mr: { constitution: 'अग्नी आणि जल (पित्त)',    position: 'मध्य' } },
-    'Antya (Kapha)': { en: { constitution: 'Earth & Water (Kapha)',  position: 'End'       }, mr: { constitution: 'पृथ्वी आणि जल (कफ)',      position: 'अंत' } },
+    'Aadi (Vata)':   {
+      en: { constitution: 'Air & Ether (Vata)',     position: 'Beginning' },
+      mr: { constitution: 'वायू आणि आकाश (वात)',    position: 'प्रारंभ' },
+      hi: { constitution: 'वायु एवं आकाश (वात)',    position: 'प्रारंभ / आदि' },
+      gu: { constitution: 'વાયુ અને આકાશ (વાત)',    position: 'શરૂઆત' },
+    },
+    'Madhya (Pitta)':{
+      en: { constitution: 'Fire & Water (Pitta)',   position: 'Middle'    },
+      mr: { constitution: 'अग्नी आणि जल (पित्त)',    position: 'मध्य' },
+      hi: { constitution: 'अग्नि एवं जल (पित्त)',    position: 'मध्य' },
+      gu: { constitution: 'અગ્નિ અને જળ (પિત્ત)',    position: 'મધ્ય' },
+    },
+    'Antya (Kapha)': {
+      en: { constitution: 'Earth & Water (Kapha)',  position: 'End'       },
+      mr: { constitution: 'पृथ्वी आणि जल (कफ)',      position: 'अंत' },
+      hi: { constitution: 'पृथ्वी एवं जल (कफ)',      position: 'अंतिम / अंत्य' },
+      gu: { constitution: 'પૃથ્વી અને જળ (કફ)',      position: 'અંતિમ' },
+    },
   },
 };
 export const RASI_LIST = [

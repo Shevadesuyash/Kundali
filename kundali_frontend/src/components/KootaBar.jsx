@@ -1,3 +1,5 @@
+import { useLang } from '../context/LanguageContext';
+import { getKootaTitle, getKootaDesc } from '../utils/astroTranslations';
 import './KootaBar.css';
 
 /**
@@ -8,15 +10,19 @@ import './KootaBar.css';
  *   - `koota.tara_warnings` : string[] | null — dangerous Tara positions (shown in amber)
  */
 export default function KootaBar({ koota }) {
+  const { lang } = useLang();
   const pct     = (koota.score / koota.max) * 100;
   const isZero  = koota.score === 0;
   const isFull  = koota.score === koota.max;
   const hasParihara = koota.parihara != null;
 
+  const localizedTitle = getKootaTitle(koota.koota, lang);
+  const localizedDetail = getKootaDesc(koota.koota, koota.detail, lang);
+
   return (
     <div className="koota-bar">
       <div className="koota-bar__head">
-        <span className="koota-bar__name">{koota.koota}</span>
+        <span className="koota-bar__name">{localizedTitle}</span>
         <span className="koota-bar__score mono">{koota.score}/{koota.max}</span>
       </div>
 
@@ -27,7 +33,7 @@ export default function KootaBar({ koota }) {
         />
       </div>
 
-      <p className="koota-bar__detail">{koota.detail}</p>
+      <p className="koota-bar__detail">{localizedDetail}</p>
 
       {/* Parihara / Dosha-cancellation banner */}
       {hasParihara && (
