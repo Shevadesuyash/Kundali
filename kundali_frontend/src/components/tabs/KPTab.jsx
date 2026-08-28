@@ -166,9 +166,9 @@ export default function KPTab({ report }) {
               {planets.map((p) => (
                 <tr key={p.planet}>
                   <td>
-                    <strong>{p.planet}</strong> {p.retrograde && <span style={{ color: '#b91c1c' }}>(R)</span>}
+                    <strong>{p.planet}</strong> {(p.is_retrograde || p.retrograde) && <span style={{ color: '#b91c1c' }}>(R)</span>}
                   </td>
-                  <td className="mono">House {p.placidus_house}</td>
+                  <td className="mono">House {p.placidus_house || p.house}</td>
                   <td>{p.sign}</td>
                   <td className="mono">{p.degree_str}</td>
                   <td>{p.sign_lord}</td>
@@ -199,15 +199,27 @@ export default function KPTab({ report }) {
               </tr>
             </thead>
             <tbody>
-              {significators.map((s) => (
-                <tr key={s.house}>
-                  <td className="mono">H{s.house}</td>
-                  <td>{s.level_1.length ? s.level_1.join(', ') : '—'}</td>
-                  <td>{s.level_2.length ? s.level_2.join(', ') : '—'}</td>
-                  <td>{s.level_3.length ? s.level_3.join(', ') : '—'}</td>
-                  <td><strong>{s.level_4}</strong></td>
-                </tr>
-              ))}
+              {significators.map((s) => {
+                const l1 = s.level_1_star_of_occupant || s.level_1 || [];
+                const l2 = s.level_2_occupant || s.level_2 || [];
+                const l3 = s.level_3_star_of_lord || s.level_3 || [];
+                const l4 = s.level_4_lord || s.level_4 || [];
+
+                const formatSignif = (val) => {
+                  if (Array.isArray(val)) return val.length ? val.join(', ') : '—';
+                  return val || '—';
+                };
+
+                return (
+                  <tr key={s.house}>
+                    <td className="mono">H{s.house}</td>
+                    <td>{formatSignif(l1)}</td>
+                    <td>{formatSignif(l2)}</td>
+                    <td>{formatSignif(l3)}</td>
+                    <td><strong>{formatSignif(l4)}</strong></td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
