@@ -260,6 +260,38 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-08-28 12:45 IST] — Commit `0ac8aa1` / Repository Hygiene & Architecture Diagram Integration
+- **Summary**: Removed internal AI instructions, agent skills, internal scratch files, and planning notes from public Git tracking while keeping them intact locally. Integrated the full-stack architecture diagram into `README.md`.
+- **Status**: Completed & Verified.
+- **Files Modified**: `.gitignore`, `README.md`, `docs/PROJECT_STATUS.md`.
+
+---
+
+### [2026-08-28 12:38 IST] — Commit `8caa878` / Bugfix: KP Tab Significators TypeError (.length)
+- **Summary**: Fixed uncaught `TypeError: Cannot read properties of undefined (reading 'length')` in `KPTab.jsx`.
+- **Root Cause**: The offscreen full PDF renderer in `KundaliReport.jsx` renders all 8 tabs concurrently. `KPTab.jsx` was referencing `s.level_1.length` while the backend schema returns `level_1_star_of_occupant`, `level_2_occupant`, `level_3_star_of_lord`, and `level_4_lord`.
+- **Fix**: Updated `KPTab.jsx` with correct backend key bindings and wrapped all 4-fold significator items in safe array formatting (`formatSignif`).
+- **Files Touched**: `kundali_frontend/src/components/tabs/KPTab.jsx`, `docs/PROJECT_STATUS.md`.
+
+---
+
+### [2026-08-28 12:31 IST] — Commit `96e1d53` / Architecture: Global Error Boundary & Safe Report Rendering
+- **Summary**: Integrated a top-level React `ErrorBoundary` and granular tab wrappers to completely eliminate white blank screen crashes across the entire suite.
+- **Enhancements**:
+  1. Built `ErrorBoundary.jsx` which catches any render-time exception and provides an informative error card with 'Try Again' and 'Back to Form' recovery buttons.
+  2. Wrapped `AppRoutes`, `KundaliReport`, and `OverviewTab` inside `ErrorBoundary`.
+  3. Added full defensive null-checks in `ReportHeader` (`profile?.name || 'Kundali'`, optional coordinates and timestamps) and `ManglikBadge` (`manglik || {}`).
+- **Files Touched**: `kundali_frontend/src/components/ErrorBoundary.jsx`, `kundali_frontend/src/App.jsx`, `kundali_frontend/src/components/KundaliReport.jsx`, `kundali_frontend/src/components/ManglikBadge.jsx`, `docs/PROJECT_STATUS.md`.
+
+---
+
+### [2026-08-28 12:12 IST] — Commit `b0bca11` / Fix: Profile Selection & New User Blank Screen Crash
+- **Summary**: Resolved blank screen crash occurring when transitioning between saved profile viewing (`/kundali?profileId=...`) and new user Kundali creation (`/kundali`).
+- **Root Causes & Fixes**:
+  1. Route Transition Stale State: Cleanly reset state (`status`, `person`, `report`) in `KundaliPage.jsx` when navigating from a profile URL to a new user URL.
+  2. Added robust optional chaining and fallback dictionary extraction across `OverviewTab.jsx`, `DoshasTab.jsx`, and `HealthReport.jsx`.
+- **Files Modified**: `kundali_frontend/src/pages/KundaliPage.jsx`, `kundali_frontend/src/components/tabs/OverviewTab.jsx`, `kundali_frontend/src/components/tabs/DoshasTab.jsx`, `kundali_frontend/src/components/HealthReport.jsx`, `docs/PROJECT_STATUS.md`.
+
 ---
 
 ### [2026-08-26 17:20 IST] — Commit `c346198` / Contextual Beginner Help Guides & Native Multi-Language AI
