@@ -12,9 +12,11 @@ const FEVER_LABELS = {
 
 export default function HealthReport({ report }) {
   const { lang, t } = useLang();
-  const health = analyzeHealth(report);
-  const { signHealth, feverRisk, mentalFactors, diseaseIndicators, marsHouse, sixthOccupants, eighthOccupants } = health;
-  const feverColors = FEVER_LEVEL_COLORS[feverRisk.level];
+  const health = analyzeHealth(report || {});
+  const { signHealth = {}, feverRisk = {}, mentalFactors = [], diseaseIndicators = [], marsHouse = 1, sixthOccupants = [], eighthOccupants = [] } = health || {};
+  const feverColors = (feverRisk?.level && FEVER_LEVEL_COLORS[feverRisk.level]) || FEVER_LEVEL_COLORS.low || { bg: 'rgba(59, 130, 246, 0.06)', border: 'rgba(59, 130, 246, 0.2)', text: '#1d4ed8' };
+
+  const feverLabel = feverRisk?.level && FEVER_LABELS[feverRisk.level] ? (lang === 'mr' ? FEVER_LABELS[feverRisk.level].mr : FEVER_LABELS[feverRisk.level].en) : 'Low Risk';
 
   return (
     <div className="health-report">
@@ -32,10 +34,10 @@ export default function HealthReport({ report }) {
           <div className="health-card__icon">🧬</div>
           <h4 className="health-card__title">{t('health.constitution')}</h4>
           <div className="health-card__prakriti">
-            {lang === 'mr' ? signHealth.prakriti.mr : signHealth.prakriti.en}
+            {signHealth?.prakriti ? (lang === 'mr' ? signHealth.prakriti.mr : signHealth.prakriti.en) : 'Balanced'}
           </div>
           <p className="health-card__desc">
-            {lang === 'mr' ? signHealth.constitution.mr : signHealth.constitution.en}
+            {signHealth?.constitution ? (lang === 'mr' ? signHealth.constitution.mr : signHealth.constitution.en) : ''}
           </p>
         </div>
 
@@ -43,17 +45,19 @@ export default function HealthReport({ report }) {
           <div className="health-card__icon">🫀</div>
           <h4 className="health-card__title">{t('health.body.part')}</h4>
           <p className="health-card__body-parts">
-            {lang === 'mr' ? signHealth.bodyParts.mr : signHealth.bodyParts.en}
+            {signHealth?.bodyParts ? (lang === 'mr' ? signHealth.bodyParts.mr : signHealth.bodyParts.en) : ''}
           </p>
-          <div className="health-card__diseases-list">
-            <p className="health-card__dis-label">{t('health.tendencies')}:</p>
-            {signHealth.diseases.map((d, i) => (
-              <div key={i} className="health-disease-item">
-                <span className="health-disease-dot" />
-                <span>{lang === 'mr' ? d.mr : d.en}</span>
-              </div>
-            ))}
-          </div>
+          {signHealth?.diseases && (
+            <div className="health-card__diseases-list">
+              <p className="health-card__dis-label">{t('health.tendencies')}:</p>
+              {signHealth.diseases.map((d, i) => (
+                <div key={i} className="health-disease-item">
+                  <span className="health-disease-dot" />
+                  <span>{lang === 'mr' ? d.mr : d.en}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -63,13 +67,13 @@ export default function HealthReport({ report }) {
         borderColor: feverColors.border,
       }}>
         <div className="health-fever-header">
-          <span className="health-fever-icon">{FEVER_ICONS[feverRisk.level]}</span>
+          <span className="health-fever-icon">{FEVER_ICONS[feverRisk?.level] || '🟢'}</span>
           <div>
             <h4 className="health-card__title" style={{ color: feverColors.text }}>
               {t('health.fever')}
             </h4>
             <span className="health-fever-badge" style={{ background: feverColors.border }}>
-              {lang === 'mr' ? FEVER_LABELS[feverRisk.level].mr : FEVER_LABELS[feverRisk.level].en}
+              {feverLabel}
             </span>
           </div>
           <div className="health-mars-info">
@@ -77,11 +81,13 @@ export default function HealthReport({ report }) {
           </div>
         </div>
         <p className="health-fever-text">
-          {lang === 'mr' ? feverRisk.mr : feverRisk.en}
+          {feverRisk ? (lang === 'mr' ? feverRisk.mr : feverRisk.en) : ''}
         </p>
-        <div className="health-fever-sign-note">
-          <strong>{lang === 'mr' ? signHealth.fever.mr : signHealth.fever.en}</strong>
-        </div>
+        {signHealth?.fever && (
+          <div className="health-fever-sign-note">
+            <strong>{lang === 'mr' ? signHealth.fever.mr : signHealth.fever.en}</strong>
+          </div>
+        )}
       </div>
 
       {/* 3. 6th & 8th House Planets → Disease Indicators */}
