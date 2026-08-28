@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { getVarshapal } from '../../api/kundaliApi';
 import HelpAccordion from '../HelpAccordion';
 import { useLang } from '../../context/LanguageContext';
+import { planetName } from '../../utils/i18n';
+import { getMunthaInterpretation } from '../../utils/astroTranslations';
 import './VarshapalTab.css';
 import './tabs.css';
 
 /**
- * VarshapalTab — Tajika Annual Solar Return chart & Mudda Dasha panel.
- * Allows selecting target year, displays Varsha Pravesh, Varsha Lagna,
- * Muntha sign progression, annual Mudda Dasha timeline, and beginner guide.
+ * VarshapalTab — Tajika Annual Solar Return chart & Mudda Dasha timeline.
  */
 export default function VarshapalTab({ report }) {
   const { profile } = report;
@@ -53,7 +53,7 @@ export default function VarshapalTab({ report }) {
     return () => {
       isMounted = false;
     };
-  }, [targetYear]);
+  }, [targetYear, personPayload.year, personPayload.lat, personPayload.lon]);
 
   const yearOptions = [
     currentYear - 2, currentYear - 1, currentYear,
@@ -64,6 +64,36 @@ export default function VarshapalTab({ report }) {
                      lang === 'hi' ? 'ताजिक वर्षफल, मुंथा और मुद्धा दशा को कैसे समझें?' :
                      lang === 'gu' ? 'તાજિક વર્ષફળ, મુંથા અને મુદ્દા દશા કેવી રીતે સમજવું?' :
                      'How to Read Tajika Varshapal, Muntha & Mudda Dasha';
+
+  const sectionTitle =
+    lang === 'mr' ? 'ताजिक वर्षफळ (वार्षिक सौर प्रवेश)' :
+    lang === 'hi' ? 'ताजिक वर्षफल (वार्षिक सौर प्रवेश)' :
+    lang === 'gu' ? 'તાજિક વર્ષફળ (વાર્ષિક સૌર પ્રવેશ)' :
+    'Tajika Varshapal (Annual Solar Return)';
+
+  const praveshLabel =
+    lang === 'mr' ? 'वर्ष प्रवेश (अचूक सौर परत वेळ)' :
+    lang === 'hi' ? 'वर्ष प्रवेश (सटीक सौर वापसी काल)' :
+    lang === 'gu' ? 'વર્ષ પ્રવેશ (ચોક્કસ સૌર સમય)' :
+    'Varsha Pravesh (Exact Return)';
+
+  const varshaLagnaLabel =
+    lang === 'mr' ? 'वार्षिक लग्न (वर्ष लग्न)' :
+    lang === 'hi' ? 'वार्षिक लग्न (वर्ष लग्न)' :
+    lang === 'gu' ? 'વાર્ષિક લગ્ન (વર્ષ લગ્ન)' :
+    'Annual Ascendant (Varsha Lagna)';
+
+  const munthaLabel =
+    lang === 'mr' ? `मुंथा प्रगती (${targetYear})` :
+    lang === 'hi' ? `मुंथा प्रगति (${targetYear})` :
+    lang === 'gu' ? `મુંથા પ્રગતિ (${targetYear})` :
+    `Muntha Progression (${targetYear})`;
+
+  const muddaTitle =
+    lang === 'mr' ? 'वार्षिक मुद्द दशा कालचक्र (३६० दिवस)' :
+    lang === 'hi' ? 'वार्षिक मुद्धा दशा चक्र (३६० दिन)' :
+    lang === 'gu' ? 'વાર્ષિક મુદ્દા દશા સમયરેખા (૩૬૦ દિવસ)' :
+    'Annual Mudda Dasha Timeline (360-Day Cycle)';
 
   return (
     <div className="tab-panel varshapal-tab" data-pdf-section="varshapal">
@@ -103,14 +133,19 @@ export default function VarshapalTab({ report }) {
       {/* Year Selection Controls */}
       <div className="tab-section varshapal-controls">
         <div>
-          <p className="tab-section__title">Tajika Varshapal (Annual Solar Return)</p>
+          <p className="tab-section__title">{sectionTitle}</p>
           <p className="tab-section__subtitle">
-            Exact astronomical moment transit Sun returns to natal longitude for Year {targetYear} (Age {data?.age ?? (targetYear - personPayload.year)}).
+            {lang === 'mr' ? `वर्ष ${targetYear} साठी सौर प्रवेश काल (वय: ${data?.age ?? (targetYear - personPayload.year)} वर्षे).` :
+             lang === 'hi' ? `वर्ष ${targetYear} हेतु सौर प्रवेश काल (आयु: ${data?.age ?? (targetYear - personPayload.year)} वर्ष)।` :
+             lang === 'gu' ? `વર્ષ ${targetYear} માટે સૌર પ્રવેશ કાળ (ઉંમર: ${data?.age ?? (targetYear - personPayload.year)} વર્ષ).` :
+             `Exact astronomical moment transit Sun returns to natal longitude for Year ${targetYear} (Age ${data?.age ?? (targetYear - personPayload.year)}).`}
           </p>
         </div>
 
         <div className="varshapal-year-pills">
-          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-dim)' }}>Select Year:</span>
+          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-dim)' }}>
+            {lang === 'mr' ? 'वर्ष निवडा:' : lang === 'hi' ? 'वर्ष चुनें:' : lang === 'gu' ? 'વર્ષ પસંદ કરો:' : 'Select Year:'}
+          </span>
           {yearOptions.map((yr) => (
             <button
               key={yr}
@@ -126,7 +161,7 @@ export default function VarshapalTab({ report }) {
 
       {loading && (
         <div style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--color-copper, #c8720a)' }}>
-          <p>⏳ Computing high-precision Solar Return &amp; Muntha progression...</p>
+          <p>⏳ {lang === 'mr' ? 'वार्षिक सौर प्रवेश व मुंथा ग्रहांची गणना करत आहे…' : lang === 'hi' ? 'वार्षिक सौर प्रवेश एवं मुंथा गणना हो रही है…' : lang === 'gu' ? 'વાર્ષિક સૌર પ્રવેશ અને મુંથા ગણતરી થઈ રહી છે…' : 'Computing high-precision Solar Return & Muntha progression...'}</p>
         </div>
       )}
 
@@ -141,35 +176,35 @@ export default function VarshapalTab({ report }) {
           {/* Hero Cards: Pravesh Time, Varsha Lagna, Muntha */}
           <div className="varshapal-hero-grid">
             <div className="varshapal-hero-card varshapal-hero-card--pravesh">
-              <span className="varshapal-card-label">Varsha Pravesh (Exact Return)</span>
+              <span className="varshapal-card-label">{praveshLabel}</span>
               <h4 className="varshapal-card-val">{data.varsha_pravesh_ist}</h4>
               <span className="varshapal-card-sub">
-                Annual Ascendant (Varsha Lagna): <strong>{data.varsha_lagna.sign}</strong> (Ruled by {data.varsha_lagna.sign_lord})
+                {varshaLagnaLabel}: <strong>{data.varsha_lagna.sign}</strong> ({lang === 'mr' ? 'स्वामी:' : lang === 'hi' ? 'स्वामी:' : lang === 'gu' ? 'સ્વામી:' : 'Ruled by'} {planetName(data.varsha_lagna.sign_lord, lang)})
               </span>
             </div>
 
             <div className={`varshapal-hero-card ${data.muntha.is_auspicious ? 'varshapal-hero-card--muntha' : 'varshapal-hero-card--muntha-challenging'}`}>
-              <span className="varshapal-card-label">Muntha Progression ({targetYear})</span>
+              <span className="varshapal-card-label">{munthaLabel}</span>
               <h4 className="varshapal-card-val">
-                {data.muntha.sign} (House {data.muntha.house})
+                {data.muntha.sign} ({lang === 'mr' ? 'भाव' : lang === 'hi' ? 'भाव' : lang === 'gu' ? 'ભાવ' : 'House'} {data.muntha.house})
               </h4>
               <span className="varshapal-card-sub">
-                {data.muntha.interpretation}
+                {getMunthaInterpretation(data.muntha.house, data.muntha.interpretation, lang)}
               </span>
             </div>
           </div>
 
           {/* Mudda Dasha Annual Timeline */}
           <div className="tab-section">
-            <p className="tab-section__title">Annual Mudda Dasha Timeline (360-Day Cycle)</p>
+            <p className="tab-section__title">{muddaTitle}</p>
             <div className="mudda-table-wrap">
               <table className="mudda-table">
                 <thead>
                   <tr>
-                    <th>Planet</th>
-                    <th>Duration</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
+                    <th>{lang === 'mr' ? 'दशा स्वामी ग्रह' : lang === 'hi' ? 'दशा स्वामी ग्रह' : lang === 'gu' ? 'દશા સ્વામી ગ્રહ' : 'Planet'}</th>
+                    <th>{lang === 'mr' ? 'कालावधी (दिवस)' : lang === 'hi' ? 'अवधि (दिन)' : lang === 'gu' ? 'સમયગાળો (દિવસ)' : 'Duration'}</th>
+                    <th>{lang === 'mr' ? 'प्रारंभ तारीख' : lang === 'hi' ? 'प्रारंभ तिथि' : lang === 'gu' ? 'શરૂઆત તારીખ' : 'Start Date'}</th>
+                    <th>{lang === 'mr' ? 'समाप्ती तारीख' : lang === 'hi' ? 'समाप्ति तिथि' : lang === 'gu' ? 'સમાપ્તિ તારીખ' : 'End Date'}</th>
                   </tr>
                 </thead>
                 <tbody>
