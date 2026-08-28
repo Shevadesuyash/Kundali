@@ -9,7 +9,7 @@
 
 A modern, high-precision, enterprise-grade Vedic Astrology (Jyotish) suite built with **FastAPI**, **Swiss Ephemeris (`pyswisseph`)**, **React 18**, **Vite**, and **Google Gemini 2.5 Flash**.
 
-Features high-precision sidereal planetary calculations (Lahiri Ayanamsha), modular **8-Tab Kundali Analysis**, **3-Way Regional Chart Formats** (North, South, East Indian), **Krishnamurti Paddhati (KP System)**, **Tajika Varshapal (Annual Solar Return)**, **Dynamic Astronomical Panchang**, **36-Point Ashtakoot Guna Milan & Jyotish Comparative Matrix**, **Live Transits & Sade Sati**, **Client-Side PDF Export**, **Contextual Help Guides**, and **4-Language Native Localization** (*English, Marathi, Hindi, Gujarati*).
+Features high-precision sidereal planetary calculations (Lahiri Ayanamsha), modular **8-Tab Kundali Analysis**, **3-Way Regional Chart Formats** (North, South, East Indian), **Krishnamurti Paddhati (KP System)**, **Tajika Varshapal (Annual Solar Return)**, **Dynamic Astronomical Panchang**, **36-Point Ashtakoot Guna Milan & Jyotish Comparative Matrix**, **Live Transits & Sade Sati**, **Client-Side PDF Export**, **Contextual Help Guides**, and **4-Language Native Localization** (_English, Marathi, Hindi, Gujarati_).
 
 ---
 
@@ -22,8 +22,9 @@ This project was engineered, evolved, and polished using **Google Antigravity**,
 ## ✨ Features & Core Capabilities
 
 ### 1. 🪐 Modular 8-Tab Kundali Report Suite
+
 - **Tab 1: Overview & Regional Charts**:
-  - Birth metadata, classification badges (*Varna, Gana, Nadi, Moon Lord*), and 12-house summary strip.
+  - Birth metadata, classification badges (_Varna, Gana, Nadi, Moon Lord_), and 12-house summary strip.
   - Interactive **3-Way Regional Chart Switcher**:
     - 💎 **North Indian Diamond Chart** (Fixed Houses, Rotating Signs)
     - 🔲 **South Indian Box Chart** (Fixed Signs, Clockwise Houses)
@@ -31,16 +32,16 @@ This project was engineered, evolved, and polished using **Google Antigravity**,
     - Switch seamlessly across **D1 Lagna**, **D9 Navamsha**, and **Chandra Lagna (Moon Chart)**.
   - Real-time **Live Transit & Saturn Sade Sati Banner**.
 - **Tab 2: Planets & Strength**:
-  - Full planetary positions table with exact degrees, retrograde motion (`℞ Vakri`), absolute longitude, Nakshatras & Padas, and classical dignities (*Exalted, Moolatrikona, Own Sign, Great Friend, Friend, Neutral, Enemy, Great Enemy, Debilitated*).
+  - Full planetary positions table with exact degrees, retrograde motion (`℞ Vakri`), absolute longitude, Nakshatras & Padas, and classical dignities (_Exalted, Moolatrikona, Own Sign, Great Friend, Friend, Neutral, Enemy, Great Enemy, Debilitated_).
   - **Sarvashtakvarga (SAV)**: 12-house strength heatmap based on classical BPHS 337/338 points ($\ge 28$ Strong, $25-27$ Average, $< 25$ Low).
   - **On-Demand Bhinnashtakvarga (BAV)**: 1-click on-demand expansion of complete $8 \times 12$ bindu matrices for all 7 classical planets from all 8 reference points.
 - **Tab 3: Dasha & Predictive Yogas**:
   - Interactive **Vimshottari Dasha Tree** (120-year cycle): All 9 Mahadashas $\times$ 9 Antardashas (81 sub-periods total) with real-time percentage elapsed progress and calendar start/end dates.
-  - Automated **Classical Vedic Yoga Detector**: Analyzes Raja Yogas, Dhana Yogas, Gaja Kesari, Budhaditya, Pancha Mahapurusha (*Ruchaka, Bhadra, Hamsa, Malavya, Shasha*), Chandra-Mangala, and Amala Yogas.
+  - Automated **Classical Vedic Yoga Detector**: Analyzes Raja Yogas, Dhana Yogas, Gaja Kesari, Budhaditya, Pancha Mahapurusha (_Ruchaka, Bhadra, Hamsa, Malavya, Shasha_), Chandra-Mangala, and Amala Yogas.
 - **Tab 4: Doshas & Vedic Remedies**:
   - Standard Parashari **Mangal (Kuja) Dosha** evaluation across Lagna, Moon, and Venus charts with **Papa Samyam** weighted score breakdown (Houses 1, 4, 7, 8, 12; Mars in House 2 is strictly not Manglik).
-  - Special afflictions: **12 Classical Kaal Sarp Variants** (*Anant, Kulik, Vasuki, Shankhpal, Padma, Mahapadma, Takshak, Karkotak, Shankachood, Ghatak, Vishdhar, Sheshnag*), Guru Chandal, Kemadruma, and Pitra Dosha.
-  - **Gemstone & Rudraksha Recommendation Engine**: Functional benefic gemstone prescriptions (*Life, Fortune, Intellect, Career stones*) with Dusthana (6, 8, 12) safety contraindications.
+  - Special afflictions: **12 Classical Kaal Sarp Variants** (_Anant, Kulik, Vasuki, Shankhpal, Padma, Mahapadma, Takshak, Karkotak, Shankachood, Ghatak, Vishdhar, Sheshnag_), Guru Chandal, Kemadruma, and Pitra Dosha.
+  - **Gemstone & Rudraksha Recommendation Engine**: Functional benefic gemstone prescriptions (_Life, Fortune, Intellect, Career stones_) with Dusthana (6, 8, 12) safety contraindications.
 - **Tab 5: Natal Panchang**:
   - Panchang at the exact moment and place of birth with Short / Full Detail toggle.
 - **Tab 6: Krishnamurti Paddhati (KP System)**:
@@ -56,17 +57,19 @@ This project was engineered, evolved, and polished using **Google Antigravity**,
 ---
 
 ### 2. 📿 Dynamic Astronomical Daily Panchang (`/panchang`)
+
 - High-precision astronomical Sunrise, Sunset, and Sun/Moon sidereal coordinates computed via Swiss Ephemeris `swe.rise_trans` for any geographic coordinate worldwide.
-- **Location Selector & 10 City Presets**: Typeahead search or quick-select chips for *Pune, Mumbai, New Delhi, Bengaluru, Kolkata, Chennai, Ahmedabad, London, New York, Dubai*.
+- **Location Selector & 10 City Presets**: Typeahead search or quick-select chips for _Pune, Mumbai, New Delhi, Bengaluru, Kolkata, Chennai, Ahmedabad, London, New York, Dubai_.
 - **The 5 Limbs (Panch-Anga)**: Tithi (with Paksha), Vara & Day Lord, Nakshatra (with Pada), Yoga, and Karana.
 - **Auspicious & Inauspicious Muhurtas**: Brahma Muhurta, Abhijit Muhurta, Rahu Kaal, Yamaganda, Gulika Kaal.
-- **Daytime Choghadiya Table**: 8 daytime slots (*Amrit, Shubh, Labh, Char, Rog, Kaal, Udveg*) with nature, timing, and recommended activities.
+- **Daytime Choghadiya Table**: 8 daytime slots (_Amrit, Shubh, Labh, Char, Rog, Kaal, Udveg_) with nature, timing, and recommended activities.
 - **Daily Devotion & Vedic Mantra**: Ruling deity, daily Vedic mantra, and recommended spiritual rituals.
 
 ---
 
 ### 3. 🔮 Professional Matchmaking & Jyotish Matrix (`/match`)
-- **Ashtakoot Guna Milan (36 Points)**: 8-Koota compatibility scorecard (*Varna, Vashya, Tara, Yoni, Graha Maitri, Gana, Bhakoot, Nadi*).
+
+- **Ashtakoot Guna Milan (36 Points)**: 8-Koota compatibility scorecard (_Varna, Vashya, Tara, Yoni, Graha Maitri, Gana, Bhakoot, Nadi_).
 - **Parashari Papa Samyam Differential**: Weighted malefic score differential ($|S_{Groom} - S_{Bride}| \le 25$ points indicates harmonious karmic equilibrium).
 - **Side-by-Side Planetary Sambandha Matrix**:
   - Groom vs Bride planetary placements, Nakshatras, and Padas.
@@ -78,8 +81,9 @@ This project was engineered, evolved, and polished using **Google Antigravity**,
 ---
 
 ### 4. 🗃️ Profile Registry & Dashboard Hub (`/profiles`)
-- **Live Stats Bar**: Real-time counter of *Total Saved Profiles*, *♂ Male Profiles*, and *♀ Female Profiles*.
-- **Relationship Tag Filters**: Filter by *Self*, *Family*, *Friend*, *Partner*, *Client*.
+
+- **Live Stats Bar**: Real-time counter of _Total Saved Profiles_, _♂ Male Profiles_, and _♀ Female Profiles_.
+- **Relationship Tag Filters**: Filter by _Self_, _Family_, _Friend_, _Partner_, _Client_.
 - **Rich Dashboard Cards**: Immediate display of Lagna, Rāśi, Nakshatra, Active Mahadasha, Manglik status, and real-time Sade Sati badge.
 - **Quick Match Tray**: Select Groom and Bride cards to view inline scorecards or launch bulk matching.
 - **Multi-Profile Bulk Compatibility Matrix (`POST /api/v1/match-bulk`)**: Match an anchor profile against all saved candidates of the opposite gender with a sortable leaderboard.
@@ -89,6 +93,7 @@ This project was engineered, evolved, and polished using **Google Antigravity**,
 ---
 
 ### 5. 📖 Vedic Knowledge Center (`/guide`) & Contextual Help
+
 - **Vedic Astrology Knowledge Center (`/guide`)**: Visual beginner and astrologer guide explaining the 12 Bhavas (Houses), 9 Grahas (Planets), Ashtakvarga SAV benchmarks, Vimshottari Dashas, and Guna Milan rules.
 - **Contextual Help Popovers (`AstroTooltip`)**: Interactive `?` popovers across reports explaining technical astrological terms.
 - **Expandable Help Cards (`HelpAccordion`)**: Embedded at the top of every report tab and match section to guide new users on how to interpret each calculation.
@@ -96,6 +101,7 @@ This project was engineered, evolved, and polished using **Google Antigravity**,
 ---
 
 ### 6. 🤖 Interactive Gemini 2.5 Flash Astrologer Bot
+
 - **Floating Action Drawer (`✨ Ask Astrologer`)**: Interactive context-aware assistant embedded in the Kundali report.
 - **Zero Hallucination Architecture**: AI is fed only verified, pre-computed astronomical facts (Lagna, planets, current Mahadasha, transits, yogas, Papa points).
 - **Structured Response Format**: Returns a crisp **`### ⚡ Executive Summary`** first, followed by categorized factors, timing, and Vedic remedies under 250 words.
@@ -105,51 +111,24 @@ This project was engineered, evolved, and polished using **Google Antigravity**,
 ---
 
 ### 7. 🌐 Native 4-Language Vedic Localization
+
 - Instant, zero-overhead language switching between:
   - 🇬🇧 **English (`en`)**
   - 🇮🇳 **Marathi (`mr`) — मराठी**
   - 🇮🇳 **Hindi (`hi`) — हिंदी**
   - 🇮🇳 **Gujarati (`gu`) — ગુજરાતી**
-- 100% authentic Jyotish terminology (e.g. *सूर्य, चंद्र, मंगळ, राशी, नक्षत्र, नवांश, अष्टकवर्ग*) across all 8 tabs, tables, forms, and match scorecards with 0 layout shift.
+- 100% authentic Jyotish terminology (e.g. _सूर्य, चंद्र, मंगळ, राशी, नक्षत्र, नवांश, अष्टकवर्ग_) across all 8 tabs, tables, forms, and match scorecards with 0 layout shift.
 
 ---
 
 ## 🏛️ Architecture & Tech Stack
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          KUNDALI MILAN ARCHITECTURE                         │
-├─────────────────────────────────────────────────────────────────────────────┤
-│  Frontend (React 18 + Vite)                                                 │
-│  ├── 8-Tab Kundali Suite (Overview, Planets, Dasha, Doshas, etc.)           │
-│  ├── 3-Way SVG Chart Engine (North Indian, South Indian, East Indian)       │
-│  ├── Dynamic Panchang (/panchang) & Knowledge Center (/guide)               │
-│  ├── Profile Hub Dashboard (/profiles) & Matchmaker (/match)                │
-│  ├── Client-Side PDF Generator (jspdf + html2canvas)                        │
-│  └── Multi-Lingual Context (EN, Marathi, Hindi, Gujarati)                   │
-├─────────────────────────────────────────────────────────────────────────────┤
-│  Backend API (FastAPI + Uvicorn)                                            │
-│  ├── Astro Engine (pyswisseph / Swiss Ephemeris C-bindings, Lahiri)         │
-│  ├── Dasha & Antardasha Calculator (120-year Vimshottari)                   │
-│  ├── Ashtakvarga Engine (BPHS 337/338 SAV & on-demand BAV)                  │
-│  ├── Yoga & Dosha Engine (12 Yogas, 12 Kaal Sarp variants, Papa Samyam)     │
-│  ├── KP Engine (Placidus Cusps, Star/Sub Lords, Ruling Planets)             │
-│  ├── Varshapal Engine (Solar Return binary search, Muntha, Mudda Dasha)     │
-│  ├── Panchang Engine (swe.rise_trans astronomical Sunrise/Sunset)           │
-│  ├── Matchmaker (36-Point Ashtakoot & Sambandha Axes)                       │
-│  └── 3-Tier Geocoder (Memory L1 → SQLite L2 → Nominatim L3)                 │
-├─────────────────────────────────────────────────────────────────────────────┤
-│  AI & Persistence Layer                                                     │
-│  ├── Google Gemini 2.5 Flash (Context-aware multi-lingual Astrologer Bot)   │
-│  └── SQLite3 Database (profiles.db with safe ALTER TABLE migrations)        │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
----
+<img src="docs/Kundali_Milan_Architecture.png" alt="Project Architechure" >
 
 ## 🚀 Quickstart & Setup Guide
 
 ### 1. Prerequisites
+
 - **Python** (v3.10 or higher)
 - **Node.js** (v18.0 or higher) & `npm`
 - **Gemini API Key** (optional, for AI Astrologer Bot)
@@ -200,26 +179,26 @@ npm run dev
 
 ## 📡 REST API Reference
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/health` | Service health probe `{"status": "ok"}` |
-| `POST` | `/api/v1/kundali` | Computes full 8-tab Kundali report payload with charts, dignities, SAV, and transits |
-| `POST` | `/api/v1/ashtakvarga` | On-demand full Bhinnashtakvarga (7 planets $\times$ 8 references $\times$ 12 signs) + SAV |
-| `POST` | `/api/v1/match` | 36-Point Ashtakoot Guna Milan + Papa Samyam for two birth detail sets |
-| `POST` | `/api/v1/match-saved` | Guna Milan for two saved profile IDs (`boy_id`, `girl_id`) |
-| `POST` | `/api/v1/match-bulk` | Matches anchor profile against all saved opposite-gender candidates |
-| `GET` | `/api/v1/panchang` | Astronomical Panchang for target date & global coordinates (`date`, `lat`, `lon`, `tz`) |
-| `POST` | `/api/v1/kp` | KP Placidus house cusps, Sub Lords, Ruling Planets, and 4-Fold Significators |
-| `POST` | `/api/v1/varshapal` | Tajika Solar Return chart, Varsha Pravesh, Muntha, and Mudda Dasha timeline |
-| `POST` | `/api/v1/ai-chat` | Multi-lingual Gemini 2.5 Flash Astrologer Bot Q&A based on computed chart facts |
-| `GET` | `/api/v1/transits/live` | Real-time 9-graha Gochara, 3-phase Saturn Sade Sati, Dhaiya, and Jupiter transit |
-| `GET` | `/api/v1/profiles` | List/search saved profiles with pagination, gender filter, and tag filter |
-| `POST` | `/api/v1/profiles` | Save a new birth profile to SQLite |
-| `GET` | `/api/v1/profiles/search` | Fast typeahead profile lookup for form auto-completion |
-| `GET` | `/api/v1/profiles/{id}` | Get single profile birth details |
-| `PATCH` | `/api/v1/profiles/{id}` | Partially update profile (recomputes astro metadata) |
-| `DELETE` | `/api/v1/profiles/{id}` | Hard delete profile from SQLite |
-| `GET` | `/api/v1/geocode` | 3-tier cached location lookup (`q` query string) |
+| Method   | Endpoint                  | Description                                                                               |
+| -------- | ------------------------- | ----------------------------------------------------------------------------------------- |
+| `GET`    | `/health`                 | Service health probe `{"status": "ok"}`                                                   |
+| `POST`   | `/api/v1/kundali`         | Computes full 8-tab Kundali report payload with charts, dignities, SAV, and transits      |
+| `POST`   | `/api/v1/ashtakvarga`     | On-demand full Bhinnashtakvarga (7 planets $\times$ 8 references $\times$ 12 signs) + SAV |
+| `POST`   | `/api/v1/match`           | 36-Point Ashtakoot Guna Milan + Papa Samyam for two birth detail sets                     |
+| `POST`   | `/api/v1/match-saved`     | Guna Milan for two saved profile IDs (`boy_id`, `girl_id`)                                |
+| `POST`   | `/api/v1/match-bulk`      | Matches anchor profile against all saved opposite-gender candidates                       |
+| `GET`    | `/api/v1/panchang`        | Astronomical Panchang for target date & global coordinates (`date`, `lat`, `lon`, `tz`)   |
+| `POST`   | `/api/v1/kp`              | KP Placidus house cusps, Sub Lords, Ruling Planets, and 4-Fold Significators              |
+| `POST`   | `/api/v1/varshapal`       | Tajika Solar Return chart, Varsha Pravesh, Muntha, and Mudda Dasha timeline               |
+| `POST`   | `/api/v1/ai-chat`         | Multi-lingual Gemini 2.5 Flash Astrologer Bot Q&A based on computed chart facts           |
+| `GET`    | `/api/v1/transits/live`   | Real-time 9-graha Gochara, 3-phase Saturn Sade Sati, Dhaiya, and Jupiter transit          |
+| `GET`    | `/api/v1/profiles`        | List/search saved profiles with pagination, gender filter, and tag filter                 |
+| `POST`   | `/api/v1/profiles`        | Save a new birth profile to SQLite                                                        |
+| `GET`    | `/api/v1/profiles/search` | Fast typeahead profile lookup for form auto-completion                                    |
+| `GET`    | `/api/v1/profiles/{id}`   | Get single profile birth details                                                          |
+| `PATCH`  | `/api/v1/profiles/{id}`   | Partially update profile (recomputes astro metadata)                                      |
+| `DELETE` | `/api/v1/profiles/{id}`   | Hard delete profile from SQLite                                                           |
+| `GET`    | `/api/v1/geocode`         | 3-tier cached location lookup (`q` query string)                                          |
 
 ---
 
@@ -318,9 +297,11 @@ Kundali/
 ---
 
 ## 📜 Astrological Disclaimer
+
 This application calculates astronomical and sidereal planetary coordinates using high-precision algorithms (Swiss Ephemeris with Lahiri Ayanamsha). Interpretations, yogas, doshas, and remedies are based on classical Vedic Jyotish literature and are intended for cultural, educational, and informational purposes. Consult a professional astrologer for major life decisions.
 
 ---
 
 ## 📄 License
+
 This project is open source and available under the [MIT License](LICENSE).

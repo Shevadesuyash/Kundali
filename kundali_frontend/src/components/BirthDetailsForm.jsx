@@ -72,10 +72,14 @@ export function makeEmptyPerson() {
  *  - "Modified from Saved Profile" badge with Save/Keep options
  */
 export default function BirthDetailsForm({
-  label, value, onChange, idPrefix,
+  label,
+  value: rawValue,
+  onChange = () => {},
+  idPrefix = 'k',
   showGender = true,      // show gender toggle (hide for legacy compact use)
   genderRequired = false, // mark gender as required
 }) {
+  const value = rawValue || makeEmptyPerson();
   const { t } = useLang();
   const [touched, setTouched] = useState({});
 
