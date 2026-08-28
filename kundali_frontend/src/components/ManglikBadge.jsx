@@ -10,19 +10,19 @@ import './ManglikBadge.css';
  */
 export default function ManglikBadge({ manglik }) {
   const {
-    is_manglik,
-    is_cancelled,
-    cancellation_reason,
-    severity,
-    mars_sign,
-    manglik_from_lagna,
-    manglik_from_moon,
-    manglik_from_venus,
-    mars_house_lagna,
-    mars_house_moon,
-    mars_house_venus,
-    papa_points,
-  } = manglik;
+    is_manglik = false,
+    is_cancelled = false,
+    cancellation_reason = '',
+    severity = 'None',
+    mars_sign = '',
+    manglik_from_lagna = false,
+    manglik_from_moon = false,
+    manglik_from_venus = false,
+    mars_house_lagna = null,
+    mars_house_moon = null,
+    mars_house_venus = null,
+    papa_points = 0,
+  } = manglik || {};
 
   // Derive tone from effective state
   let tone = 'jade';

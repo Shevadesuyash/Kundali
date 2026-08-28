@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import ReportTabs from './ReportTabs';
+import ErrorBoundary from './ErrorBoundary';
 import OverviewTab from './tabs/OverviewTab';
 import PlanetsTab  from './tabs/PlanetsTab';
 import DashaTab    from './tabs/DashaTab';
@@ -34,14 +35,17 @@ export default function KundaliReport({ report, compact = false }) {
   const [activeTab, setActiveTab] = useState('overview');
   const exportTargetRef = useRef(null);
 
-  const { profile } = report;
+  if (!report) return null;
+  const profile = report.profile || {};
 
   if (compact) {
     // Compact mode: just the header + overview tab, no tabs
     return (
       <div className="kundali-report kundali-report--compact">
         <ReportHeader profile={profile} report={report} t={t} />
-        <OverviewTab report={report} />
+        <ErrorBoundary>
+          <OverviewTab report={report} />
+        </ErrorBoundary>
       </div>
     );
   }
@@ -67,14 +71,16 @@ export default function KundaliReport({ report, compact = false }) {
         profile={profile}
         report={report}
         t={t}
-        exportBtn={<ExportPDFButton reportRef={exportTargetRef} personName={profile.name} />}
+        exportBtn={<ExportPDFButton reportRef={exportTargetRef} personName={profile.name || 'Kundali'} />}
       />
 
       {/* Tab navigation */}
       <ReportTabs activeTab={activeTab} onChange={setActiveTab} />
 
       {/* Active tab content */}
-      {renderTab()}
+      <ErrorBoundary>
+        {renderTab()}
+      </ErrorBoundary>
 
       {/* Interactive AI Astrologer Assistant (Gemini 2.0 Flash) */}
       <AIAssistant report={report} />
@@ -102,14 +108,14 @@ export default function KundaliReport({ report, compact = false }) {
 }
 
 /** Shared header strip — name, date/time, location, and optional action buttons */
-function ReportHeader({ profile, report, t, exportBtn = null, hideExportBtn = false }) {
+function ReportHeader({ profile = {}, report = {}, t, exportBtn = null, hideExportBtn = false }) {
   const gender = report.gender || profile.gender;
   return (
     <div className="kundali-report__header">
       <div className="kundali-report__profile">
         <p className="eyebrow">{t('report.eyebrow')}</p>
         <h2 className="kundali-report__name">
-          {profile.name}
+          {profile.name || 'Kundali'}
           {gender && (
             <span className={`gender-badge gender-badge--${gender}`}>
               {gender === 'male' ? '♂ Male' : '♀ Female'}
@@ -120,11 +126,13 @@ function ReportHeader({ profile, report, t, exportBtn = null, hideExportBtn = fa
           {gender && (
             <span>{gender === 'male' ? '♂ Male' : '♀ Female'}</span>
           )}
-          <span>📅 {profile.local}</span>
+          {profile.local && <span>📅 {profile.local}</span>}
           {report.birth_place && (
             <span>🌐 {report.birth_place}</span>
           )}
-          <span>📍 Lat: {profile.lat}, Lon: {profile.lon}</span>
+          {(profile.lat != null && profile.lon != null) && (
+            <span>📍 Lat: {profile.lat}, Lon: {profile.lon}</span>
+          )}
           {profile.utc && <span>⏱️ UTC: {new Date(profile.utc).toUTCString()}</span>}
         </div>
       </div>
