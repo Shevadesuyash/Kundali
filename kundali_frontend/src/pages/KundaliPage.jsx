@@ -66,31 +66,54 @@ export default function KundaliPage() {
 
   // If ?profileId= is in the URL, auto-fill and auto-submit on mount
   useEffect(() => {
-    if (!profileId) return;
+    if (!profileId) {
+      setStatus('form');
+      setReport(null);
+      setPerson(makeEmptyPerson());
+      setPlaceLabel('');
+      setErrorMessage('');
+      return;
+    }
+
+    let isMounted = true;
     (async () => {
+      setStatus('loading');
+      setErrorMessage('');
       try {
         const profile = await getProfile(profileId);
+        if (!profile || profile.detail) {
+          throw new Error('Profile not found');
+        }
         const filled = {
-          name:         profile.name,
-          gender:       profile.gender,
-          year:         String(profile.year),
-          month:        String(profile.month),
-          day:          String(profile.day),
-          hour:         String(profile.hour),
-          minute:       String(profile.minute),
-          lat:          String(parseFloat(profile.lat).toFixed(4)),
-          lon:          String(parseFloat(profile.lon).toFixed(4)),
-          timezone_str: profile.timezone_str,
+          name:         profile.name || '',
+          gender:       profile.gender || 'male',
+          year:         String(profile.year || ''),
+          month:        String(profile.month || ''),
+          day:          String(profile.day || ''),
+          hour:         String(profile.hour ?? 12),
+          minute:       String(profile.minute ?? 0),
+          lat:          String(parseFloat(profile.lat || 18.5204).toFixed(4)),
+          lon:          String(parseFloat(profile.lon || 73.8567).toFixed(4)),
+          timezone_str: profile.timezone_str || 'Asia/Kolkata',
           place_label:  profile.birth_place || '',
         };
-        setPerson(filled);
-        setPlaceLabel(profile.birth_place || '');
+        if (isMounted) {
+          setPerson(filled);
+          setPlaceLabel(profile.birth_place || '');
+        }
         // Auto-submit
         await submitKundali(filled, profile.birth_place);
-      } catch {
-        // silently fail — show empty form
+      } catch (err) {
+        if (isMounted) {
+          setErrorMessage(err.message || c.error || 'Failed to load profile');
+          setStatus('form');
+        }
       }
     })();
+
+    return () => {
+      isMounted = false;
+    };
   }, [profileId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function submitKundali(personData, birthPlace) {
@@ -101,14 +124,12 @@ export default function KundaliPage() {
       const data = await getKundali(payload);
       // Attach birth_place and gender for display in the report header
       data.birth_place = birthPlace || personData.place_label || '';
-      data.gender = personData.gender || '';
+      data.gender = personData.gender || 'male';
       data.raw_person = payload;
       setReport(data);
       setStatus('result');
-
-
     } catch (err) {
-      setErrorMessage(err instanceof ApiError ? err.message : c.error);
+      setErrorMessage(err instanceof ApiError ? err.message : (c.error || 'Failed to calculate Kundali'));
       setStatus('error');
     }
   }
