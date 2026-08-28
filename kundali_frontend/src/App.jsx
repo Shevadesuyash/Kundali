@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { LanguageProvider, useLang } from './context/LanguageContext';
 import Navbar from './components/Navbar';
+import ErrorBoundary from './components/ErrorBoundary';
 import HomePage from './pages/HomePage';
 import KundaliPage from './pages/KundaliPage';
 import MatchPage from './pages/MatchPage';
@@ -23,14 +24,16 @@ function AppRoutes() {
   return (
     <BrowserRouter>
       <Navbar />
-      <Routes>
-        <Route path="/"         element={<HomePage />} />
-        <Route path="/kundali"  element={<KundaliPage />} />
-        <Route path="/match"    element={<MatchPage />} />
-        <Route path="/panchang" element={<PanchangPage />} />
-        <Route path="/profiles" element={<ProfilesPage />} />
-        <Route path="/guide"    element={<GuidePage />} />
-      </Routes>
+      <ErrorBoundary>
+        <Routes>
+          <Route path="/"         element={<HomePage />} />
+          <Route path="/kundali"  element={<KundaliPage />} />
+          <Route path="/match"    element={<MatchPage />} />
+          <Route path="/panchang" element={<PanchangPage />} />
+          <Route path="/profiles" element={<ProfilesPage />} />
+          <Route path="/guide"    element={<GuidePage />} />
+        </Routes>
+      </ErrorBoundary>
       <AppFooter />
     </BrowserRouter>
   );
@@ -39,7 +42,9 @@ function AppRoutes() {
 export default function App() {
   return (
     <LanguageProvider>
-      <AppRoutes />
+      <ErrorBoundary>
+        <AppRoutes />
+      </ErrorBoundary>
     </LanguageProvider>
   );
 }
