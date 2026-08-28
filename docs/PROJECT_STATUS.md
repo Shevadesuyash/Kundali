@@ -260,6 +260,18 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-08-28 14:04 IST] — Commit `e51c992` / Full-Suite Native Jyotish Multi-Language Translation Engine
+- **Summary**: Implemented 100% complete native multi-language translation across all 8 Kundali tabs, Varshapal, Guna Milan, Doshas, Gemstones, and Vedic Guide in English, Marathi, Hindi, and Gujarati.
+- **Architectural Enhancements**:
+  1. Built `astroTranslations.js` mapping all 12 Classical Yogas, 12 Kaal Sarp variants, 12 Muntha house predictions, and 8 Ashtakoot Koota rules into authentic Sanskrit/regional terms.
+  2. Built `guideTranslations.js` providing multi-lingual guidance for 12 Bhavas, 9 Grahas, and SAV benchmarks.
+  3. Localized `YogaList.jsx`, `GemstonePanel.jsx`, `GunaMilanScorecard.jsx`, `KootaBar.jsx`, `VarshapalTab.jsx`, `OverviewTab.jsx`, and `GuidePage.jsx`.
+  4. Tested and verified with 0 build errors (`npm run build` in 1.02s).
+- **Status**: Completed & Verified.
+- **Files Modified / Created**: `astroTranslations.js`, `guideTranslations.js`, `YogaList.jsx`, `GemstonePanel.jsx`, `GunaMilanScorecard.jsx`, `KootaBar.jsx`, `VarshapalTab.jsx`, `OverviewTab.jsx`, `GuidePage.jsx`, `astrology.js`, `docs/PROJECT_STATUS.md`.
+
+---
+
 ### [2026-08-28 12:45 IST] — Commit `0ac8aa1` / Repository Hygiene & Architecture Diagram Integration
 - **Summary**: Removed internal AI instructions, agent skills, internal scratch files, and planning notes from public Git tracking while keeping them intact locally. Integrated the full-stack architecture diagram into `README.md`.
 - **Status**: Completed & Verified.
