@@ -31,3 +31,13 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# AI Agent Instructions & Local Workspace Metadata (Present Locally, Untracked in Git)
+.agents/
+GEMINI.md
+run.txt
+*.postman_test_run.json
+kundali_backend/PLAN.md
+kundali_frontend/FRONTEND_PLAN.md
+docs/BUGFIXES_AND_NOTES.md
+docs/HANDOFF_AND_ROADMAP.md

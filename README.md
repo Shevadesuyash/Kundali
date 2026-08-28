@@ -121,11 +121,23 @@ This project was engineered, evolved, and polished using **Google Antigravity**,
 
 ---
 
-## 🏛️ Architecture & Tech Stack
+## 🏛️ Architecture & System Design
 
-<img src="docs/Kundali_Milan_Architecture.png" alt="Project Architechure" >
+<div align="center">
+  <img src="docs/Kundali_Milan_Architecture.png" alt="Kundali Milan Architecture" width="100%" style="border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);" />
+  <p><em>Kundali Milan Full-Stack System Architecture — React Frontend, FastAPI Swiss Ephemeris Backend & AI Layer</em></p>
+</div>
 
-## 🚀 Quickstart & Setup Guide
+### System Topology Overview
+
+| Layer | Technologies | Responsibilities |
+|---|---|---|
+| **Frontend Layer** | React 18, Vite, React Router, JSPDF, html2canvas, DOMPurify | 8-Tab Kundali report, 3-way SVG charts (North/South/East), 4-language i18n, live Panchang, Profile Hub, client-side PDF export |
+| **Backend API Engine** | FastAPI, Uvicorn, Pydantic, pyswisseph (Swiss Ephemeris) | High-precision ephemeris calculations, 8-tab payload generation, 12 Kaal Sarp / Yoga detectors, KP Placidus engine, Tajika Varshapal, 3-tier geocoder |
+| **AI & Intelligence** | Google Gemini 2.5 Flash, context-aware prompt templates | Astrologer Chatbot with dual summary/breakdown outputs in English, Marathi, Hindi, and Gujarati |
+| **Persistence Layer** | SQLite3, safe ALTER TABLE migrations | Profile registry, cached geocode coordinates, zero-data-loss upgrades |
+
+---
 
 ### 1. Prerequisites
 
