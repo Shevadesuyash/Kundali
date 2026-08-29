@@ -4,21 +4,20 @@ import { planetName } from '../utils/i18n';
 import {
   getGemCategory,
   getGemPurpose,
-  getGemPlacement,
   getGemMetal,
   getGemFinger,
   getGemDayTime,
   getGemContraindication,
   getGemSafetyRule,
+  getPrimaryGemName,
+  getGemSubstitutes,
+  getGemRudraksha,
 } from '../utils/astroTranslations';
 import './GemstonePanel.css';
 
 /**
  * GemstonePanel — Displays personalized Life Stone, Fortune Stone,
  * Intellect Stone, Career Stone, metal/finger specifications, and Rudraksha guidance.
- *
- * Props:
- *   data: gemstone_recommendations object from backend
  */
 export default function GemstonePanel({ data, recommendations: propRecs }) {
   const { lang } = useLang();
@@ -66,7 +65,7 @@ export default function GemstonePanel({ data, recommendations: propRecs }) {
             <div className="gemstone-card__header">
               <div>
                 <p className="gemstone-card__category">{getGemCategory(gem.category, lang)}</p>
-                <h4 className="gemstone-card__gem-name">{gem.primary_gemstone}</h4>
+                <h4 className="gemstone-card__gem-name">{getPrimaryGemName(gem.primary_gemstone, lang)}</h4>
                 <p className="gemstone-card__purpose">{getGemPurpose(gem.purpose, lang)}</p>
               </div>
               <span className="gemstone-card__planet-pill">
@@ -97,40 +96,46 @@ export default function GemstonePanel({ data, recommendations: propRecs }) {
               </div>
               <div className="gemstone-spec">
                 <span className="gemstone-spec__label">{weightLabel}</span>
-                <span className="gemstone-spec__val">{gem.carats}</span>
+                <span className="gemstone-spec__val">
+                  {gem.carats} {lang === 'mr' || lang === 'hi' || lang === 'gu' ? 'कॅरट' : 'Carats'}
+                </span>
               </div>
               <div className="gemstone-spec">
                 <span className="gemstone-spec__label">{wearingDayLabel}</span>
-                <span className="gemstone-spec__val">{getGemDayTime(gem.day_time, lang)}</span>
+                <span className="gemstone-spec__val">{getGemDayTime(gem.wearing_day, lang)}</span>
               </div>
             </div>
 
-            {/* Substitute */}
-            {gem.substitute_gemstone && (
-              <div className="gemstone-rudraksha">
-                <strong>{alternateLabel}</strong> {gem.substitute_gemstone}
+            {/* Alternate Stones */}
+            {gem.substitute_gemstones && (
+              <div className="gemstone-card__substitutes">
+                <span className="gemstone-substitutes-label">{alternateLabel}</span>
+                <span className="gemstone-substitutes-val">{getGemSubstitutes(gem.substitute_gemstones, lang)}</span>
               </div>
             )}
 
-            {/* Rudraksha Option */}
-            {gem.rudraksha && (
-              <div className="gemstone-rudraksha">
-                <strong>{rudrakshaLabel}</strong> {gem.rudraksha}
+            {/* Rudraksha Alternative */}
+            {gem.rudraksha_recommendation && (
+              <div className="gemstone-card__rudraksha">
+                <span className="gemstone-rudraksha-label">{rudrakshaLabel}</span>
+                <span className="gemstone-rudraksha-val">{getGemRudraksha(gem.rudraksha_recommendation, lang)}</span>
               </div>
             )}
 
-            {/* Mantra Box */}
-            <div className="gemstone-card__mantra-box">
-              <span className="gemstone-mantra-title">{mantraTitle}</span>
-              <span className="gemstone-mantra-text">{gem.mantra}</span>
-            </div>
+            {/* Energization Mantra */}
+            {gem.mantra && (
+              <div className="gemstone-card__mantra">
+                <span className="gemstone-mantra-label">{mantraTitle}</span>
+                <p className="gemstone-mantra-text mono">{gem.mantra}</p>
+              </div>
+            )}
           </div>
         ))}
       </div>
 
-      {/* Safety & Prana Pratishtha Guidelines */}
+      {/* General Safety Advisory */}
       {general_safety.length > 0 && (
-        <div className="gemstone-safety-card">
+        <div className="gemstone-safety-banner">
           <h4 className="gemstone-safety-title">
             <span>🛡️</span> {safetyTitle}
           </h4>

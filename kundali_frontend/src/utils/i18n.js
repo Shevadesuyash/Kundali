@@ -198,6 +198,36 @@ export const TRANSLATIONS = {
   'match.manglik.res': { en: 'Manglik Compatibility',       mr: 'मंगळ दोष सुसंगतता',       hi: 'मांगलिक सुसंगतता',       gu: 'માંગલિક સુસંગતતા' },
   'match.papa.diff':   { en: 'Papa Samyam Differential',    mr: 'पाप साम्य फरक',          hi: 'पाप साम्य संतुलन',        gu: 'પાપ સામ્ય તફાવત' },
 
+  // ─── Health Tab ───────────────────────────────────────────────
+  'health.title':        { en: 'Ayurvedic Health & Vitality Analysis', mr: 'आयुर्वेदिक प्रकृती व आरोग्य विश्लेषण', hi: 'आयुर्वेदिक प्रकृति एवं स्वास्थ्य विश्लेषण', gu: 'આયુર્વેદિક પ્રકૃતિ અને સ્વાસ્થ્ય વિશ્લેષણ' },
+  'health.subtitle':     { en: 'Planetary indicators for constitution, body vulnerabilities, and vitality based on your Lagna & 6th/8th house.', mr: 'आपले लग्न, षष्ठ व अष्टम भावावर आधारित शारीरिक प्रकृती, संभाव्य आजार आणि ऊर्जा विश्लेषण.', hi: 'लग्न, षष्ठ एवं अष्टम भाव पर आधारित शारीरिक प्रकृति, संभावित रोग एवं आरोग्य विश्लेषण।', gu: 'લગ્ન, ૬ઠ્ઠા અને ૮મા ભાવ આધારિત શારીરિક પ્રકૃતિ અને સ્વાસ્થ્ય વિશ્લેષણ.' },
+  'health.constitution': { en: 'Body Constitution (Prakriti)',         mr: 'शारीरिक प्रकृती (दोष स्वभाव)',            hi: 'शारीरिक प्रकृति (दोष स्वरूप)',            gu: 'શારીરિક પ્રકૃતિ (દોષ સ્વરૂપ)' },
+  'health.body.part':    { en: 'Vulnerable Body Parts & Organs',       mr: 'संवेदनशील अवयव व क्षेत्र',               hi: 'संवेदनशील अंग एवं क्षेत्र',               gu: 'સંવેદનશીલ અંગો અને ક્ષેત્ર' },
+  'health.tendencies':   { en: 'Health Tendencies & Risks',             mr: 'संभाव्य आरोग्य प्रवृत्ती',               hi: 'संभावित स्वास्थ्य प्रवृत्तियां',             gu: 'સંભવિત સ્વાસ્થ્ય સમસ્યાઓ' },
+  'health.fever':        { en: 'Fever & Inflammation Tendency (Mars)',  mr: 'ताप, दाह व संक्रमण प्रवृत्ती (मंगळ)',    hi: 'ज्वर, दाह एवं संक्रमण प्रवृत्ति (मंगल)',    gu: 'તાવ, દાહ અને ચેપ પ્રવૃત્તિ (મંગળ)' },
+  'health.mental':       { en: 'Mental & Emotional Balance',           mr: 'मानसिक व भावनिक संतुलन',                hi: 'मानसिक एवं भावनात्मक संतुलन',             gu: 'માનસિક અને ભાવનાત્મક સંતુલન' },
+  'health.remedy':       { en: 'Ayurvedic & Astrological Remedies',     mr: 'आरोग्य उपाय व पथ्य',                    hi: 'स्वास्थ्य सुरक्षा उपाय एवं पथ्य',         gu: 'આરોગ્ય સુરક્ષા ઉપાય અને પથ્ય' },
+  'health.disclaimer':   { en: 'Vedic astrology health insights are for complementary guidance only. Always consult a qualified medical professional.', mr: 'वैदिक ज्योतिष आरोग्य विश्लेषण केवळ पूरक मार्गदर्शनासाठी आहे. वैद्यकीय उपचारांसाठी डॉक्टरांचा सल्ला घ्या.', hi: 'वैदिक ज्योतिष स्वास्थ्य विश्लेषण केवल पूरक मार्गदर्शन हेतु है। चिकित्सा हेतु योग्य चिकित्सक से परामर्श लें।', gu: 'વૈદિક જ્યોતિષ સ્વાસ્થ્ય વિશ્લેષણ માત્ર પૂરક માર્ગદર્શન માટે છે. યોગ્ય ચિકિત્સકની સલાહ લો.' },
+
+  // ─── Dignities Additional ────────────────────────────────────
+  'dignity.Friendly':    { en: 'Friendly (Mitra)',                    mr: 'मित्र',                                hi: 'मित्र',                                gu: 'મિત્ર' },
+  'dignity.Enemy Sign':  { en: 'Enemy Sign (Shatru)',                 mr: 'शत्रू',                                hi: 'शत्रु',                                gu: 'શત્રુ' },
+
+  // ─── Classifications ──────────────────────────────────────────
+  'varna.Brahmin':       { en: 'Brahmin',                             mr: 'ब्राह्मण',                             hi: 'ब्राह्मण',                             gu: 'બ્રાહ્મણ' },
+  'varna.Kshatriya':     { en: 'Kshatriya',                           mr: 'क्षत्रिय',                             hi: 'क्षत्रिय',                             gu: 'ક્ષત્રિય' },
+  'varna.Vaishya':       { en: 'Vaishya',                             mr: 'वैश्य',                               hi: 'वैश्य',                                gu: 'વૈશ્ય' },
+  'varna.Shudra':        { en: 'Shudra',                              mr: 'शूद्र',                                hi: 'शूद्र',                                gu: 'શૂદ્ર' },
+  'gana.Deva':           { en: 'Deva',                                mr: 'देव',                                  hi: 'देव',                                  gu: 'દેવ' },
+  'gana.Manushya':       { en: 'Manushya',                            mr: 'मनुष्य',                               hi: 'मनुष्य',                               gu: 'મનુષ્ય' },
+  'gana.Rakshasa':       { en: 'Rakshasa',                            mr: 'राक्षस',                               hi: 'राक्षस',                               gu: 'રાક્ષસ' },
+  'nadi.Aadi (Vata)':    { en: 'Aadi (Vata)',                         mr: 'आदि (वात)',                            hi: 'आदि (वात)',                            gu: 'આદિ (વાત)' },
+  'nadi.Madhya (Pitta)': { en: 'Madhya (Pitta)',                      mr: 'मध्य (पित्त)',                         hi: 'मध्य (पित्त)',                         gu: 'મધ્ય (પિત્ત)' },
+  'nadi.Antya (Kapha)':  { en: 'Antya (Kapha)',                       mr: 'अंत्य (कफ)',                           hi: 'अंत्य (कफ)',                           gu: 'અંત્ય (કફ)' },
+  'nadi.Adi':            { en: 'Aadi (Vata)',                         mr: 'आदि (वात)',                            hi: 'आदि (वात)',                            gu: 'આદિ (વાત)' },
+  'nadi.Madhya':         { en: 'Madhya (Pitta)',                      mr: 'मध्य (पित्त)',                         hi: 'मध्य (पित्त)',                         gu: 'મધ્ય (પિત્ત)' },
+  'nadi.Antya':          { en: 'Antya (Kapha)',                       mr: 'अंत्य (कफ)',                           hi: 'अंत्य (कफ)',                           gu: 'અંત્ય (કફ)' },
+
   // ─── General UI ───────────────────────────────────────────────
   'general.loading': { en: 'Calculating your Kundali…', mr: 'आपली कुंडली काढत आहे…', hi: 'आपकी कुंडली बन रही है…', gu: 'તમારી કુંડળી બની રહી છે…' },
   'general.error':   { en: 'Something went wrong',      mr: 'काहीतरी चुकले',         hi: 'कुछ गलत हो गया',        gu: 'કંઈક ખોટું થયું' },
@@ -254,4 +284,28 @@ export function nakshatraName(name, lang = 'en') {
   const entry = TRANSLATIONS[`nakshatra.${name}`];
   if (!entry) return name;
   return entry[lang] || entry.en || name;
+}
+
+/** Translate Varna */
+export function varnaName(varna, lang = 'en') {
+  if (!varna) return '—';
+  const entry = TRANSLATIONS[`varna.${varna}`];
+  if (!entry) return varna;
+  return entry[lang] || entry.en || varna;
+}
+
+/** Translate Gana */
+export function ganaName(gana, lang = 'en') {
+  if (!gana) return '—';
+  const entry = TRANSLATIONS[`gana.${gana}`];
+  if (!entry) return gana;
+  return entry[lang] || entry.en || gana;
+}
+
+/** Translate Nadi */
+export function nadiName(nadi, lang = 'en') {
+  if (!nadi) return '—';
+  const entry = TRANSLATIONS[`nadi.${nadi}`];
+  if (!entry) return nadi;
+  return entry[lang] || entry.en || nadi;
 }

@@ -4,6 +4,7 @@ import TransitTracker from '../TransitTracker';
 import AstroTooltip from '../AstroTooltip';
 import { CLASSIFICATION_INFO } from '../../utils/astrology';
 import { useLang } from '../../context/LanguageContext';
+import { signName, nakshatraName, planetName, varnaName, ganaName, nadiName } from '../../utils/i18n';
 import './tabs.css';
 
 /**
@@ -29,14 +30,20 @@ export default function OverviewTab({ report }) {
   const g_entry = ganaInfo  ? (ganaInfo[lang] || ganaInfo.en) : null;
   const n_entry = nadiInfo  ? (nadiInfo[lang] || nadiInfo.en) : null;
 
+  const ascSignName = ascendant?.sign_index !== undefined ? signName(ascendant.sign_index, lang) : (ascendant?.sign || '—');
+  const ascNakName  = ascendant?.nakshatra ? nakshatraName(ascendant.nakshatra, lang) : '—';
+  const moonSignName = report.moon_sign_index !== undefined ? signName(report.moon_sign_index, lang) : (moon_sign || '—');
+  const moonNakName  = moon_nakshatra ? nakshatraName(moon_nakshatra, lang) : '—';
+  const moonLordName = classification?.moon_sign_lord ? planetName(classification.moon_sign_lord, lang) : '—';
+
   const housePills = Array.from({ length: 12 }, (_, i) => {
     const houseNum = i + 1;
     const houseData = charts?.D1_lagna?.find((h) => h.house === houseNum);
     const occupants = houseData?.occupants || [];
     return {
       house: houseNum,
-      sign: houseData ? houseData.sign.split(' ')[0] : '—',
-      occupants: occupants.map((p) => p.abbr).join(' '),
+      sign: houseData?.sign_index !== undefined ? signName(houseData.sign_index, lang) : (houseData ? houseData.sign.split(' ')[0] : '—'),
+      occupants: occupants.map((p) => (lang === 'mr' || lang === 'hi' ? p.devanagari || p.abbr : p.abbr)).join(' '),
     };
   });
 
@@ -49,12 +56,12 @@ export default function OverviewTab({ report }) {
             {t('report.ascendant')}
             <AstroTooltip title="Ascendant (Lagna)" content="The sign rising on the eastern horizon at your birth. Represents your physical vitality, personality, and foundational life path." learnMoreId="houses" />
           </dt>
-          <dd className="stat-card__val">{ascendant?.sign || '—'}</dd>
+          <dd className="stat-card__val">{ascSignName}</dd>
           <dd className="stat-card__sub mono">{ascendant?.degree_str || ''}</dd>
         </div>
         <div className="stat-card">
           <dt>{t('report.asc.nakshatra')}</dt>
-          <dd className="stat-card__val">{ascendant?.nakshatra || '—'}</dd>
+          <dd className="stat-card__val">{ascNakName}</dd>
           <dd className="stat-card__sub mono">{t('report.pada')} {ascendant?.pada || '1'}</dd>
         </div>
         <div className="stat-card">
@@ -62,12 +69,12 @@ export default function OverviewTab({ report }) {
             {t('report.moon.sign')}
             <AstroTooltip title="Moon Sign (Rashi)" content="The sign occupied by the Moon at birth. Governs your emotional core, mind (Manas), intuition, and perceptual reactions." learnMoreId="planets" />
           </dt>
-          <dd className="stat-card__val">{moon_sign || '—'}</dd>
-          <dd className="stat-card__sub">{t('report.lord')}: <strong>{classification?.moon_sign_lord || '—'}</strong></dd>
+          <dd className="stat-card__val">{moonSignName}</dd>
+          <dd className="stat-card__sub">{t('report.lord')}: <strong>{moonLordName}</strong></dd>
         </div>
         <div className="stat-card">
           <dt>{t('report.moon.nakshatra')}</dt>
-          <dd className="stat-card__val">{moon_nakshatra || '—'}</dd>
+          <dd className="stat-card__val">{moonNakName}</dd>
           <dd className="stat-card__sub mono">{t('report.pada')} {moon_pada || '1'}</dd>
         </div>
         <div className="stat-card">
@@ -95,7 +102,7 @@ export default function OverviewTab({ report }) {
             {t('report.varna')}
             <AstroTooltip title="Varna" content="Spiritual temperaments: Brahmin (intellectual), Kshatriya (leader), Vaishya (commercial), Shudra (productive)." learnMoreId="matchmaking" />
           </span>
-          <h4 className="class-card__name">{classification?.varna || '—'}</h4>
+          <h4 className="class-card__name">{varnaName(classification?.varna, lang)}</h4>
           {v_entry && (
             <p className="class-card__desc">
               {v_entry.meaning}
@@ -105,7 +112,7 @@ export default function OverviewTab({ report }) {
         </div>
         <div className="class-card">
           <span className="class-card__title">{t('report.gana')}</span>
-          <h4 className="class-card__name">{classification?.gana || '—'}</h4>
+          <h4 className="class-card__name">{ganaName(classification?.gana, lang)}</h4>
           {g_entry && (
             <p className="class-card__desc">
               {g_entry.meaning}
@@ -115,11 +122,11 @@ export default function OverviewTab({ report }) {
         </div>
         <div className="class-card">
           <span className="class-card__title">{t('report.nadi')}</span>
-          <h4 className="class-card__name">{classification?.nadi || '—'}</h4>
+          <h4 className="class-card__name">{nadiName(classification?.nadi, lang)}</h4>
           {n_entry && (
             <p className="class-card__desc">
               {n_entry.constitution}
-              {n_entry.position && <> · {lang === 'mr' ? 'स्थिती:' : 'Position:'} {n_entry.position}</>}
+              {n_entry.position && <> · {lang === 'mr' ? 'स्थिती:' : lang === 'hi' ? 'स्थिति:' : lang === 'gu' ? 'સ્થિતિ:' : 'Position:'} {n_entry.position}</>}
             </p>
           )}
         </div>

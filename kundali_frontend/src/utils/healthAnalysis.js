@@ -15,7 +15,7 @@
 const SIGN_HEALTH = {
   0: { // Aries
     sign: 'Aries / मेष',
-    prakriti: { en: 'Pitta (Fire & Water)', mr: 'पित्त (अग्नी आणि जल)' },
+    prakriti: { en: 'Pitta (Fire & Water)', mr: 'पित्त (अग्नी आणि जल)', hi: 'पित्त (अग्नि एवं जल)', gu: 'પિત્ત (અગ્નિ અને જળ)' },
     constitution: {
       en: 'Hot, sharp, and energetic constitution. Strong metabolism and digestion. Tendency toward inflammation and heat-related disorders.',
       mr: 'उष्ण, तीव्र आणि ऊर्जावान प्रकृती. चांगली पचनशक्ती. दाह आणि उष्णतेशी संबंधित आजारांची प्रवृत्ती.'
@@ -33,7 +33,7 @@ const SIGN_HEALTH = {
   },
   1: { // Taurus
     sign: 'Taurus / वृषभ',
-    prakriti: { en: 'Kapha-Vata (Earth & Air)', mr: 'कफ-वात (पृथ्वी आणि वायू)' },
+    prakriti: { en: 'Kapha-Vata (Earth & Air)', mr: 'कफ-वात (पृथ्वी आणि वायू)', hi: 'कफ-वात (पृथ्वी एवं वायु)', gu: 'કફ-વાત (પૃથ્વી અને વાયુ)' },
     constitution: {
       en: 'Stable, strong and enduring constitution. Slow metabolism. Tendency toward respiratory and thyroid issues.',
       mr: 'स्थिर, मजबूत आणि टिकाऊ प्रकृती. मंद चयापचय. श्वसन आणि थायरॉईड समस्यांची प्रवृत्ती.'
@@ -51,7 +51,7 @@ const SIGN_HEALTH = {
   },
   2: { // Gemini
     sign: 'Gemini / मिथुन',
-    prakriti: { en: 'Vata (Air & Ether)', mr: 'वात (वायू आणि आकाश)' },
+    prakriti: { en: 'Vata (Air & Ether)', mr: 'वात (वायू आणि आकाश)', hi: 'वात (वायु एवं आकाश)', gu: 'વાત (વાયુ અને આકાશ)' },
     constitution: {
       en: 'Quick, adaptive but variable constitution. Nervous system sensitivity. Tendency toward anxiety and respiratory issues.',
       mr: 'जलद, अनुकूल पण परिवर्तनशील प्रकृती. मज्जासंस्था संवेदनशीलता. चिंता आणि श्वसन समस्यांची प्रवृत्ती.'
@@ -69,7 +69,7 @@ const SIGN_HEALTH = {
   },
   3: { // Cancer
     sign: 'Cancer / कर्क',
-    prakriti: { en: 'Kapha-Pitta (Water & Fire)', mr: 'कफ-पित्त (जल आणि अग्नी)' },
+    prakriti: { en: 'Kapha-Pitta (Water & Fire)', mr: 'कफ-पित्त (जल आणि अग्नी)', hi: 'कफ-पित्त (जल एवं अग्नि)', gu: 'કફ-પિત્ત (જળ અને અગ્નિ)' },
     constitution: {
       en: 'Nurturing, sensitive and fluid constitution. Strong immunity but prone to emotional eating. Digestive and lymphatic sensitivity.',
       mr: 'पोषण करणारी, संवेदनशील आणि तरल प्रकृती. मजबूत प्रतिकारशक्ती पण भावनिक खाण्याची प्रवृत्ती. पचन आणि लसीका संवेदनशीलता.'
@@ -87,7 +87,7 @@ const SIGN_HEALTH = {
   },
   4: { // Leo
     sign: 'Leo / सिंह',
-    prakriti: { en: 'Pitta (Fire dominant)', mr: 'पित्त (अग्नी प्रधान)' },
+    prakriti: { en: 'Pitta (Fire dominant)', mr: 'पित्त (अग्नी प्रधान)', hi: 'पित्त (अग्नि प्रधान)', gu: 'પિત્ત (અગ્નિ પ્રધાન)' },
     constitution: {
       en: 'Strong, vital and commanding constitution. High vitality. Heart and circulatory system is the key area. Very strong immunity.',
       mr: 'मजबूत, प्राणवान आणि प्रभावशाली प्रकृती. उच्च जीवनशक्ती. हृदय आणि रक्ताभिसरण संस्था हे मुख्य क्षेत्र. अत्यंत मजबूत प्रतिकारशक्ती.'
@@ -105,7 +105,7 @@ const SIGN_HEALTH = {
   },
   5: { // Virgo
     sign: 'Virgo / कन्या',
-    prakriti: { en: 'Vata-Pitta (Earth & Fire)', mr: 'वात-पित्त (पृथ्वी आणि अग्नी)' },
+    prakriti: { en: 'Vata-Pitta (Earth & Fire)', mr: 'वात-पित्त (पृथ्वी आणि अग्नी)', hi: 'वात-पित्त (पृथ्वी एवं अग्नि)', gu: 'વાત-પિત્ત (પૃથ્વી અને અગ્નિ)' },
     constitution: {
       en: 'Analytical, precise and health-conscious constitution. Excellent digestive capacity when in balance. Tendency toward over-analysis and digestive sensitivity.',
       mr: 'विश्लेषणात्मक, अचूक आणि आरोग्य-सजग प्रकृती. संतुलनात असताना उत्कृष्ट पचनशक्ती. अति-विश्लेषण आणि पाचन संवेदनशीलतेची प्रवृत्ती.'
@@ -123,7 +123,7 @@ const SIGN_HEALTH = {
   },
   6: { // Libra
     sign: 'Libra / तुला',
-    prakriti: { en: 'Vata (Air dominant)', mr: 'वात (वायू प्रधान)' },
+    prakriti: { en: 'Vata (Air dominant)', mr: 'वात (वायू प्रधान)', hi: 'वात (वायु प्रधान)', gu: 'વાત (વાયુ પ્રધાન)' },
     constitution: {
       en: 'Balanced and harmonious constitution. Kidney and urinary system sensitivity. Prone to Vata imbalances when under stress.',
       mr: 'संतुलित आणि समरस प्रकृती. मूत्रपिंड आणि मूत्र तंत्र संवेदनशीलता. ताणाखाली वात असंतुलनाची प्रवृत्ती.'
@@ -141,7 +141,7 @@ const SIGN_HEALTH = {
   },
   7: { // Scorpio
     sign: 'Scorpio / वृश्चिक',
-    prakriti: { en: 'Kapha-Pitta (Water & Fire)', mr: 'कफ-पित्त (जल आणि अग्नी)' },
+    prakriti: { en: 'Kapha-Pitta (Water & Fire)', mr: 'कफ-पित्त (जल आणि अग्नी)', hi: 'कफ-पित्त (जल एवं अग्नि)', gu: 'કફ-પિત્ત (જળ અને અગ્નિ)' },
     constitution: {
       en: 'Intense, regenerative and powerful constitution. Strong healing ability. Reproductive system and elimination are key health areas.',
       mr: 'तीव्र, पुनरुत्पादक आणि शक्तिशाली प्रकृती. मजबूत बरे होण्याची क्षमता. पुनरुत्पादन संस्था आणि उत्सर्जन हे मुख्य आरोग्य क्षेत्र.'
@@ -159,7 +159,7 @@ const SIGN_HEALTH = {
   },
   8: { // Sagittarius
     sign: 'Sagittarius / धनु',
-    prakriti: { en: 'Pitta-Kapha (Fire & Water)', mr: 'पित्त-कफ (अग्नी आणि जल)' },
+    prakriti: { en: 'Pitta-Kapha (Fire & Water)', mr: 'पित्त-कफ (अग्नी आणि जल)', hi: 'पित्त-कफ (अग्नि एवं जल)', gu: 'પિત્ત-કફ (અગ્નિ અને જળ)' },
     constitution: {
       en: 'Expansive, optimistic and active constitution. Strong liver and thighs. Tendency toward overindulgence and liver stress.',
       mr: 'विस्तारशील, आशावादी आणि सक्रिय प्रकृती. मजबूत यकृत आणि मांड्या. अतिभोग आणि यकृत ताणाची प्रवृत्ती.'
@@ -177,7 +177,7 @@ const SIGN_HEALTH = {
   },
   9: { // Capricorn
     sign: 'Capricorn / मकर',
-    prakriti: { en: 'Vata-Kapha (Earth & Air)', mr: 'वात-कफ (पृथ्वी आणि वायू)' },
+    prakriti: { en: 'Vata-Kapha (Earth & Air)', mr: 'वात-कफ (पृथ्वी आणि वायू)', hi: 'वात-कफ (पृथ्वी एवं वायु)', gu: 'વાત-કફ (પૃથ્વી અને વાયુ)' },
     constitution: {
       en: 'Enduring, disciplined and structured constitution. Skeletal system and joints are key. Slow aging but prone to structural issues.',
       mr: 'टिकाऊ, शिस्तबद्ध आणि संरचित प्रकृती. सांगाडा तंत्र आणि सांधे हे मुख्य. हळू वृद्धत्व पण संरचनात्मक समस्यांची प्रवृत्ती.'
@@ -195,7 +195,7 @@ const SIGN_HEALTH = {
   },
   10: { // Aquarius
     sign: 'Aquarius / कुंभ',
-    prakriti: { en: 'Vata (Air & Ether dominant)', mr: 'वात (वायू आणि आकाश प्रधान)' },
+    prakriti: { en: 'Vata (Air & Ether dominant)', mr: 'वात (वायू आणि आकाश प्रधान)', hi: 'वात (वायु एवं आकाश प्रधान)', gu: 'વાત (વાયુ અને આકાશ પ્રધાન)' },
     constitution: {
       en: 'Intellectual, innovative and unconventional constitution. Circulation and nervous system are key. Ankles and calves susceptible.',
       mr: 'बौद्धिक, नाविन्यपूर्ण आणि अपारंपरिक प्रकृती. परिसंचरण आणि मज्जासंस्था हे मुख्य. घोटे आणि पोटऱ्या संवेदनशील.'

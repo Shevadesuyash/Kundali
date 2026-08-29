@@ -759,3 +759,67 @@ export function getChoghadiyaDesc(name, defaultDesc = '', lang = 'en') {
   };
   return descMap[name]?.[lang] || defaultDesc;
 }
+
+/** Translate Primary Gemstone Name */
+export function getPrimaryGemName(name, lang = 'en') {
+  if (!name || lang === 'en') return name;
+  const gemMap = {
+    'Red Coral (Moonga)': { mr: 'पोवळे (मूंगा) / Red Coral', hi: 'मूंगा (रक्त प्रवाल) / Red Coral', gu: 'પરવાળું (મૂંગા) / Red Coral' },
+    'Pearl (Moti)': { mr: 'मोती (मुक्ता) / Pearl', hi: 'मोती (मुक्ता) / Pearl', gu: 'મોતી (મુક્તા) / Pearl' },
+    'Yellow Sapphire (Pukhraj)': { mr: 'पुष्कराज (पुखराज) / Yellow Sapphire', hi: 'पुखराज (पीत पुखराज) / Yellow Sapphire', gu: 'પોખરાજ (પુખરાજ) / Yellow Sapphire' },
+    'Ruby (Manik)': { mr: 'माणिक (माणेक) / Ruby', hi: 'माणिक्य (माणिक) / Ruby', gu: 'માણેક (રૂબી) / Ruby' },
+    'Emerald (Panna)': { mr: 'पाचू (पन्ना) / Emerald', hi: 'पन्ना (हरित पाचू) / Emerald', gu: 'પન્ના (પાચુ) / Emerald' },
+    'Diamond (Heera)': { mr: 'हिरा (हीरा) / Diamond', hi: 'हीरा (वज्र) / Diamond', gu: 'હીરો (હીરા) / Diamond' },
+    'Blue Sapphire (Neelam)': { mr: 'नीलम (नीलमणी) / Blue Sapphire', hi: 'नीलम (नीलमणि) / Blue Sapphire', gu: 'નીલમ / Blue Sapphire' },
+    'Hessonite (Gomed)': { mr: 'गोमेद / Hessonite', hi: 'गोमेद / Hessonite', gu: 'ગોમેદ / Hessonite' },
+    "Cat's Eye (Lehsunia)": { mr: 'लसण्या (वैडूर्य)', hi: 'लहसुनिया (वैडूर्य)', gu: 'લહસુનિયા' },
+  };
+  return gemMap[name]?.[lang] || name;
+}
+
+/** Translate Substitute Gemstone Names */
+export function getGemSubstitutes(subs, lang = 'en') {
+  if (!subs || lang === 'en') return subs;
+  let res = subs;
+  const map = {
+    'Carnelian': { mr: 'कार्नेलियन', hi: 'कार्नेलियन', gu: 'કાર્નેલિયન' },
+    'Red Jasper': { mr: 'लाल जास्पर (हकीक)', hi: 'लाल जास्पर (हकीक)', gu: 'લાલ જાસ્પર' },
+    'Moonstone': { mr: 'चंद्रकांत मणी (मूनस्टोन)', hi: 'चंद्रकांत मणि (मूनस्टोन)', gu: 'ચંદ્રકાંત મણિ (મૂનસ્ટોન)' },
+    'Yellow Topaz': { mr: 'पिवळा टोपाझ', hi: 'पीला पुखराज/टोपाज', gu: 'પીળો ટોપાઝ' },
+    'Heliodor': { mr: 'हेलिओडोर', hi: 'हेलिओडोर', gu: 'હેલિઓડોર' },
+    'Citrine': { mr: 'सुनहला (सिट्रीन)', hi: 'सुनहला (सिट्रीन)', gu: 'સુનહલા (સિટ્રીન)' },
+    'Red Spinel': { mr: 'लाल स्पिनेल', hi: 'लाल स्पिनेल', gu: 'લાલ સ્પિનેલ' },
+    'Garnet': { mr: 'गार्नेट (तामडा)', hi: 'गार्नेट (तामड़ा)', gu: 'ગાર્નેટ' },
+    'Peridot': { mr: 'पेरिडॉट', hi: 'पेरिडॉट', gu: 'પેરિડોટ' },
+    'Green Tourmaline': { mr: 'हिरवा तूरमलीन', hi: 'हरा टूर्मलीन', gu: 'લીલો ટૂરમલીન' },
+    'White Sapphire': { mr: 'पांढरा पुष्कराज', hi: 'श्वेत पुखराज', gu: 'શ્વેત પોખરાજ' },
+    'Zircon': { mr: 'झिरकॉन', hi: 'जरकन (ज़िरकॉन)', gu: 'ઝિરકોન' },
+    'Amethyst': { mr: 'जांभळा अमिथिस्ट (कटेला)', hi: 'कटैला (जमुनिया)', gu: 'જાંબલી એમિથિસ્ટ' },
+  };
+  for (const [en, tr] of Object.entries(map)) {
+    if (res.includes(en)) {
+      res = res.replace(en, tr[lang] || en);
+    }
+  }
+  return res;
+}
+
+/** Translate Rudraksha Recommendation */
+export function getGemRudraksha(rudra, lang = 'en') {
+  if (!rudra || lang === 'en') return rudra;
+  let res = rudra;
+  res = res.replace(/1 Mukhi \(Ek Mukhi\)/g, lang === 'mr' || lang === 'hi' ? '१ मुखी (एक मुखी)' : '૧ મુખી');
+  res = res.replace(/2 Mukhi \(Do Mukhi\)/g, lang === 'mr' || lang === 'hi' ? '२ मुखी (दोन मुखी)' : '૨ મુખી');
+  res = res.replace(/3 Mukhi \(Teen Mukhi\)/g, lang === 'mr' || lang === 'hi' ? '३ मुखी (तीन मुखी)' : '૩ મુખી');
+  res = res.replace(/4 Mukhi \(Char Mukhi\)/g, lang === 'mr' || lang === 'hi' ? '४ मुखी (चार मुखी)' : '૪ મુખી');
+  res = res.replace(/5 Mukhi \(Panch Mukhi\)/g, lang === 'mr' || lang === 'hi' ? '५ मुखी (पंच मुखी)' : '૫ મુખી');
+  res = res.replace(/6 Mukhi \(Cheh Mukhi\)/g, lang === 'mr' || lang === 'hi' ? '६ मुखी (सहा मुखी)' : '૬ મુખી');
+  res = res.replace(/7 Mukhi \(Saat Mukhi\)/g, lang === 'mr' || lang === 'hi' ? '७ मुखी (सात मुखी)' : '૭ મુખી');
+  res = res.replace(/8 Mukhi \(Aath Mukhi\)/g, lang === 'mr' || lang === 'hi' ? '८ मुखी (आठ मुखी)' : '૮ મુખી');
+  res = res.replace(/9 Mukhi \(Nau Mukhi\)/g, lang === 'mr' || lang === 'hi' ? '९ मुखी (नऊ मुखी)' : '૯ મુખી');
+  res = res.replace(/10 Mukhi \(Dus Mukhi\)/g, lang === 'mr' || lang === 'hi' ? '१० मुखी (दहा मुखी)' : '૧૦ મુખી');
+  res = res.replace(/11 Mukhi \(Gyarah Mukhi\)/g, lang === 'mr' || lang === 'hi' ? '११ मुखी (अकरा मुखी)' : '૧૧ મુખી');
+  res = res.replace(/12 Mukhi Rudraksha/g, lang === 'mr' || lang === 'hi' ? '१२ मुखी रुद्राक्ष' : '૧૨ મુખી રુદ્રાક્ષ');
+  res = res.replace(/Rudraksha/g, lang === 'mr' || lang === 'hi' ? 'रुद्राक्ष' : 'રુદ્રાક્ષ');
+  return res;
+}

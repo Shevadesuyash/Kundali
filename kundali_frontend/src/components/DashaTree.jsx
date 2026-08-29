@@ -73,17 +73,17 @@ export default function DashaTree({ periods = [] }) {
                 <div>
                   <div className="dasha-tree__maha-title-row">
                     <h4 className="dasha-tree__maha-title">
-                      {translatedPlanet} {t('dasha.mahadasha') || 'Mahadasha'}
+                      {translatedPlanet} {t('dasha.mahadasha') || (lang === 'mr' ? 'महादशा' : lang === 'hi' ? 'महादशा' : lang === 'gu' ? 'મહાદશા' : 'Mahadasha')}
                     </h4>
                     {isMahaCurrent && (
                       <span className="dasha-tree__badge dasha-tree__badge--active">
-                        ACTIVE NOW
+                        {lang === 'mr' ? 'सध्या सुरू' : lang === 'hi' ? 'वर्तमान सक्रिय' : lang === 'gu' ? 'હાલ સક્રિય' : 'ACTIVE NOW'}
                       </span>
                     )}
                   </div>
                   <p className="dasha-tree__dates mono">
                     {formatDate(maha.start_date)} &nbsp;→&nbsp; {formatDate(maha.end_date)}
-                    <span className="dasha-tree__duration"> ({maha.dasha_years} yrs)</span>
+                    <span className="dasha-tree__duration"> ({maha.dasha_years} {lang === 'mr' || lang === 'hi' || lang === 'gu' ? 'वर्षे' : 'yrs'})</span>
                   </p>
                 </div>
               </div>
@@ -91,7 +91,7 @@ export default function DashaTree({ periods = [] }) {
               <div className="dasha-tree__maha-right">
                 {isMahaCurrent && (
                   <div className="dasha-tree__progress-wrap">
-                    <span className="dasha-tree__progress-label mono">{progress}% elapsed</span>
+                    <span className="dasha-tree__progress-label mono">{progress}% {lang === 'mr' || lang === 'hi' ? 'पूर्ण' : lang === 'gu' ? 'પૂર્ણ' : 'elapsed'}</span>
                     <div className="dasha-tree__progress-bar">
                       <div
                         className="dasha-tree__progress-fill"
@@ -110,9 +110,9 @@ export default function DashaTree({ periods = [] }) {
             {isExpanded && maha.antardashas && maha.antardashas.length > 0 && (
               <div className="dasha-tree__antardasha-wrap">
                 <div className="dasha-tree__antardasha-header">
-                  <span>Antardasha (Sub-Period)</span>
-                  <span>Timeline</span>
-                  <span>Duration</span>
+                  <span>{lang === 'mr' ? 'अंतर्दशा (उप-काळ)' : lang === 'hi' ? 'अंतर्दशा (उप-काल)' : lang === 'gu' ? 'અંતર્દશા (ઉપ-સમય)' : 'Antardasha (Sub-Period)'}</span>
+                  <span>{lang === 'mr' ? 'कालावधी' : lang === 'hi' ? 'समय अवधि' : lang === 'gu' ? 'સમયગાળો' : 'Timeline'}</span>
+                  <span>{lang === 'mr' ? 'मुदत' : lang === 'hi' ? 'अवधि' : lang === 'gu' ? 'મુદ્દત' : 'Duration'}</span>
                 </div>
                 <div className="dasha-tree__antardasha-list">
                   {maha.antardashas.map((antar, aIdx) => {
@@ -121,6 +121,9 @@ export default function DashaTree({ periods = [] }) {
                     const subProgress = isAntarCurrent
                       ? calcProgress(antar.start_date, antar.end_date)
                       : 0;
+
+                    const yearsSuffix = lang === 'mr' || lang === 'hi' || lang === 'gu' ? ' वर्षे' : ' yrs';
+                    const monthsSuffix = lang === 'mr' || lang === 'hi' || lang === 'gu' ? ' महिने' : ' mos';
 
                     return (
                       <div
@@ -133,7 +136,7 @@ export default function DashaTree({ periods = [] }) {
                             {translatedPlanet} – {translatedSubPlanet}
                           </strong>
                           {isAntarCurrent && (
-                            <span className="dasha-tree__pulse-tag">CURRENT</span>
+                            <span className="dasha-tree__pulse-tag">{lang === 'mr' ? 'सध्या चालू' : lang === 'hi' ? 'वर्तमान काल' : lang === 'gu' ? 'હાલ ચાલુ' : 'CURRENT'}</span>
                           )}
                         </div>
 
@@ -151,8 +154,8 @@ export default function DashaTree({ periods = [] }) {
 
                         <div className="dasha-tree__antar-duration mono">
                           {antar.total_years >= 1
-                            ? `${antar.total_years.toFixed(2)} yrs`
-                            : `${Math.round(antar.total_years * 12)} mos`}
+                            ? `${antar.total_years.toFixed(2)}${yearsSuffix}`
+                            : `${Math.round(antar.total_years * 12)}${monthsSuffix}`}
                         </div>
                       </div>
                     );
