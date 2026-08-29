@@ -107,16 +107,26 @@ export default function PlanetsTab({ report }) {
 
           <div className="chart-wrapper">
             {activeChart === 'd1' && charts.D1_lagna && (
-              <ChartGrid charts={{ D1_lagna: charts.D1_lagna }} />
+              <ChartGrid houses={charts.D1_lagna} title={lang === 'mr' ? 'D1 लग्न कुंडली' : lang === 'hi' ? 'D1 लग्न कुंडली' : lang === 'gu' ? 'D1 લગ્ન કુંડળી' : 'D1 Rāśi (Lagna)'} ascendantSignIndex={report.ascendant?.sign_index} />
             )}
             {activeChart === 'd9' && charts.D9_navamsha && (
-              <ChartGrid charts={{ D9_navamsha: charts.D9_navamsha }} />
+              <ChartGrid houses={charts.D9_navamsha} title={lang === 'mr' ? 'D9 नवांश कुंडली' : lang === 'hi' ? 'D9 नवांश कुंडली' : lang === 'gu' ? 'D9 નવાંશ કુંડળી' : 'D9 Navamsha'} ascendantSignIndex={report.d9_ascendant_sign_index ?? report.ascendant?.sign_index} />
             )}
             {activeChart === 'rashi' && charts.rashi_moon_chart && (
-              <ChartGrid charts={{ rashi_moon_chart: charts.rashi_moon_chart }} />
+              <ChartGrid houses={charts.rashi_moon_chart} title={lang === 'mr' ? 'चंद्र राशी कुंडली' : lang === 'hi' ? 'चंद्र राशि कुंडली' : lang === 'gu' ? 'ચંદ્ર રાશિ કુંડળી' : 'Rashi (Moon)'} ascendantSignIndex={report.moon_sign_index ?? report._technical_profile?.moon_sign_index ?? report.planets?.Moon?.sign_index} />
             )}
             {activeChart === 'all' && (
-              <ChartGrid charts={charts} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                {charts.D1_lagna && (
+                  <ChartGrid houses={charts.D1_lagna} title={lang === 'mr' ? 'D1 लग्न कुंडली' : lang === 'hi' ? 'D1 लग्न कुंडली' : lang === 'gu' ? 'D1 લગ્ન કુંડળી' : 'D1 Rāśi (Lagna)'} ascendantSignIndex={report.ascendant?.sign_index} />
+                )}
+                {charts.D9_navamsha && (
+                  <ChartGrid houses={charts.D9_navamsha} title={lang === 'mr' ? 'D9 नवांश कुंडली' : lang === 'hi' ? 'D9 नवांश कुंडली' : lang === 'gu' ? 'D9 નવાંશ કુંડળી' : 'D9 Navamsha'} ascendantSignIndex={report.d9_ascendant_sign_index ?? report.ascendant?.sign_index} />
+                )}
+                {charts.rashi_moon_chart && (
+                  <ChartGrid houses={charts.rashi_moon_chart} title={lang === 'mr' ? 'चंद्र राशी कुंडली' : lang === 'hi' ? 'चंद्र राशि कुंडली' : lang === 'gu' ? 'ચંદ્ર રાશિ કુંડળી' : 'Rashi (Moon)'} ascendantSignIndex={report.moon_sign_index ?? report._technical_profile?.moon_sign_index ?? report.planets?.Moon?.sign_index} />
+                )}
+              </div>
             )}
           </div>
         </div>

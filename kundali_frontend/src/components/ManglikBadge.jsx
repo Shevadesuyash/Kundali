@@ -1,4 +1,5 @@
 import { useLang } from '../context/LanguageContext';
+import { signName } from '../utils/i18n';
 import { getManglikSeverity, getCancellationReason } from '../utils/astroTranslations';
 import './ManglikBadge.css';
 

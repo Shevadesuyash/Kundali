@@ -532,27 +532,80 @@ export const ASTRO_CATALOG = {
 };
 
 /** Translate a yoga name */
+/** Translate a yoga name */
 export function getYogaName(yogaName, lang = 'en') {
+  if (!yogaName) return '';
   const item = ASTRO_CATALOG.yogas[yogaName];
-  if (!item) return yogaName;
-  return item.name[lang] || item.name.en || yogaName;
+  if (item && item.name) return item.name[lang] || item.name.en || yogaName;
+
+  if (lang === 'en') return yogaName;
+
+  // Dynamic Pattern: Kendra-Trikona Raja Yoga (Planet1-Planet2)
+  if (yogaName.startsWith('Kendra-Trikona Raja Yoga')) {
+    const match = yogaName.match(/\((.*?)\)/);
+    if (match) {
+      const planets = match[1].split(/[-–]/).map(p => {
+        const clean = p.trim().toLowerCase();
+        if (clean === 'venus') return lang === 'mr' ? 'शुक्र' : lang === 'hi' ? 'शुक्र' : 'શુક્ર';
+        if (clean === 'moon') return lang === 'mr' ? 'चंद्र' : lang === 'hi' ? 'चंद्र' : 'ચંદ્ર';
+        if (clean === 'sun') return lang === 'mr' ? 'सूर्य' : lang === 'hi' ? 'सूर्य' : 'સૂર્ય';
+        if (clean === 'mars') return lang === 'mr' ? 'मंगळ' : lang === 'hi' ? 'मंगल' : 'મંગળ';
+        if (clean === 'mercury') return lang === 'mr' ? 'बुध' : lang === 'hi' ? 'बुध' : 'બુધ';
+        if (clean === 'jupiter') return lang === 'mr' ? 'गुरू' : lang === 'hi' ? 'गुरु' : 'ગુરુ';
+        if (clean === 'saturn') return lang === 'mr' ? 'शनी' : lang === 'hi' ? 'शनि' : 'શનિ';
+        return p.trim();
+      });
+      const prefix = lang === 'mr' ? 'केंद्र-त्रिकोण राजयोग' : lang === 'hi' ? 'केन्द्र-त्रिकोण राजयोग' : 'કેન્દ્ર-ત્રિકોણ રાજયોગ';
+      return `${prefix} (${planets.join('–')})`;
+    }
+    return lang === 'mr' ? 'केंद्र-त्रिकोण राजयोग' : lang === 'hi' ? 'केन्द्र-त्रिकोण राजयोग' : 'કેન્દ્ર-ત્રિકોણ રાજયોગ';
+  }
+
+  if (yogaName.includes('Budhaditya Yoga') || yogaName.includes('बुधादित्य')) {
+    return lang === 'mr' ? 'बुधादित्य योग' : lang === 'hi' ? 'बुधादित्य योग' : 'બુધાદિત્ય યોગ';
+  }
+
+  return yogaName;
 }
 
 /** Translate a yoga category */
 export function getYogaCategory(yogaName, defaultCategory = 'Auspicious', lang = 'en') {
   const item = ASTRO_CATALOG.yogas[yogaName];
-  if (!item || !item.category) return defaultCategory;
-  return item.category[lang] || item.category.en || defaultCategory;
+  if (item && item.category) return item.category[lang] || item.category.en || defaultCategory;
+  if (lang === 'en') return defaultCategory;
+  if (defaultCategory.toLowerCase().includes('raja') || defaultCategory.toLowerCase().includes('rajayoga')) {
+    return lang === 'mr' ? 'राजयोग' : lang === 'hi' ? 'राजयोग' : 'રાજયોગ';
+  }
+  if (defaultCategory.toLowerCase().includes('auspicious')) {
+    return lang === 'mr' ? 'शुभ योग' : lang === 'hi' ? 'शुभ योग' : 'શુભ યોગ';
+  }
+  return defaultCategory;
 }
 
 /** Translate a yoga description */
 export function getYogaDesc(yogaName, defaultDesc = '', lang = 'en') {
   const item = ASTRO_CATALOG.yogas[yogaName];
-  if (!item || !item.desc) return defaultDesc;
-  return item.desc[lang] || item.desc.en || defaultDesc;
+  if (item && item.desc) return item.desc[lang] || item.desc.en || defaultDesc;
+  if (!defaultDesc || lang === 'en') return defaultDesc;
+
+  if (defaultDesc.includes('Lords of Kendra') && defaultDesc.includes('Trikona')) {
+    return lang === 'mr' ? 'केंद्र आणि त्रिकोण स्थानांच्या स्वामींची युती. उच्च अधिकार, नेतृत्व आणि सामाजिक प्रतिष्ठा प्रदान करणारा अत्यंत शुभ राजयोग.' :
+           lang === 'hi' ? 'केंद्र एवं त्रिकोण स्थानों के स्वामियों की युति। उच्च पद, नेतृत्व के अवसर एवं सामाजिक प्रतिष्ठा प्रदाता अत्यंत शुभ राजयोग।' :
+           lang === 'gu' ? 'કેન્દ્ર અને ત્રિકોણ ભાવોના સ્વામીઓની યુતિ. ઉચ્ચ પદ, નેતૃત્વ અને સામાજિક પ્રતિષ્ઠા આપનાર અત્યંત શુભ રાજયોગ.' : defaultDesc;
+  }
+  if (defaultDesc.includes('Amala Yoga') || defaultDesc.includes('occupies the 10th house')) {
+    return lang === 'mr' ? 'दशम भावात शुभ ग्रह स्थित असल्यामुळे निष्कलंक कीर्ती, व्यावसायिक प्रामाणिकपणा आणि समृद्धी मिळते.' :
+           lang === 'hi' ? 'दशम भाव में शुभ ग्रह स्थित होने से निष्कलंक यश, व्यावसायिक शुचिता एवं समृद्धि प्राप्त होती है।' :
+           lang === 'gu' ? 'દશમ ભાવમાં શુભ ગ્રહ હોવાથી ઉત્તમ યશ અને સમૃદ્ધિ મળે છે.' : defaultDesc;
+  }
+  if (defaultDesc.includes('Kemadruma')) {
+    return lang === 'mr' ? 'चंद्राच्या मागे-पुढे ग्रह नसले तरी केंद्र स्थानी शुभ ग्रह असल्याने केमद्रुम दोषाचा परिहार होतो आणि जीवनात स्थैर्य लाभते.' :
+           lang === 'hi' ? 'चंद्र के आगे-पीछे ग्रह न होने पर भी केंद्र में शुभ ग्रह होने से केमद्रुम भंग राजयोग बनता है।' :
+           lang === 'gu' ? 'કેન્દ્રમાં શુભ ગ્રહો હોવાથી કેમદ્રુમ દોષનો ભંગ થાય છે.' : defaultDesc;
+  }
+  return defaultDesc;
 }
 
-/** Translate a dosha name */
 export function getDoshaName(doshaName, lang = 'en') {
   const item = ASTRO_CATALOG.doshas[doshaName];
   if (!item) return doshaName;

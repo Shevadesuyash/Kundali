@@ -195,7 +195,7 @@ export default function TransitTracker({ data, compact = false }) {
                   <td>
                     <strong>{planetName(item.planet, lang)}</strong>
                   </td>
-                  <td>{item.sign}</td>
+                  <td>{signName(item.sign_index !== undefined ? item.sign_index : item.sign, lang)}</td>
                   <td className="mono">{item.degree_in_sign}°</td>
                   <td>
                     {lang === 'mr' ? `भाव ${item.house_from_moon}` : lang === 'hi' ? `भाव ${item.house_from_moon}` : lang === 'gu' ? `${item.house_from_moon}મો ભાવ` : `House ${item.house_from_moon}`}

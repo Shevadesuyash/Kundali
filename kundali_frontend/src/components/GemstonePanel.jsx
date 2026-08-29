@@ -97,28 +97,28 @@ export default function GemstonePanel({ data, recommendations: propRecs }) {
               <div className="gemstone-spec">
                 <span className="gemstone-spec__label">{weightLabel}</span>
                 <span className="gemstone-spec__val">
-                  {gem.carats} {lang === 'mr' || lang === 'hi' || lang === 'gu' ? 'कॅरट' : 'Carats'}
+                  {String(gem.carats).replace(/carats?/i, '').trim()} {lang === 'mr' || lang === 'hi' || lang === 'gu' ? 'कॅरट' : 'Carats'}
                 </span>
               </div>
               <div className="gemstone-spec">
                 <span className="gemstone-spec__label">{wearingDayLabel}</span>
-                <span className="gemstone-spec__val">{getGemDayTime(gem.wearing_day, lang)}</span>
+                <span className="gemstone-spec__val">{getGemDayTime(gem.day_time || gem.wearing_day, lang)}</span>
               </div>
             </div>
 
             {/* Alternate Stones */}
-            {gem.substitute_gemstones && (
+            {(gem.substitute_gemstone || gem.substitute_gemstones) && (
               <div className="gemstone-card__substitutes">
                 <span className="gemstone-substitutes-label">{alternateLabel}</span>
-                <span className="gemstone-substitutes-val">{getGemSubstitutes(gem.substitute_gemstones, lang)}</span>
+                <span className="gemstone-substitutes-val">{getGemSubstitutes(gem.substitute_gemstone || gem.substitute_gemstones, lang)}</span>
               </div>
             )}
 
             {/* Rudraksha Alternative */}
-            {gem.rudraksha_recommendation && (
+            {(gem.rudraksha || gem.rudraksha_recommendation) && (
               <div className="gemstone-card__rudraksha">
                 <span className="gemstone-rudraksha-label">{rudrakshaLabel}</span>
-                <span className="gemstone-rudraksha-val">{getGemRudraksha(gem.rudraksha_recommendation, lang)}</span>
+                <span className="gemstone-rudraksha-val">{getGemRudraksha(gem.rudraksha || gem.rudraksha_recommendation, lang)}</span>
               </div>
             )}
 

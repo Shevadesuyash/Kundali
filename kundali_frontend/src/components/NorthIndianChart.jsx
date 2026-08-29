@@ -1,4 +1,4 @@
-import { signAbbr } from '../utils/i18n';
+import { signAbbr, getPlanetAbbr } from '../utils/i18n';
 import './NorthIndianChart.css';
 
 // Exact center and sign-number positions for all 12 houses in SVG (400x400)
@@ -65,7 +65,7 @@ export default function NorthIndianChart({ houses, title, lang = 'en' }) {
         {/* Center title */}
         <text x="200" y="192" textAnchor="middle" className="north-chart-title">{title}</text>
         <text x="200" y="210" textAnchor="middle" className="north-chart-subtitle">
-          {lang === 'mr' ? 'उत्तर भारतीय' : 'North Indian'}
+          {lang === 'mr' ? 'उत्तर भारतीय' : lang === 'hi' ? 'उत्तर भारतीय' : lang === 'gu' ? 'ઉત્તર ભારતીય' : 'North Indian'}
         </text>
 
         {/* 12 houses */}
@@ -110,7 +110,7 @@ export default function NorthIndianChart({ houses, title, lang = 'en' }) {
                   {occupants.map((p, idx) => {
                     const total = occupants.length;
                     const offsetY = total > 1 ? (idx - (total - 1) / 2) * 14 : 0;
-                    const label = lang === 'mr' ? getMrAbbr(p.abbr) : p.abbr;
+                    const label = lang === 'mr' ? getPlanetAbbr(p.abbr, lang) : p.abbr;
                     const retroMark = p.retrograde ? (lang === 'mr' ? 'व' : 'R') : '';
                     return (
                       <text

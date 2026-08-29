@@ -139,7 +139,7 @@ export default function KPTab({ report }) {
                 <tr key={c.house}>
                   <td className="mono">H{c.house}</td>
                   <td className="mono">{c.degree_str}</td>
-                  <td>{c.sign}</td>
+                  <td>{signName(c.sign, lang)}</td>
                   <td>{planetName(c.sign_lord, lang)}</td>
                   <td>{planetName(c.star_lord, lang)}</td>
                   <td className="highlight-col font-bold" style={{ color: 'var(--color-copper, #c8720a)' }}>
@@ -179,7 +179,7 @@ export default function KPTab({ report }) {
                     <strong>{planetName(p.planet, lang)}</strong> {(p.is_retrograde || p.retrograde) && <span style={{ color: '#b91c1c' }}>({lang === 'mr' ? 'व' : 'R'})</span>}
                   </td>
                   <td className="mono">{lang === 'mr' ? `भाव ${p.placidus_house || p.house}` : lang === 'hi' ? `भाव ${p.placidus_house || p.house}` : lang === 'gu' ? `${p.placidus_house || p.house}મો ભાવ` : `House ${p.placidus_house || p.house}`}</td>
-                  <td>{p.sign}</td>
+                  <td>{signName(p.sign, lang)}</td>
                   <td className="mono">{p.degree_str}</td>
                   <td>{planetName(p.sign_lord, lang)}</td>
                   <td>{planetName(p.star_lord, lang)}</td>
