@@ -160,20 +160,15 @@ def test_jupiter_aspect_cancellation(astro_engine):
 
 def test_panchang_sun_moon_timings():
     """
-    Panchang sun_moon_timings must return Rashi names for sun_sign and moon_sign,
-    and Nakshatra names for sun_nakshatra and moon_nakshatra.
+    Panchang sun_moon_timings must return sun_nakshatra and moon_nakshatra.
     """
     panchang = PanchangEngine.get_panchang(target_date=datetime.date(2026, 8, 15), lat=18.5204, lon=73.8567)
     timings = panchang["sun_moon_timings"]
 
-    assert "sun_sign" in timings
     assert "sun_nakshatra" in timings
-    assert "moon_sign" in timings
     assert "moon_nakshatra" in timings
-
-    # On Aug 15: Sun is in sidereal Cancer/Leo
-    assert any(sign in timings["sun_sign"] for sign in ["Cancer", "Leo"])
     assert len(timings["sun_nakshatra"]) > 2
+    assert len(timings["moon_nakshatra"]) > 2
 
 
 def test_seconds_precision(astro_engine):

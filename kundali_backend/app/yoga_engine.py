@@ -128,10 +128,10 @@ class YogaEngine:
             if not p_data:
                 continue
             p_sign = p_data.get("sign_index", 0)
-            p_house = p_data.get("house_from_lagna", 0)
+            p_house = ((p_sign - lagna_sign_idx) % 12) + 1
 
-            is_exalted = p_sign == EXALTATION_SIGNS.get(p_name)
-            is_own = p_sign in OWN_SIGNS.get(p_name, set())
+            is_exalted = p_data.get("dignity") == "Exalted" or p_sign == EXALTATION_SIGNS.get(p_name)
+            is_own = p_data.get("dignity") == "Own Sign" or p_sign in OWN_SIGNS.get(p_name, set())
 
             if (is_exalted or is_own) and p_house in KENDRA_HOUSES:
                 status_str = "exalted" if is_exalted else "in its own sign"
@@ -171,11 +171,11 @@ class YogaEngine:
         # ------------------------------------------------------------------
         tenth_from_lagna_planets = [
             p for p in ["Jupiter", "Venus", "Mercury"]
-            if planets.get(p, {}).get("house_from_lagna") == 10
+            if p in planets and ((planets[p].get("sign_index", 0) - lagna_sign_idx) % 12) + 1 == 10
         ]
         tenth_from_moon_planets = [
             p for p in ["Jupiter", "Venus", "Mercury"]
-            if ((planets.get(p, {}).get("sign_index", 0) - moon_sign_idx) % 12) + 1 == 10
+            if p in planets and ((planets[p].get("sign_index", 0) - moon_sign_idx) % 12) + 1 == 10
         ]
         if tenth_from_lagna_planets or tenth_from_moon_planets:
             benefics_found = list(set(tenth_from_lagna_planets + tenth_from_moon_planets))
@@ -193,22 +193,23 @@ class YogaEngine:
 
         # ------------------------------------------------------------------
         # 6. Kendra-Trikona Rajayoga (Benefic)
-        # Conjunction of a Kendra lord (4, 7, 10) with a Trikona lord (5, 9)
+        # Conjunction of a Kendra lord (1, 4, 7, 10) with a Trikona lord (1, 5, 9)
         # ------------------------------------------------------------------
-        kendra_lords = {house_lords[4], house_lords[7], house_lords[10]}
-        trikona_lords = {house_lords[5], house_lords[9]}
+        kendra_lords = {house_lords[1], house_lords[4], house_lords[7], house_lords[10]}
+        trikona_lords = {house_lords[1], house_lords[5], house_lords[9]}
         # Check pairs
         for kl in kendra_lords:
             for tl in trikona_lords:
                 if kl != tl and kl in planets and tl in planets:
                     if planets[kl]["sign_index"] == planets[tl]["sign_index"]:
+                        conj_house = ((planets[kl]["sign_index"] - lagna_sign_idx) % 12) + 1
                         detected.append({
                             "name": f"Kendra-Trikona Raja Yoga ({kl}-{tl})",
                             "type": "benefic",
                             "category": "Rajayoga",
                             "planets_involved": [kl, tl],
                             "description": (
-                                f"Lords of Kendra ({kl}) and Trikona ({tl}) are conjunct in House {planets[kl]['house_from_lagna']}. "
+                                f"Lords of Kendra ({kl}) and Trikona ({tl}) are conjunct in House {conj_house}. "
                                 "Generates high authority, leadership opportunities, and socio-economic elevation."
                             ),
                             "is_present": True,
@@ -232,7 +233,8 @@ class YogaEngine:
             # Check for cancellation: planets in Kendra from Lagna or Moon
             kendra_planets = [
                 p for p in ["Jupiter", "Venus", "Mercury"]
-                if planets.get(p, {}).get("house_from_lagna") in KENDRA_HOUSES
+                if p in planets and (((planets[p].get("sign_index", 0) - lagna_sign_idx) % 12) + 1 in KENDRA_HOUSES
+                                     or ((planets[p].get("sign_index", 0) - moon_sign_idx) % 12) + 1 in KENDRA_HOUSES)
             ]
             is_cancelled = len(kendra_planets) > 0
             detected.append({
