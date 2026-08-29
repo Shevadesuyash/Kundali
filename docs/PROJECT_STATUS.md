@@ -260,6 +260,20 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-08-29 13:03 IST] — Commit `42f0807` / Chart Rendering Fix & Universal Rashi/Planet Localization
+- **Summary**: Fixed chart grid rendering in Planets tab (resolving the "कुंडली डेटा उपलब्ध नाही" message) and made `signName` / `planetName` intelligent across all formats (`Aquarius (Kumbha)`, `Leo`, `Ketu`, `Sagittarius (Dhanu)`), translating all remaining English Rashis, planets, and classical yogas.
+- **Key Enhancements**:
+  1. **PlanetsTab Chart Rendering**: Fixed `ChartGrid` props from `{ charts: ... }` to `{ houses: charts.D1_lagna, title: ... }`, restoring D1 Lagna, D9 Navamsha, Rashi Moon, and All Charts views.
+  2. **Universal Rashi Translator (`signName`, `signAbbr`)**: Implemented smart index resolver `getSignIndex` in `i18n.js` that maps any string name (`Leo`, `Aquarius`, `Scorpio (Vrishchika)`, `Dhanu`, etc.) to its localized Devanagari/Gujarati name across all tabs (TransitTracker, Overview, KP Cusps/Planets, Varshapal, Manglik).
+  3. **Universal Planet Translator (`planetName`, `getPlanetAbbr`)**: Added missing `planet.Ketu` to `TRANSLATIONS` dictionary; fixed planet abbreviations in South, North, and East Indian charts for Marathi, Hindi, and Gujarati.
+  4. **Dynamic Raja Yoga & Description Localization**: `getYogaName` dynamically translates combinations like `Kendra-Trikona Raja Yoga (Venus-Moon)` into `केंद्र-त्रिकोण राजयोग (शुक्र–चंद्र)` and provides authentic localized descriptions.
+  5. **Gemstone Panel Alignment**: Linked `day_time`, `substitute_gemstone`, and `rudraksha` keys with backend response format; localized metals, fingers, and wearing day/time.
+  6. **Build & Test Verification**: Vite build succeeded in 4.21s with zero errors; all 99 pytest unit/regression tests passed.
+- **Status**: Completed & Verified.
+- **Files Modified**: `kundali_frontend/src/utils/i18n.js`, `kundali_frontend/src/components/tabs/PlanetsTab.jsx`, `kundali_frontend/src/components/ChartGrid.jsx`, `kundali_frontend/src/components/NorthIndianChart.jsx`, `kundali_frontend/src/components/TransitTracker.jsx`, `kundali_frontend/src/components/tabs/OverviewTab.jsx`, `kundali_frontend/src/components/ManglikBadge.jsx`, `kundali_frontend/src/components/tabs/DoshasTab.jsx`, `kundali_frontend/src/components/tabs/KPTab.jsx`, `kundali_frontend/src/components/tabs/VarshapalTab.jsx`, `kundali_frontend/src/components/GemstonePanel.jsx`, `kundali_frontend/src/utils/astroTranslations.js`, `docs/PROJECT_STATUS.md`.
+
+---
+
 ### [2026-08-29 12:52 IST] — Commit `eaba27a` / 100% Dynamic Multi-Language Localization Across All Tabs
 - **Summary**: Completed 100% end-to-end multi-language localization across all 8 report tabs (Overview, Planets, Dasha, Doshas, Panchang, KP System, Varshapal, Health), eliminating all remaining raw keys and hardcoded English labels in Marathi, Hindi, and Gujarati.
 - **Key Enhancements**:
