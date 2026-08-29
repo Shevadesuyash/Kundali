@@ -95,21 +95,23 @@ export function geocodeSearch(query) {
 // ---------------------------------------------------------------------------
 
 /** Save a new birth profile. */
-export function saveProfile(person, gender, birthPlace, tag = 'self') {
+export function saveProfile(person, gender, birthPlace, tag = 'self', userId = null) {
   return postJSON('/api/v1/profiles', {
     person,
     gender,
     birth_place: birthPlace || null,
     tag,
+    user_id: userId || null,
   });
 }
 
 /** Full paginated profile list with optional filters. */
-export function searchProfiles({ q = '', gender = '', tag = '', page = 1, perPage = 20 } = {}) {
+export function searchProfiles({ q = '', gender = '', tag = '', page = 1, perPage = 20, userId = null } = {}) {
   const params = new URLSearchParams();
   if (q)      params.set('q',        q);
   if (gender) params.set('gender',   gender);
   if (tag)    params.set('tag',      tag);
+  if (userId) params.set('user_id',  userId);
   params.set('page',     String(page));
   params.set('per_page', String(perPage));
   return fetch(`${API_BASE}/api/v1/profiles?${params}`, {
@@ -199,8 +201,8 @@ export function getKPSystem(person) {
 // ---------------------------------------------------------------------------
 // Phase 7B: Context-Aware Interactive AI Assistant
 // ---------------------------------------------------------------------------
-export function askAIChat(report, question, language = 'en') {
-  return postJSON('/api/v1/ai-chat', { report, question, language });
+export function askAIChat(report, question, language = 'en', userId = null) {
+  return postJSON('/api/v1/ai-chat', { report, question, language, user_id: userId });
 }
 
 // ---------------------------------------------------------------------------

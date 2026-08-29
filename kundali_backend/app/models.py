@@ -133,10 +133,12 @@ class SaveProfileRequest(BaseModel):
     gender: Literal["male", "female"]
     birth_place: Optional[str] = None
     tag: Optional[str] = "self"
+    user_id: Optional[str] = None
 
 
 class ProfileSummary(BaseModel):
     id: int
+    user_id: Optional[str] = None
     name: str
     gender: str
     birth_place: Optional[str] = None
@@ -176,6 +178,7 @@ class AIChatRequest(BaseModel):
     report: Dict[str, Any]
     question: str
     language: Optional[str] = "en"
+    user_id: Optional[str] = None
 
 
 class VarshapalRequest(BaseModel):
