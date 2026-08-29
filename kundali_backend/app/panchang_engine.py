@@ -287,9 +287,7 @@ class PanchangEngine:
             "sun_moon_timings": {
                 "sunrise": sunrise_dt.strftime("%I:%M %p"),
                 "sunset": sunset_dt.strftime("%I:%M %p"),
-                "sun_sign": RASI_NAMES[int(sun_lon // 30.0)],
                 "sun_nakshatra": NAKSHATRA_NAMES[int(sun_lon // nak_span)],
-                "moon_sign": RASI_NAMES[int(moon_lon // 30.0)],
                 "moon_nakshatra": NAKSHATRA_NAMES[int(moon_lon // nak_span)],
             },
             "auspicious_timings": {

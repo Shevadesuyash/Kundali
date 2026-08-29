@@ -85,7 +85,7 @@ BPHS_BAV_RULES: Dict[str, Dict[str, List[int]]] = {
     },
     "Saturn": {
         "Sun":     [1, 2, 4, 7, 8, 10, 11],
-        "Moon":    [3, 5, 6, 11],
+        "Moon":    [3, 6, 11],
         "Mars":    [3, 5, 6, 10, 11, 12],
         "Mercury": [6, 8, 9, 10, 11, 12],
         "Jupiter": [5, 6, 11, 12],

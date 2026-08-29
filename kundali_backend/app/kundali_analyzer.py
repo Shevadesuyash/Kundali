@@ -163,6 +163,10 @@ class KundaliAnalyzer:
         else:
             severity = "None"
 
+        # Ketu supplementary indicator from Lagna
+        ketu_house = self.engine.house_of_planet(asc_idx, ketu["sign_index"]) if ketu else None
+        ketu_manglik = (ketu_house in MANGLIK_HOUSES) if ketu_house is not None else False
+
         return {
             "is_manglik":           is_manglik,
             "is_cancelled":         is_cancelled,
@@ -178,6 +182,8 @@ class KundaliAnalyzer:
             "manglik_from_lagna":   manglik_from_lagna,
             "manglik_from_moon":    manglik_from_moon,
             "manglik_from_venus":   manglik_from_venus,
+            "ketu_manglik":         ketu_manglik,
+            "ketu_house_lagna":     ketu_house,
             "mars_house_lagna":     house_from_lagna,
             "mars_house_moon":      house_from_moon,
             "mars_house_venus":     house_from_venus,
