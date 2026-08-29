@@ -260,6 +260,21 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-08-29 14:06 IST] — Commit `203c7a3` / Supabase Dual-Mode DB, Rate Limiter, Cloud Profile Gating & Dev Support (on `develop` branch)
+- **Summary**: Successfully transitioned architecture to cloud-ready foundation on new `develop` branch (keeping `main` safe). Integrated Supabase PostgreSQL (`ap-south-1` Mumbai) with seamless SQLite fallback, IP rate-limiting (1 free query/24h per IP), AI Wallet monetization architecture, Cloud Profile gating, and Developer Support section.
+- **Key Enhancements**:
+  1. **Dual-Mode Persistence (`app/database.py`)**: Automatic detection of `DATABASE_URL` for Supabase PostgreSQL with `psycopg2-binary`, falling back smoothly to local SQLite `profiles.db` for offline development and testing. Auto-creates `profiles`, `ai_usage_logs`, `user_wallets`, and `location_cache` tables.
+  2. **IP & Wallet Rate Limiter (`app/rate_limiter.py`)**: Enforces strict 24-hour rate limit on `/api/v1/ai-chat` for guest IPs (1 free query per 24 hours). Logged-in users can use wallet credits or 24h consultation pass.
+  3. **Cloud Profile Gating (`SaveProfileButton.jsx`)**: Authenticated users can save and sync unlimited horoscopes under their `user_id`; guest users receive a clean upgrade / login prompt explaining cloud features.
+  4. **Developer Support Section (`SupportDeveloper.jsx`)**: Showcases developer bio (Suyash Dilip Shevade), mission, GitHub (`Shevadesuyash`), LinkedIn, PayPal donation link, and tiered packages (₹49 for 50 AI questions / 24-hour consultation pass).
+  5. **Supabase Auth Frontend (`AuthContext.jsx`, `AuthModal.jsx`)**: Added `@supabase/supabase-js` client with Google One-Tap and Email/Password authentication.
+  6. **AIAssistant Quota Banner**: Added inline recharge/support banner when daily free limit is reached.
+  7. **Build & Test Verification**: Vite built in 1.69s; all 101 pytest unit and regression tests passed.
+- **Status**: Completed & Verified on `develop` branch.
+- **Files Modified**: `kundali_backend/app/database.py`, `kundali_backend/app/main.py`, `kundali_backend/app/models.py`, `kundali_backend/app/rate_limiter.py`, `kundali_backend/tests/test_rate_limiter.py`, `kundali_frontend/src/lib/supabaseClient.js`, `kundali_frontend/src/context/AuthContext.jsx`, `kundali_frontend/src/components/AuthModal.jsx`, `kundali_frontend/src/components/SupportDeveloper.jsx`, `kundali_frontend/src/components/Navbar.jsx`, `kundali_frontend/src/components/SaveProfileButton.jsx`, `kundali_frontend/src/components/AIAssistant.jsx`, `kundali_frontend/src/api/kundaliApi.js`, `docs/PROJECT_STATUS.md`.
+
+---
+
 ### [2026-08-29 13:03 IST] — Commit `42f0807` / Chart Rendering Fix & Universal Rashi/Planet Localization
 - **Summary**: Fixed chart grid rendering in Planets tab (resolving the "कुंडली डेटा उपलब्ध नाही" message) and made `signName` / `planetName` intelligent across all formats (`Aquarius (Kumbha)`, `Leo`, `Ketu`, `Sagittarius (Dhanu)`), translating all remaining English Rashis, planets, and classical yogas.
 - **Key Enhancements**:
