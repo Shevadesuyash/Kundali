@@ -54,16 +54,29 @@ export default function DashaTab({ report }) {
 
       {/* 1. Interactive Vimshottari Dasha Tree */}
       <div className="tab-section" data-pdf-section="dasha-tree">
-        <p className="tab-section__title">Vimshottari Dasha &amp; Antardashas</p>
+        <p className="tab-section__title">
+          {lang === 'mr' ? 'विंशोत्तरी महादशा व अंतर्दशा कालचक्र' :
+           lang === 'hi' ? 'विंशोत्तरी महादशा एवं अंतर्दशा कालचक्र' :
+           lang === 'gu' ? 'વિંશોત્તરી મહાદશા અને અંતર્દશા સમયચક્ર' :
+           'Vimshottari Dasha & Antardashas'}
+        </p>
         <p className="tab-section__subtitle">
-          Major planetary cycles (Mahadashas) and sub-periods (Antardashas). Click any cycle to expand.
+          {lang === 'mr' ? 'प्रमुख ग्रहांचे दशा काळ (महादशा) आणि उप-काळ (अंतर्दशा). विस्तार पाहण्यासाठी कोणत्याही दशेवर क्लिक करा.' :
+           lang === 'hi' ? 'प्रमुख ग्रहों के दशा काल (महादशा) एवं उप-काल (अंतर्दशा)। विस्तार देखने हेतु किसी भी दशा पर क्लिक करें।' :
+           lang === 'gu' ? 'મુખ્ય ગ્રહોના દશા કાળ (મહાદશા) અને ઉપ-કાળ (અંતર્દશા).' :
+           'Major planetary cycles (Mahadashas) and sub-periods (Antardashas). Click any cycle to expand.'}
         </p>
         <DashaTree periods={dasha_periods} />
       </div>
 
       {/* 2. Classical Vedic Yogas */}
       <div className="tab-section" data-pdf-section="vedic-yogas">
-        <p className="tab-section__title">Vedic Yogas &amp; Planetary Combinations</p>
+        <p className="tab-section__title">
+          {lang === 'mr' ? 'वैदिक शुभ योग व ज्योतिषीय युती' :
+           lang === 'hi' ? 'वैदिक शुभ योग एवं ज्योतिषीय युति' :
+           lang === 'gu' ? 'વૈદિક શુભ યોગ અને જ્યોતિષીય યુતિ' :
+           'Vedic Yogas & Planetary Combinations'}
+        </p>
         <YogaList yogas={yogas} filterType="all" />
       </div>
     </div>

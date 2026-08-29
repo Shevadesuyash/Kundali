@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getVarshapal } from '../../api/kundaliApi';
 import HelpAccordion from '../HelpAccordion';
 import { useLang } from '../../context/LanguageContext';
-import { planetName } from '../../utils/i18n';
+import { planetName, signName } from '../../utils/i18n';
 import { getMunthaInterpretation } from '../../utils/astroTranslations';
 import './VarshapalTab.css';
 import './tabs.css';
@@ -101,67 +101,74 @@ export default function VarshapalTab({ report }) {
       <HelpAccordion id="varshapal-help" title={guideTitle} defaultOpen={false}>
         <div className="help-grid-cards">
           <div className="help-card-item">
-            <h5>{lang === 'mr' ? '१. वर्ष प्रवेश (Solar Return)' : lang === 'hi' ? '१. वर्ष प्रवेश (Solar Return)' : lang === 'gu' ? '૧. વર્ષ પ્રવેશ' : '1. Varsha Pravesh'}</h5>
+            <h5>{lang === 'mr' ? '१. सौर परत (Solar Return)' : lang === 'hi' ? '१. सौर वापसी (Solar Return)' : lang === 'gu' ? '૧. સૌર વાપસી' : '1. Solar Return Moment'}</h5>
             <p>
-              {lang === 'mr' ? 'गोचर सूर्य जन्मकालीन सूर्याच्या अचूक अंशावर ज्या क्षणी परत येतो, तो त्या वर्षाचा वार्षिक जन्मक्षण मानला जातो.' :
-               lang === 'hi' ? 'गोचर सूर्य जिस क्षण जन्मकालीन सूर्य के सटीक अंश पर आता है, वह उस वर्ष का वार्षिक प्रवेश काल होता है।' :
-               lang === 'gu' ? 'ગોચર સૂર્ય જન્મ સમયના સૂર્યના અંશ પર આવે તે ક્ષણે વાર્ષિક કુંડળી બને છે.' :
-               'The exact astronomical second transit Sun returns to your natal Sun longitude.'}
+              {lang === 'mr' ? 'सूर्य जन्मवेळच्या अचूक अंशावर दरवर्षी परत येतो त्या क्षणाची कुंडली म्हणजे वर्षफळ.' :
+               lang === 'hi' ? 'सूर्य के जन्म कालीन सटीक अंश पर पुनः लौटने के क्षण का चार्ट वर्षफल कहलाता है।' :
+               lang === 'gu' ? 'સૂર્ય જન્મ સમયના ચોક્કસ અંશ પર પરત આવે તે ક્ષણનું ચાર્ટ વર્ષફળ છે.' :
+               'Calculates the exact second the Sun returns to its precise natal longitude for the selected year.'}
             </p>
           </div>
           <div className="help-card-item">
-            <h5>{lang === 'mr' ? '२. मुंथा प्रगती (Muntha)' : lang === 'hi' ? '२. मुंथा प्रगति (Muntha)' : lang === 'gu' ? '૨. મુંથા પ્રગતિ' : '2. Muntha Progression'}</h5>
+            <h5>{lang === 'mr' ? '२. मुंथा (Muntha)' : lang === 'hi' ? '२. मुंथा (Muntha)' : lang === 'gu' ? '૨. મુંથા (Muntha)' : '2. Muntha Progression'}</h5>
             <p>
-              {lang === 'mr' ? 'मुंथा दरवर्षी १ राशी पुढे सरकते. मुंथा ९, १०, ११ भावात असल्यास यश, पदोन्नती व धनलाभाचे वर्ष ठरते; ६, ८, १२ भावात असल्यास आरोग्याची काळजी घ्यावी.' :
-               lang === 'hi' ? 'मुंथा प्रतिवर्ष १ राशि आगे बढ़ती है। ९, १०, ११ भाव में मुंथा भाग्यवर्धक और पदोन्नति देती है; ६, ८, १२ में सावधानी रखें।' :
-               lang === 'gu' ? 'મુંથા દર વર્ષે ૧ રાશિ આગળ વધે છે. ૯, ૧૦, ૧૧ ભાવમાં તે સફળતા અને ધનલાભ આપે છે.' :
-               'Advances 1 sign/year. In houses 9, 10, 11 brings promotion & triumph; in houses 6, 8, 12 calls for health caution.'}
+              {lang === 'mr' ? 'दरवर्षी १ घर पुढे सरकणारा संवेदनशील बिंदू. १, ५, ९, १०, ११ भावात असल्यास वर्ष अत्यंत शुभ ठरते; ६, ८, १२ भावात काळजी हवी.' :
+               lang === 'hi' ? 'प्रतिवर्ष एक भाव आगे बढ़ने वाला संवेदनशील बिंदु। १, ५, ९, १०, ११ भाव में उत्तम; ६, ८, १२ भाव में सावधानी आवश्यक।' :
+               lang === 'gu' ? 'દર વર્ષે એક ભાવ આગળ વધતો બિંદુ. ૧, ૫, ૯, ૧૦, ૧૧ માં ઉત્તમ પરિણામ આપે છે.' :
+               'Progresses one house per completed year. Houses 1, 5, 9, 10, 11 are auspicious; 6, 8, 12 require caution.'}
             </p>
           </div>
           <div className="help-card-item">
             <h5>{lang === 'mr' ? '३. मुद्द दशा (Mudda Dasha)' : lang === 'hi' ? '३. मुद्धा दशा (Mudda Dasha)' : lang === 'gu' ? '૩. મુદ્દા દશા' : '3. Mudda Dasha'}</h5>
             <p>
-              {lang === 'mr' ? '३६० दिवसांची वार्षिक ताजिक दशा. त्या वर्षातील प्रत्येक महिन्याचे स्वतंत्र आर्थिक व कौटुंबिक फळ दाखवते.' :
-               lang === 'hi' ? '३६० दिन का वार्षिक चक्र जो उस वर्ष के प्रत्येक माह के करियर व वित्तीय परिणाम स्पष्ट करता है।' :
-               lang === 'gu' ? '૩૬૦ દિવસનું વાર્ષિક ચક્ર જે વર્ષના દરેક મહિનાનું પરિણામ દર્શાવે છે.' :
-               '360-day annual planetary timeline revealing month-by-month financial, career, and personal milestones.'}
+              {lang === 'mr' ? '३६० दिवसांचे वार्षिक दशा चक्र. वर्षातील प्रत्येक महिन्याचे फलित आणि महत्त्वाचे प्रसंग दर्शवते.' :
+               lang === 'hi' ? '३६० दिन का वार्षिक दशा चक्र, जो वर्ष के प्रत्येक माह के फलित को स्पष्ट करता है।' :
+               lang === 'gu' ? '૩૬૦ દિવસનું વાર્ષિક દશા ચક્ર, જે વર્ષના દરેક મહિનાનું ફળ દર્શાવે છે.' :
+               '360-day annual cycle dividing the year into proportional planetary periods.'}
             </p>
           </div>
         </div>
       </HelpAccordion>
 
-      {/* Year Selection Controls */}
-      <div className="tab-section varshapal-controls">
+      {/* Header and Year Picker */}
+      <div className="varshapal-header-wrap">
         <div>
           <p className="tab-section__title">{sectionTitle}</p>
           <p className="tab-section__subtitle">
-            {lang === 'mr' ? `वर्ष ${targetYear} साठी सौर प्रवेश काल (वय: ${data?.age ?? (targetYear - personPayload.year)} वर्षे).` :
-             lang === 'hi' ? `वर्ष ${targetYear} हेतु सौर प्रवेश काल (आयु: ${data?.age ?? (targetYear - personPayload.year)} वर्ष)।` :
-             lang === 'gu' ? `વર્ષ ${targetYear} માટે સૌર પ્રવેશ કાળ (ઉંમર: ${data?.age ?? (targetYear - personPayload.year)} વર્ષ).` :
-             `Exact astronomical moment transit Sun returns to natal longitude for Year ${targetYear} (Age ${data?.age ?? (targetYear - personPayload.year)}).`}
+            {lang === 'mr' ? `वर्ष ${targetYear} साठी सौर प्रवेश काल (वय: ${targetYear - personPayload.year} वर्षे).` :
+             lang === 'hi' ? `वर्ष ${targetYear} हेतु सौर प्रवेश काल (आयु: ${targetYear - personPayload.year} वर्ष)।` :
+             lang === 'gu' ? `વર્ષ ${targetYear} માટે સૌર પ્રવેશ કાળ (ઉંમર: ${targetYear - personPayload.year} વર્ષ).` :
+             `Solar Return analysis for year ${targetYear} (Age: ${targetYear - personPayload.year} years).`}
           </p>
         </div>
 
-        <div className="varshapal-year-pills">
-          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-dim)' }}>
+        <div className="varshapal-year-selector">
+          <label htmlFor="varsha-year-select">
             {lang === 'mr' ? 'वर्ष निवडा:' : lang === 'hi' ? 'वर्ष चुनें:' : lang === 'gu' ? 'વર્ષ પસંદ કરો:' : 'Select Year:'}
-          </span>
-          {yearOptions.map((yr) => (
-            <button
-              key={yr}
-              type="button"
-              className={`year-pill${targetYear === yr ? ' is-active' : ''}`}
-              onClick={() => setTargetYear(yr)}
-            >
-              {yr}
-            </button>
-          ))}
+          </label>
+          <div className="varshapal-year-chips">
+            {yearOptions.map((y) => (
+              <button
+                key={y}
+                type="button"
+                className={`varshapal-chip${y === targetYear ? ' is-active' : ''}`}
+                onClick={() => setTargetYear(y)}
+              >
+                {y}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       {loading && (
-        <div style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--color-copper, #c8720a)' }}>
-          <p>⏳ {lang === 'mr' ? 'वार्षिक सौर प्रवेश व मुंथा ग्रहांची गणना करत आहे…' : lang === 'hi' ? 'वार्षिक सौर प्रवेश एवं मुंथा गणना हो रही है…' : lang === 'gu' ? 'વાર્ષિક સૌર પ્રવેશ અને મુંથા ગણતરી થઈ રહી છે…' : 'Computing high-precision Solar Return & Muntha progression...'}</p>
+        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--color-copper, #c8720a)' }}>
+          <p>
+            {lang === 'mr' ? `⏳ वर्ष ${targetYear} चे ताजिक वर्षफळ काढत आहे...` :
+             lang === 'hi' ? `⏳ वर्ष ${targetYear} का ताजिक वर्षफल तैयार हो रहा है...` :
+             lang === 'gu' ? `⏳ વર્ષ ${targetYear} નું તાજિક વર્ષફળ બની રહ્યું છે...` :
+             `⏳ Calculating Tajika Varshapal for ${targetYear}...`}
+          </p>
         </div>
       )}
 
@@ -173,8 +180,8 @@ export default function VarshapalTab({ report }) {
 
       {!loading && !error && data && (
         <>
-          {/* Hero Cards: Pravesh Time, Varsha Lagna, Muntha */}
-          <div className="varshapal-hero-grid">
+          {/* Key Indicators Cards */}
+          <div className="varshapal-hero-cards">
             <div className="varshapal-hero-card varshapal-hero-card--pravesh">
               <span className="varshapal-card-label">{praveshLabel}</span>
               <h4 className="varshapal-card-val">{data.varsha_pravesh_ist}</h4>
@@ -210,8 +217,8 @@ export default function VarshapalTab({ report }) {
                 <tbody>
                   {data.mudda_dasha.map((m) => (
                     <tr key={m.planet}>
-                      <td><strong>{m.planet}</strong></td>
-                      <td>{m.duration_days} Days</td>
+                      <td><strong>{planetName(m.planet, lang)}</strong></td>
+                      <td>{m.duration_days} {lang === 'mr' ? 'दिवस' : lang === 'hi' ? 'दिन' : lang === 'gu' ? 'દિવસ' : 'Days'}</td>
                       <td className="mono">{m.start_date}</td>
                       <td className="mono">{m.end_date}</td>
                     </tr>
@@ -223,26 +230,39 @@ export default function VarshapalTab({ report }) {
 
           {/* Annual Planetary Positions Table */}
           <div className="tab-section">
-            <p className="tab-section__title">Planets in Varshapal Chart</p>
+            <p className="tab-section__title">
+              {lang === 'mr' ? 'वार्षिक वर्षफळ कुंडलीतील ग्रह स्थिती' :
+               lang === 'hi' ? 'वार्षिक वर्षफल कुंडली में ग्रह स्थिति' :
+               lang === 'gu' ? 'વાર્ષિક વર્ષફળ કુંડળીમાં ગ્રહ સ્થિતિ' :
+               'Planets in Varshapal Chart'}
+            </p>
             <div className="mudda-table-wrap">
               <table className="mudda-table">
                 <thead>
                   <tr>
-                    <th>Planet</th>
-                    <th>Sign</th>
-                    <th>Longitude</th>
-                    <th>House from Varsha Lagna</th>
-                    <th>Motion</th>
+                    <th>{lang === 'mr' ? 'ग्रह' : lang === 'hi' ? 'ग्रह' : lang === 'gu' ? 'ગ્રહ' : 'Planet'}</th>
+                    <th>{lang === 'mr' ? 'राशी' : lang === 'hi' ? 'राशि' : lang === 'gu' ? 'રાશિ' : 'Sign'}</th>
+                    <th>{lang === 'mr' ? 'अंश' : lang === 'hi' ? 'अंश' : lang === 'gu' ? 'અંશ' : 'Longitude'}</th>
+                    <th>{lang === 'mr' ? 'वर्ष लग्नापासून भाव' : lang === 'hi' ? 'वर्ष लग्न से भाव' : lang === 'gu' ? 'વર્ષ લગ્નથી ભાવ' : 'House from Varsha Lagna'}</th>
+                    <th>{lang === 'mr' ? 'गती' : lang === 'hi' ? 'गति' : lang === 'gu' ? 'ગતિ' : 'Motion'}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data.planets.map((p) => (
                     <tr key={p.planet}>
-                      <td><strong>{p.planet}</strong></td>
+                      <td><strong>{planetName(p.planet, lang)}</strong></td>
                       <td>{p.sign}</td>
                       <td className="mono">{p.longitude}°</td>
-                      <td className="mono"><strong>House {p.house}</strong></td>
-                      <td>{p.retrograde ? '℞ Vakri' : 'Direct'}</td>
+                      <td className="mono">
+                        <strong>
+                          {lang === 'mr' ? `भाव ${p.house}` : lang === 'hi' ? `भाव ${p.house}` : lang === 'gu' ? `${p.house}મો ભાવ` : `House ${p.house}`}
+                        </strong>
+                      </td>
+                      <td>
+                        {p.retrograde
+                          ? (lang === 'mr' || lang === 'hi' ? '℞ वक्री' : lang === 'gu' ? '℞ વક્રી' : '℞ Vakri')
+                          : (lang === 'mr' || lang === 'hi' ? 'मार्गी' : lang === 'gu' ? 'માર્ગી' : 'Direct')}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
