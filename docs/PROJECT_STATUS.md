@@ -260,6 +260,20 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-08-29 11:45 IST] — Commit `52942e0` / Sarvashtakvarga 337 Checksum Fix, Ketu Manglik Implementation & Full P0+P1 Accuracy Test Suite
+- **Summary**: Resolved classical BPHS Saturn Ashtakvarga bindu count (restoring 337 checksum), implemented Ketu Manglik indicator in `check_manglik()`, enhanced `YogaEngine` house calculations, and deployed full P0 regression & P1 accuracy test suites (all 99 tests passing).
+- **Key Enhancements & Corrections**:
+  1. **Ashtakvarga 337 Checksum Fix**: Corrected `BPHS_BAV_RULES["Saturn"]["Moon"]` from `[3, 5, 6, 11]` (4 bindus) to classical BPHS Upachaya list `[3, 6, 11]` (3 bindus), fixing Saturn's total to exactly 39 and the grand Sarvashtakvarga sum to the universal 337 bindus.
+  2. **Ketu Manglik Indicator**: Computed `ketu_house = house_of_planet(asc_idx, ketu["sign_index"])` and returned `"ketu_manglik": True/False` + `"ketu_house_lagna"` in `check_manglik()`, eliminating dead variable assignment.
+  3. **YogaEngine Real Lagna Dynamics**: Updated `YogaEngine` to dynamically compute planetary houses from `lagna_sign_index` (`((p_sign - lagna_sign_idx) % 12) + 1`) and included House 1 (Lagna lord) in Kendra & Trikona Raja Yoga combinations.
+  4. **P0 Regression Suite (`tests/test_regression_bugs.py`)**: 19 tests verifying Lagna propagation, dignity population, retrograde key, Jupiter 5/7/9 aspect cancellation, Ketu Manglik key, Panchang nakshatra naming, BPHS 337 checksum, and real-Lagna Raja Yoga detection.
+  5. **P1 Accuracy Test Suite**: Built `test_accuracy_astro_engine.py` (Golden India Independence chart, J2000 Lahiri ayanamsha, Ketu=Rahu+180 fuzzing, D9 Navamsha modalities), `test_accuracy_dasha.py` (120-year cycle invariant, continuity, antardasha sum), `test_accuracy_ashtakoot.py` (exhaustive 12x12 and 27x27 bounds, 36 max points, symmetry), `test_accuracy_manglik_papa.py` (three-chart independence, debilitation non-cancellation, weighted Papa Samyam formula), and `test_accuracy_yogas_gemstones.py` (all 12 ascendants life stones, catalog coverage).
+  6. **Test Coverage**: 99 pytest tests passing in 1.59s with 100% success rate.
+- **Status**: Completed & Verified.
+- **Files Modified / Created**: `kundali_backend/app/ashtakvarga_engine.py`, `kundali_backend/app/kundali_analyzer.py`, `kundali_backend/app/panchang_engine.py`, `kundali_backend/app/yoga_engine.py`, `kundali_backend/tests/test_regression_bugs.py`, `kundali_backend/tests/test_accuracy_astro_engine.py`, `kundali_backend/tests/test_accuracy_dasha.py`, `kundali_backend/tests/test_accuracy_ashtakoot.py`, `kundali_backend/tests/test_accuracy_manglik_papa.py`, `kundali_backend/tests/test_accuracy_yogas_gemstones.py`, `docs/PROJECT_STATUS.md`.
+
+---
+
 ### [2026-08-29 11:16 IST] — Commit `7f5962c` / Core Engine Bugfixes, Planetary Dignity, Aspect Correction & Regression Test Suite
 - **Summary**: Implemented all verified roadmap and audit fixes: Lagna index in technical profile, planetary dignity population, retrograde key mismatch fix, Jupiter 5/7/9 aspect correction, Panchang Rashi/Nakshatra clarification, seconds precision, node mode toggle, and CORS configuration.
 - **Architectural & Calculation Fixes**:
