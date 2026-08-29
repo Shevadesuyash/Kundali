@@ -260,6 +260,20 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-08-29 12:00 IST] — Commit `fdc1603` / Full Dynamic Multi-Language Translation Engine & Multilingual AI Prompts
+- **Summary**: Implemented full dynamic translation across all runtime-generated content, backend string interpolations, and Gemini AI outputs in English, Marathi (मराठी), Hindi (हिंदी), and Gujarati (ગુજરાતી).
+- **Key Enhancements & Translations**:
+  1. **Multilingual AI Prompt Generation**: Updated `ai_service.py` to accept `language` parameter in `generate_individual_reading` and `generate_match_reading`, enforcing authentic Sanskrit/Devanagari/Gujarati Jyotish terminology when Marathi, Hindi, or Gujarati is selected.
+  2. **Dynamic Gemstone Translation**: Localized all gemstone categories, purposes, metals, fingers, wearing day/time, dynamic contraindications (Dusthana lordship, Neecha debilitation), and 4 classical Prana Pratishtha safety guidelines.
+  3. **Manglik & Papa Samyam Localization**: Localized tiered severity classifications, multi-chart breakdown pills, cancellation explanations (Mars own-sign, exaltation, Jupiter aspect), Papa Samyam table rows, and combined match compatibility verdicts.
+  4. **Dynamic Panchang & Choghadiya**: Localized daytime Choghadiya quality descriptions, Tithi half-tithi notes, daily devotional guidance, and auspicious/inauspicious Muhurta sections.
+  5. **Interactive AI Assistant Bot**: Localized quick question chips, placeholder hints, headers, and loading animations across all 4 languages.
+  6. **Build & Test Verification**: Vite frontend bundle compiled in 590ms with 0 errors; full backend test suite (99/99 tests) passing with 100% success.
+- **Status**: Completed & Verified.
+- **Files Modified**: `kundali_backend/app/ai_service.py`, `kundali_backend/app/models.py`, `kundali_backend/app/main.py`, `kundali_frontend/src/api/kundaliApi.js`, `kundali_frontend/src/utils/astroTranslations.js`, `kundali_frontend/src/components/GemstonePanel.jsx`, `kundali_frontend/src/components/ManglikBadge.jsx`, `kundali_frontend/src/components/tabs/DoshasTab.jsx`, `kundali_frontend/src/components/tabs/PanchangTab.jsx`, `kundali_frontend/src/components/GunaMilanScorecard.jsx`, `kundali_frontend/src/components/AIAssistant.jsx`, `docs/PROJECT_STATUS.md`.
+
+---
+
 ### [2026-08-29 11:45 IST] — Commit `52942e0` / Sarvashtakvarga 337 Checksum Fix, Ketu Manglik Implementation & Full P0+P1 Accuracy Test Suite
 - **Summary**: Resolved classical BPHS Saturn Ashtakvarga bindu count (restoring 337 checksum), implemented Ketu Manglik indicator in `check_manglik()`, enhanced `YogaEngine` house calculations, and deployed full P0 regression & P1 accuracy test suites (all 99 tests passing).
 - **Key Enhancements & Corrections**:
