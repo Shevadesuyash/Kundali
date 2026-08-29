@@ -1,6 +1,16 @@
 import React from 'react';
 import { useLang } from '../context/LanguageContext';
 import { planetName } from '../utils/i18n';
+import {
+  getGemCategory,
+  getGemPurpose,
+  getGemPlacement,
+  getGemMetal,
+  getGemFinger,
+  getGemDayTime,
+  getGemContraindication,
+  getGemSafetyRule,
+} from '../utils/astroTranslations';
 import './GemstonePanel.css';
 
 /**
@@ -10,11 +20,12 @@ import './GemstonePanel.css';
  * Props:
  *   data: gemstone_recommendations object from backend
  */
-export default function GemstonePanel({ data }) {
+export default function GemstonePanel({ data, recommendations: propRecs }) {
   const { lang } = useLang();
-  if (!data) return null;
+  if (!data && !propRecs) return null;
 
-  const { recommendations = [], general_safety = [] } = data;
+  const recommendations = data?.recommendations || propRecs || (Array.isArray(data) ? data : []);
+  const general_safety = data?.general_safety || [];
 
   const titleText =
     lang === 'mr' ? 'रत्न व रुद्राक्ष शिफारसी' :
@@ -54,9 +65,9 @@ export default function GemstonePanel({ data }) {
           >
             <div className="gemstone-card__header">
               <div>
-                <p className="gemstone-card__category">{gem.category}</p>
+                <p className="gemstone-card__category">{getGemCategory(gem.category, lang)}</p>
                 <h4 className="gemstone-card__gem-name">{gem.primary_gemstone}</h4>
-                <p className="gemstone-card__purpose">{gem.purpose}</p>
+                <p className="gemstone-card__purpose">{getGemPurpose(gem.purpose, lang)}</p>
               </div>
               <span className="gemstone-card__planet-pill">
                 {planetName(gem.ruling_planet, lang)}
@@ -68,7 +79,8 @@ export default function GemstonePanel({ data }) {
               <div className="gemstone-card__warning">
                 <span>⚠️</span>
                 <div>
-                  <strong>{lang === 'mr' ? 'सावधगिरी:' : lang === 'hi' ? 'सावधानी:' : lang === 'gu' ? 'સાવચેતી:' : 'Precaution:'}</strong> {gem.contraindications.join(' ')}
+                  <strong>{lang === 'mr' ? 'सावधगिरी:' : lang === 'hi' ? 'सावधानी:' : lang === 'gu' ? 'સાવચેતી:' : 'Precaution:'}</strong>{' '}
+                  {gem.contraindications.map((c) => getGemContraindication(c, lang)).join(' ')}
                 </div>
               </div>
             )}
@@ -77,11 +89,11 @@ export default function GemstonePanel({ data }) {
             <div className="gemstone-card__specs">
               <div className="gemstone-spec">
                 <span className="gemstone-spec__label">{metalLabel}</span>
-                <span className="gemstone-spec__val">{gem.metal}</span>
+                <span className="gemstone-spec__val">{getGemMetal(gem.metal, lang)}</span>
               </div>
               <div className="gemstone-spec">
                 <span className="gemstone-spec__label">{fingerLabel}</span>
-                <span className="gemstone-spec__val">{gem.finger}</span>
+                <span className="gemstone-spec__val">{getGemFinger(gem.finger, lang)}</span>
               </div>
               <div className="gemstone-spec">
                 <span className="gemstone-spec__label">{weightLabel}</span>
@@ -89,7 +101,7 @@ export default function GemstonePanel({ data }) {
               </div>
               <div className="gemstone-spec">
                 <span className="gemstone-spec__label">{wearingDayLabel}</span>
-                <span className="gemstone-spec__val">{gem.day_time}</span>
+                <span className="gemstone-spec__val">{getGemDayTime(gem.day_time, lang)}</span>
               </div>
             </div>
 
@@ -124,7 +136,7 @@ export default function GemstonePanel({ data }) {
           </h4>
           <ul className="gemstone-safety-list">
             {general_safety.map((rule, idx) => (
-              <li key={idx}>{rule}</li>
+              <li key={idx}>{getGemSafetyRule(rule, lang)}</li>
             ))}
           </ul>
         </div>

@@ -1,14 +1,17 @@
+import { useLang } from '../context/LanguageContext';
+import { getManglikSeverity, getCancellationReason } from '../utils/astroTranslations';
 import './ManglikBadge.css';
 
 /**
  * ManglikBadge — shows full Mangal Dosha status for one person.
  *
  * Updates:
- *   - Tiered Severity Classification
+ *   - Tiered Severity Classification with Native Multi-Language Translation
  *   - Papa Samyam score display
  *   - Conditional progressive disclosure for non-Manglik
  */
 export default function ManglikBadge({ manglik }) {
+  const { lang } = useLang();
   const {
     is_manglik = false,
     is_cancelled = false,
@@ -26,20 +29,42 @@ export default function ManglikBadge({ manglik }) {
 
   // Derive tone from effective state
   let tone = 'jade';
-  let label = 'Not Manglik';
+  let label = lang === 'mr' ? 'मंगळ दोष नाही (निर्दोष)' :
+              lang === 'hi' ? 'मांगलिक दोष नहीं (निर्दोष)' :
+              lang === 'gu' ? 'માંગલિક દોષ નથી (નિર્દોષ)' :
+              'Not Manglik';
 
   if (is_manglik && is_cancelled) {
     tone  = 'gold';
-    label = 'Manglik — Dosha Cancelled';
+    label = lang === 'mr' ? 'मंगळ दोष — दोष रद्द / परिहार' :
+            lang === 'hi' ? 'मांगलिक दोष — दोष रद्द / परिहार' :
+            lang === 'gu' ? 'માંગલિક દોષ — દોષ રદ / પરિહાર' :
+            'Manglik — Dosha Cancelled';
   } else if (is_manglik) {
     tone  = severity?.startsWith('Primary') ? 'vermilion' : 'amber';
-    label = `Manglik — ${severity}`;
+    label = getManglikSeverity(severity, lang);
   } else if (severity && severity !== 'None') {
     // Surface Anshik/Minor without calling them full Manglik
-    label = `Not Manglik — ${severity}`;
+    label = getManglikSeverity(severity, lang);
   }
 
   const hasMultiChart = manglik_from_lagna != null && is_manglik;
+
+  const viewDetailsText = lang === 'mr' ? 'तपशीलवार ग्रह स्थिती पाहा' :
+                          lang === 'hi' ? 'विस्तृत ग्रह स्थिति देखें' :
+                          lang === 'gu' ? 'વિસ્તૃત ગ્રહ સ્થિતિ જુઓ' :
+                          'View Detailed Planetary Positions';
+
+  const papaScoreLabel = lang === 'mr' ? 'पाप साम्य (अशुभ भारमान):' :
+                         lang === 'hi' ? 'पाप साम्य (अशुभ भारित स्कोर):' :
+                         lang === 'gu' ? 'પાપ સામ્ય (અશુભ સ્કોર):' :
+                         'Papa Samyam (Malefic Score):';
+
+  const marsHouseLabel = (h) => {
+    if (lang === 'mr' || lang === 'hi') return `मंगळ भाव ${h ?? '—'}`;
+    if (lang === 'gu') return `મંગળ ${h ?? '—'}મો ભાવ`;
+    return `Mars in house ${h ?? '—'}`;
+  };
 
   return (
     <div className={`manglik-badge manglik-badge--${tone}`}>
@@ -52,24 +77,24 @@ export default function ManglikBadge({ manglik }) {
         {/* Mars position / Progressive disclosure */}
         {!is_manglik ? (
           <details className="manglik-badge__details-accordion">
-            <summary className="manglik-badge__summary">View Detailed Planetary Positions</summary>
+            <summary className="manglik-badge__summary">{viewDetailsText}</summary>
             <p className="manglik-badge__detail mono">
-              Mars in house {mars_house_lagna ?? '—'} · {mars_sign}
+              {marsHouseLabel(mars_house_lagna)} · {mars_sign}
             </p>
             {papa_points !== undefined && (
               <p className="manglik-badge__papa-points">
-                Papa Samyam (Malefic Score): {papa_points}
+                {papaScoreLabel} {papa_points}
               </p>
             )}
           </details>
         ) : (
           <>
             <p className="manglik-badge__detail mono">
-              Mars in house {mars_house_lagna ?? '—'} · {mars_sign}
+              {marsHouseLabel(mars_house_lagna)} · {mars_sign}
             </p>
             {papa_points !== undefined && (
               <p className="manglik-badge__papa-points" style={{ fontSize: '0.85em', opacity: 0.8, marginTop: '4px' }}>
-                Papa Samyam (Malefic Score): {papa_points}
+                {papaScoreLabel} {papa_points}
               </p>
             )}
           </>
@@ -78,7 +103,7 @@ export default function ManglikBadge({ manglik }) {
         {/* Cancellation reason */}
         {is_cancelled && cancellation_reason && (
           <p className="manglik-badge__cancellation">
-            <span aria-hidden="true">✓</span> {cancellation_reason}
+            <span aria-hidden="true">✓</span> {getCancellationReason(cancellation_reason, lang)}
           </p>
         )}
 
@@ -86,17 +111,17 @@ export default function ManglikBadge({ manglik }) {
         {hasMultiChart && (
           <div className="manglik-badge__charts">
             <ChartPill
-              label="Lagna"
+              label={lang === 'mr' || lang === 'hi' ? 'लग्न' : lang === 'gu' ? 'લગ્ન' : 'Lagna'}
               house={mars_house_lagna}
               active={manglik_from_lagna}
             />
             <ChartPill
-              label="Moon"
+              label={lang === 'mr' || lang === 'hi' ? 'चंद्र' : lang === 'gu' ? 'ચંદ્ર' : 'Moon'}
               house={mars_house_moon}
               active={manglik_from_moon}
             />
             <ChartPill
-              label="Venus"
+              label={lang === 'mr' || lang === 'hi' ? 'शुक्र' : lang === 'gu' ? 'શુક્ર' : 'Venus'}
               house={mars_house_venus}
               active={manglik_from_venus}
             />

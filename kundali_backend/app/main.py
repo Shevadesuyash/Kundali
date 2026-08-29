@@ -117,7 +117,7 @@ def get_kundali(request: KundaliRequest):
         raise HTTPException(status_code=500, detail="Kundali calculation failed") from exc
 
     if request.include_ai_reading:
-        report["ai_reading"] = ai_service.generate_individual_reading(report)
+        report["ai_reading"] = ai_service.generate_individual_reading(report, language=request.language or "en")
 
     return report
 
@@ -397,7 +397,7 @@ def get_match(request: MatchRequest):
         raise HTTPException(status_code=500, detail="Matchmaking calculation failed") from exc
 
     if request.include_ai_reading:
-        result["ai_reading"] = ai_service.generate_match_reading(result)
+        result["ai_reading"] = ai_service.generate_match_reading(result, language=request.language or "en")
 
     return result
 
@@ -664,7 +664,7 @@ def match_saved_profiles(request: MatchSavedRequest):
         raise HTTPException(status_code=500, detail="Matchmaking calculation failed") from exc
 
     if request.include_ai_reading:
-        result["ai_reading"] = ai_service.generate_match_reading(result)
+        result["ai_reading"] = ai_service.generate_match_reading(result, language=request.language or "en")
 
     return result
 

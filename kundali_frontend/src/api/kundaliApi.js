@@ -64,8 +64,8 @@ function normalizeApiError(data) {
 // ---------------------------------------------------------------------------
 // Kundali & Match
 // ---------------------------------------------------------------------------
-export function getKundali(person, includeAiReading = false) {
-  return postJSON('/api/v1/kundali', { person, include_ai_reading: includeAiReading });
+export function getKundali(person, includeAiReading = false, language = 'en') {
+  return postJSON('/api/v1/kundali', { person, include_ai_reading: includeAiReading, language });
 }
 
 export function getAshtakvarga(person) {
@@ -73,8 +73,8 @@ export function getAshtakvarga(person) {
 }
 
 
-export function getMatch(boy, girl, includeAiReading = false) {
-  return postJSON('/api/v1/match', { boy, girl, include_ai_reading: includeAiReading });
+export function getMatch(boy, girl, includeAiReading = false, language = 'en') {
+  return postJSON('/api/v1/match', { boy, girl, include_ai_reading: includeAiReading, language });
 }
 
 export function checkHealth() {
@@ -146,11 +146,12 @@ export function deleteProfile(id) {
 }
 
 /** Run Guna Milan for two saved profiles by ID. */
-export function matchSaved(boyId, girlId, includeAiReading = false) {
+export function matchSaved(boyId, girlId, includeAiReading = false, language = 'en') {
   return postJSON('/api/v1/match-saved', {
     boy_id: boyId,
     girl_id: girlId,
     include_ai_reading: includeAiReading,
+    language,
   });
 }
 

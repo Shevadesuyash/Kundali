@@ -105,12 +105,14 @@ class BirthDetails(BaseModel):
 class KundaliRequest(BaseModel):
     person: BirthDetails
     include_ai_reading: bool = False
+    language: Optional[str] = "en"
 
 
 class MatchRequest(BaseModel):
     boy: BirthDetails
     girl: BirthDetails
     include_ai_reading: bool = False
+    language: Optional[str] = "en"
 
 
 class ErrorResponse(BaseModel):
@@ -162,6 +164,7 @@ class MatchSavedRequest(BaseModel):
     boy_id: int
     girl_id: int
     include_ai_reading: bool = False
+    language: Optional[str] = "en"
 
 
 class BulkMatchRequest(BaseModel):

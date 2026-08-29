@@ -127,6 +127,64 @@ export default function AIAssistant({ report }) {
     }
   };
 
+  const quickChips = useMemo(() => {
+    if (lang === 'mr') {
+      return [
+        '💼 चालू महादशेत करिअर व धनयोग कसा राहील?',
+        '💍 विवाह योग आणि अनुकूल कालावधी कधी आहे?',
+        '🪐 शनीची साडेसाती / ढिय्या प्रभाव कसा आहे?',
+        '🌿 सर्वात लाभदायक रत्न आणि वैदिक उपाय कोणते?',
+      ];
+    }
+    if (lang === 'hi') {
+      return [
+        '💼 वर्तमान महादशा में आजीविका एवं धन लाभ?',
+        '💍 विवाह योग एवं अनुकूल समय कब बनेगा?',
+        '🪐 शनि की साढ़ेसाती का क्या प्रभाव रहेगा?',
+        '🌿 सर्वाधिक लाभकारी रत्न एवं वैदिक उपाय?',
+      ];
+    }
+    if (lang === 'gu') {
+      return [
+        '💼 વર્તમાન દશામાં કારકિર્દી અને ધનલાભ કેવો રહેશે?',
+        '💍 વિવાહ યોગ અને અનુકૂળ સમય ક્યારે બનશે?',
+        '🪐 શનિની સાડાસાતીની શું અસર રહેશે?',
+        '🌿 સૌથી ફાયદાકારક રત્ન અને વૈદિક ઉપાયો કયા છે?',
+      ];
+    }
+    return QUICK_CHIPS;
+  }, [lang]);
+
+  const botTitle = lang === 'mr' ? 'वैदिक AI ज्योतिषी' :
+                    lang === 'hi' ? 'वैदिक AI ज्योतिषी' :
+                    lang === 'gu' ? 'વૈદિક AI જ્યોતિષી' :
+                    'Vedic AI Astrologer';
+
+  const fabText = lang === 'mr' ? 'ज्योतिषाला विचारा' :
+                  lang === 'hi' ? 'ज्योतिषी से पूछें' :
+                  lang === 'gu' ? 'જ્યોતિષીને પૂછો' :
+                  'Ask Astrologer';
+
+  const chipsLabel = lang === 'mr' ? 'सुचवलेले प्रश्न' :
+                     lang === 'hi' ? 'सुझाए गए प्रश्न' :
+                     lang === 'gu' ? 'સૂચવેલા પ્રશ્નો' :
+                     'Suggested Questions';
+
+  const loadingText = lang === 'mr' ? '✨ ज्योतिषी आपल्या ग्रहांच्या योगांचे व गोचराचे विश्लेषण करत आहेत...' :
+                      lang === 'hi' ? '✨ ज्योतिषी आपके ग्रह योगों एवं गोचर का विश्लेषण कर रहे हैं...' :
+                      lang === 'gu' ? '✨ જ્યોતિષી તમારા ગ્રહ યોગો અને ગોચરનું વિશ્લેષણ કરી રહ્યા છે...' :
+                      '✨ Astrologer is analyzing your planetary yogas & transits...';
+
+  const inputPlaceholder = lang === 'mr' ? 'करिअर, विवाह, आरोग्य किंवा उपायांविषयी विचारा...' :
+                            lang === 'hi' ? 'करियर, विवाह, स्वास्थ्य अथवा उपायों के बारे में पूछें...' :
+                            lang === 'gu' ? 'કારકિર્દી, વિવાહ, સ્વાસ્થ્ય કે ઉપાયો વિશે પૂછો...' :
+                            'Ask about career, marriage, remedies...';
+
+  const askBtnText = lang === 'mr' ? 'विचारा' :
+                     lang === 'hi' ? 'पूछें' :
+                     lang === 'gu' ? 'પૂછો' :
+                     'Ask';
+
   return (
     <>
       {/* 1. Floating Right-Side Action Button */}
@@ -138,7 +196,7 @@ export default function AIAssistant({ report }) {
           aria-label="Open Vedic AI Astrologer"
         >
           <span className="ai-bot-fab__sparkle">✨</span>
-          <span>Ask Astrologer</span>
+          <span>{fabText}</span>
         </button>
       )}
 
@@ -159,7 +217,7 @@ export default function AIAssistant({ report }) {
             <div className="ai-bot-header__info">
               <div className="ai-bot-avatar">🕉️</div>
               <div>
-                <h3 className="ai-bot-title">Vedic AI Astrologer</h3>
+                <h3 className="ai-bot-title">{botTitle}</h3>
                 <p className="ai-bot-subtitle">Gemini 2.5 Flash · Chart-Aware</p>
               </div>
             </div>
@@ -185,9 +243,9 @@ export default function AIAssistant({ report }) {
             {/* Quick Chips (if no conversation yet) */}
             {messages.length === 0 && (
               <div className="ai-bot-chips">
-                <span className="ai-bot-chips-label">Suggested Questions</span>
+                <span className="ai-bot-chips-label">{chipsLabel}</span>
                 <div className="ai-bot-chips-list">
-                  {QUICK_CHIPS.map((chip, idx) => (
+                  {quickChips.map((chip, idx) => (
                     <button
                       key={idx}
                       type="button"
@@ -217,7 +275,7 @@ export default function AIAssistant({ report }) {
             {/* Loading animation */}
             {loading && (
               <div className="ai-bot-loading">
-                <span>✨ Astrologer is analyzing your planetary yogas &amp; transits...</span>
+                <span>{loadingText}</span>
               </div>
             )}
           </div>
@@ -234,7 +292,7 @@ export default function AIAssistant({ report }) {
               <input
                 type="text"
                 className="ai-bot-input-field"
-                placeholder="Ask about career, marriage, remedies..."
+                placeholder={inputPlaceholder}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 disabled={loading}
@@ -244,7 +302,7 @@ export default function AIAssistant({ report }) {
                 className="ai-bot-send-btn"
                 disabled={loading || !inputValue.trim()}
               >
-                <span>Ask</span>
+                <span>{askBtnText}</span>
                 <span>↗</span>
               </button>
             </form>
