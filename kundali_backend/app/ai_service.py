@@ -50,7 +50,7 @@ def _get_client():
         return None
 
 
-def generate_individual_reading(report: Dict) -> Optional[str]:
+def generate_individual_reading(report: Dict, language: str = "en") -> Optional[str]:
     model = _get_client()
     if model is None:
         return None
@@ -68,6 +68,15 @@ def generate_individual_reading(report: Dict) -> Optional[str]:
         "nadi": report["classification"]["nadi"],
         "manglik": report["manglik_dosha"],
     }
+
+    lang_instruction = ""
+    if language == "mr":
+        lang_instruction = "\n\nMANDATORY LANGUAGE RULE: Write the ENTIRE analysis in authentic, fluent Marathi (मराठी) using proper Vedic Jyotish terminology (लग्न, राशी, नक्षत्र, मंगळ दोष, स्वभाव, उपाय).\n"
+    elif language == "hi":
+        lang_instruction = "\n\nMANDATORY LANGUAGE RULE: Write the ENTIRE analysis in authentic, fluent Hindi (हिंदी) using proper Vedic Jyotish terminology (लग्न, राशि, नक्षत्र, मांगलिक दोष, स्वभाव, उपाय).\n"
+    elif language == "gu":
+        lang_instruction = "\n\nMANDATORY LANGUAGE RULE: Write the ENTIRE analysis in authentic, fluent Gujarati (ગુજરાતી) using proper Vedic Jyotish terminology (લગ્ન, રાશિ, નક્ષત્ર, માંગલિક દોષ, સ્વભાવ, ઉપાય).\n"
+
     prompt = (
         "You are a warm, plain-spoken Vedic astrology assistant. Using ONLY the "
         "structured facts below (already computed by a Swiss-Ephemeris backend - "
@@ -75,7 +84,8 @@ def generate_individual_reading(report: Dict) -> Optional[str]:
         "personality/life-theme summary for this person, followed by 2-3 short, "
         "practical, non-medical general well-being suggestions if their Manglik "
         "status warrants a note. Do not state exact predictions about death, "
-        "disease, or finances; keep it general and constructive.\n\n"
+        "disease, or finances; keep it general and constructive."
+        f"{lang_instruction}\n\n"
         f"FACTS:\n{json.dumps(facts, indent=2)}"
     )
     try:
@@ -86,7 +96,7 @@ def generate_individual_reading(report: Dict) -> Optional[str]:
         return None
 
 
-def generate_match_reading(match_report: Dict) -> Optional[str]:
+def generate_match_reading(match_report: Dict, language: str = "en") -> Optional[str]:
     model = _get_client()
     if model is None:
         return None
@@ -106,6 +116,15 @@ def generate_match_reading(match_report: Dict) -> Optional[str]:
         "bhakoot_dosha": guna["bhakoot_dosha"],
         "manglik_verdict": match_report["manglik_analysis"]["combined_verdict"],
     }
+
+    lang_instruction = ""
+    if language == "mr":
+        lang_instruction = "\n\nMANDATORY LANGUAGE RULE: Write the ENTIRE marriage compatibility summary in authentic, fluent Marathi (मराठी) using authentic Kundali Milan terminology (गुण मिलन, नाडी दोष, भकूट, ग्रह मैत्री, उपाय).\n"
+    elif language == "hi":
+        lang_instruction = "\n\nMANDATORY LANGUAGE RULE: Write the ENTIRE marriage compatibility summary in authentic, fluent Hindi (हिंदी) using authentic Kundali Milan terminology (गुण मिलान, नाड़ी दोष, भकूट, ग्रह मैत्री, उपाय).\n"
+    elif language == "gu":
+        lang_instruction = "\n\nMANDATORY LANGUAGE RULE: Write the ENTIRE marriage compatibility summary in authentic, fluent Gujarati (ગુજરાતી) using authentic Kundali Milan terminology (ગુણ મિલન, નાડી દોષ, ભકૂટ, ગ્રહ મૈત્રી, ઉપાય).\n"
+
     prompt = (
         "You are a warm, balanced Vedic astrology assistant helping a family "
         "understand a Kundali Milan (marriage matching) report. Using ONLY the "
@@ -114,7 +133,8 @@ def generate_match_reading(match_report: Dict) -> Optional[str]:
         "explain in simple terms what the weakest koota(s) mean in practice, and "
         "give 2-3 constructive, non-alarming next steps (e.g. 'discuss with an "
         "astrologer', 'consider remedies'). Avoid absolute pronouncements about "
-        "the couple's fate; be supportive and balanced either way.\n\n"
+        "the couple's fate; be supportive and balanced either way."
+        f"{lang_instruction}\n\n"
         f"FACTS:\n{json.dumps(facts, indent=2)}"
     )
     try:

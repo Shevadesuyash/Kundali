@@ -419,6 +419,116 @@ export const ASTRO_CATALOG = {
       },
     },
   },
+
+  // ─── 5. Gemstones Dynamic Catalog ─────────────────────────────────────
+  gemstones: {
+    categories: {
+      'Life Stone (Lagna Ratna)': { en: 'Life Stone (Lagna Ratna)', mr: 'जीवन रत्न (लग्न रत्न)', hi: 'जीवन रत्न (लग्न रत्न)', gu: 'જીવન રત્ન (લગ્ન રત્ન)' },
+      'Fortune Stone (Bhagya Ratna)': { en: 'Fortune Stone (Bhagya Ratna)', mr: 'भाग्य रत्न (धर्म व भाग्य)', hi: 'भाग्य रत्न (धर्म एवं भाग्य)', gu: 'ભાગ્ય રત્ન (ધર્મ અને ભાગ્ય)' },
+      'Intellect Stone (Vidya Ratna)': { en: 'Intellect Stone (Vidya Ratna)', mr: 'विद्या रत्न (ज्ञान व बुद्धी)', hi: 'विद्या रत्न (ज्ञान एवं बुद्धि)', gu: 'વિદ્યા રત્ન (જ્ઞાન અને બુદ્ધિ)' },
+      'Career Stone (Karma Ratna)': { en: 'Career Stone (Karma Ratna)', mr: 'कर्म रत्न (करियर व यश)', hi: 'कर्म रत्न (करियर एवं यश)', gu: 'કર્મ રત્ન (કારકિર્દી અને યશ)' },
+    },
+    purposes: {
+      'Health, Immunity, Vitality, Charisma & Self-Confidence': {
+        en: 'Health, Immunity, Vitality, Charisma & Self-Confidence',
+        mr: 'आरोग्य, प्रतिकारशक्ती, चैतन्य, व्यक्तिमत्त्व प्रभाव आणि आत्मविश्वास',
+        hi: 'आरोग्य, रोग प्रतिरोधक क्षमता, तेज, व्यक्तित्व प्रभाव और आत्मबल',
+        gu: 'આરોગ્ય, રોગપ્રતિકારક શક્તિ, પ્રભાવશાળી વ્યક્તિત્વ અને આત્મવિશ્વાસ',
+      },
+      'Destiny Support, Divine Grace, Dharma & Prosperity': {
+        en: 'Destiny Support, Divine Grace, Dharma & Prosperity',
+        mr: 'भाग्याची साथ, दैवी कृपा, धर्मनिष्ठा आणि निरंतर भरभराट',
+        hi: 'भाग्य वृद्धि, ईश्वरीय कृपा, धर्म निष्ठा और निरंतर समृद्धि',
+        gu: 'ભાગ્યવૃદ્ધિ, દૈવી કૃપા, ધર્મનિષ્ઠા અને નિરંતર સમૃદ્ધિ',
+      },
+      'Intellect, Focus, Creative Expression & Academic Success': {
+        en: 'Intellect, Focus, Creative Expression & Academic Success',
+        mr: 'बुद्धिमत्ता, एकाग्रता, सर्जनशीलता आणि उच्च शैक्षणिक यश',
+        hi: 'कुशाग्र बुद्धि, एकाग्रता, रचनात्मक प्रतिभा और उच्च शैक्षिक सफलता',
+        gu: 'તીક્ષ્ણ બુદ્ધિ, એકાગ્રતા, સર્જનાત્મક પ્રતિભા અને શૈક્ષણિક સફળતા',
+      },
+      'Professional Status, Career Elevation & Societal Leadership': {
+        en: 'Professional Status, Career Elevation & Societal Leadership',
+        mr: 'व्यावसायिक प्रतिष्ठा, नोकरी/उद्योग प्रगती आणि सामाजिक नेतृत्व',
+        hi: 'व्यावसायिक प्रतिष्ठा, करियर में पदोन्नति और सामाजिक नेतृत्व',
+        gu: 'વ્યાવસાયિક પ્રતિષ્ઠા, કારકિર્દીમાં પ્રગતિ અને સામાજિક નેતૃત્વ',
+      },
+    },
+    metals: {
+      'Gold / Copper': { en: 'Gold / Copper', mr: 'सोने / तांबे', hi: 'स्वर्ण / तांबा', gu: 'સોનું / તાંબુ' },
+      'Silver / White Gold': { en: 'Silver / White Gold', mr: 'चांदी / पांढरे सोने', hi: 'चांदी / श्वेत स्वर्ण', gu: 'ચાંદી / શ્વેત સોનું' },
+      'Gold / Brass / Panchdhatu': { en: 'Gold / Brass / Panchdhatu', mr: 'सोने / पितळ / पंचधातू', hi: 'स्वर्ण / पीतल / पंचधातु', gu: 'સોનું / પિત્તળ / પંચધાતુ' },
+      'Silver / Platinum / White Gold': { en: 'Silver / Platinum / White Gold', mr: 'चांदी / प्लॅटिनम / पांढरे सोने', hi: 'चांदी / प्लेटिनम / श्वेत स्वर्ण', gu: 'ચાંદી / પ્લેટિનમ / શ્વેત સોનું' },
+      'Panchdhatu / Iron / Silver': { en: 'Panchdhatu / Iron / Silver', mr: 'पंचधातू / लोखंड / चांदी', hi: 'पंचधातु / लोहा / चांदी', gu: 'પંચધાતુ / લોખંડ / ચાંદી' },
+      'Silver / Ashtadhatu': { en: 'Silver / Ashtadhatu', mr: 'चांदी / अष्टधातू', hi: 'चांदी / अष्टधातु', gu: 'ચાંદી / અષ્ટધાતુ' },
+    },
+    fingers: {
+      'Ring finger (Anamika)': { en: 'Ring finger (Anamika)', mr: 'अनामिका (करंगळीशेजारील बोट)', hi: 'अनामिका अंगुली', gu: 'અનામિકા આંગળી' },
+      'Little finger (Kanishtha)': { en: 'Little finger (Kanishtha)', mr: 'करंगळी (कनिष्ठिका)', hi: 'कनिष्ठिका अंगुली', gu: 'ટચલી આંગળી (કનિષ્ઠિકા)' },
+      'Index finger (Tarjani)': { en: 'Index finger (Tarjani)', mr: 'तर्जनी (अंगठ्याशेजारील बोट)', hi: 'तर्जनी अंगुली', gu: 'તર્જની આંગળી' },
+      'Middle finger (Madhyama)': { en: 'Middle finger (Madhyama)', mr: 'मधले बोट (मध्यमा)', hi: 'मध्यमा अंगुली', gu: 'વચલી આંગળી (મધ્યમા)' },
+    },
+    safetyRules: [
+      {
+        pattern: 'Never wear Pearl/Ruby together',
+        en: 'Never wear Pearl/Ruby together with Blue Sapphire or Diamond without astrological neutralization.',
+        mr: 'मोती/माणिक आणि नीलम/हिरा हे विरोधी ग्रहांचे रत्न एकत्र घालू नयेत.',
+        hi: 'मोती/माणिक्य और नीलम/हीरा जैसे परस्पर विरोधी ग्रहों के रत्न कभी एक साथ न पहनें।',
+        gu: 'મોતી/માણેક અને નીલમ/હીરા જેવા પરસ્પર વિરોધી રત્નો ક્યારેય સાથે ન પહેરવા.',
+      },
+      {
+        pattern: 'Always test sensitive stones',
+        en: 'Always test sensitive stones like Blue Sapphire (Neelam) or Hessonite (Gomed) for 3 days under pillow before permanent mounting.',
+        mr: 'नीलम किंवा गोमेद कायमस्वरूपी घालण्यापूर्वी ३ दिवस उशीखाली ठेवून शुभ-अशुभ अनुभव तपासावा.',
+        hi: 'नीलम या गोमेद स्थायी रूप से धारण करने से पूर्व ३ दिन तक तकिए के नीचे रखकर अनुभव जांचें।',
+        gu: 'નીલમ કે ગોમેદ કાયમી ધારણ કરતા પહેલા ૩ દિવસ તકિયા નીચે રાખી અનુભવ ચકાસવો.',
+      },
+      {
+        pattern: 'Ensure gemstones have direct skin contact',
+        en: 'Ensure gemstones have direct skin contact on the inner side of the ring or pendant.',
+        mr: 'रत्नाचा अंगठीच्या किंवा पेंडंटच्या मागून त्वचेशी थेट स्पर्श होत असल्याची खात्री करा.',
+        hi: 'अंगूठी या लॉकेट के निचले भाग से रत्न का त्वचा से सीधा स्पर्श होना अनिवार्य है।',
+        gu: 'વીંટી કે પેન્ડન્ટની નીચેથી રત્નનો ત્વચા સાથે સીધો સ્પર્શ થવો જરૂરી છે.',
+      },
+      {
+        pattern: 'Cleanse and energize',
+        en: 'Cleanse and energize (Prana Pratishtha) with milk, Ganga jal, and the planetary mantra before initial wearing.',
+        mr: 'धारण करण्यापूर्वी कच्चे दूध, गंगाजल आणि संबंधित ग्रहांच्या मंत्राने प्राण-प्रतिष्ठा करावी.',
+        hi: 'धारण करने से पूर्व कच्चे दूध, गंगाजल और संबंधित ग्रह के बीज मंत्र से प्राण-प्रतिष्ठा अवश्य करें।',
+        gu: 'પહેલાં કાચા દૂધ, ગંગાજળ અને ગ્રહના બીજ મંત્રથી પ્રાણ-પ્રતિષ્ઠા અવશ્ય કરવી.',
+      },
+    ],
+  },
+
+  // ─── 6. Manglik & Papa Samyam Translations ───────────────────────────
+  manglik: {
+    severities: {
+      'Primary (Mars in Manglik house from Lagna)': {
+        en: 'Primary (Mars in Manglik house from Lagna)',
+        mr: 'मुख्य मंगळ दोष (लग्नापासून मंगळ १, ४, ७, ८, किंवा १२ भावात)',
+        hi: 'मुख्य मांगलिक दोष (लग्न से मंगल १, ४, ७, ८, अथवा १२ भाव में)',
+        gu: 'મુખ્ય માંગલિક દોષ (લગ્નથી મંગળ ૧, ૪, ૭, ૮, કે ૧૨ ભાવમાં)',
+      },
+      'Anshik / Partial (Mars in Manglik house from Moon only)': {
+        en: 'Anshik / Partial (Mars in Manglik house from Moon only)',
+        mr: 'अंशिक / सौम्य मंगळ दोष (केवळ चंद्रापासून मंगळ दोष)',
+        hi: 'आंशिक / सौम्य मांगलिक दोष (केवल चंद्रमा से मंगल दोष)',
+        gu: 'આંશિક માંગલિક દોષ (માત્ર ચંદ્રથી મંગળ દોષ)',
+      },
+      'Minor / Secondary (Mars in Manglik house from Venus only)': {
+        en: 'Minor / Secondary (Mars in Manglik house from Venus only)',
+        mr: 'गौण मंगळ दोष (केवळ शुक्रापासून मंगळ दोष)',
+        hi: 'गौण मांगलिक दोष (केवल शुक्र से मंगल दोष)',
+        gu: 'ગૌણ માંગલિક દોષ (માત્ર શુક્રથી મંગળ દોષ)',
+      },
+      'None': {
+        en: 'No Mangal Dosha (Nirdosh)',
+        mr: 'मंगळ दोष नाही (निर्दोष कुंडली)',
+        hi: 'मांगलिक दोष नहीं (निर्दोष कुंडली)',
+        gu: 'માંગલિક દોષ નથી (નિર્દોષ કુંડળી)',
+      },
+    },
+  },
 };
 
 /** Translate a yoga name */
@@ -475,4 +585,177 @@ export function getKootaDesc(kootaName, defaultDesc = '', lang = 'en') {
   const item = ASTRO_CATALOG.kootas[kootaName];
   if (!item || !item.desc) return defaultDesc;
   return item.desc[lang] || item.desc.en || defaultDesc;
+}
+
+/** Translate Gemstone category */
+export function getGemCategory(cat, lang = 'en') {
+  const item = ASTRO_CATALOG.gemstones?.categories?.[cat];
+  if (!item) return cat;
+  return item[lang] || item.en || cat;
+}
+
+/** Translate Gemstone purpose */
+export function getGemPurpose(purpose, lang = 'en') {
+  const item = ASTRO_CATALOG.gemstones?.purposes?.[purpose];
+  if (!item) return purpose;
+  return item[lang] || item.en || purpose;
+}
+
+/** Translate Gemstone placement string e.g. "House 1 (Exalted)" or "House 4 (Own Sign, Retrograde ℞)" */
+export function getGemPlacement(placementStr, lang = 'en') {
+  if (!placementStr || lang === 'en') return placementStr;
+  let translated = placementStr;
+  translated = translated.replace(/House (\d+)/g, (match, h) => {
+    if (lang === 'mr') return `भाव ${h}`;
+    if (lang === 'hi') return `भाव ${h}`;
+    if (lang === 'gu') return `${h}મો ભાવ`;
+    return match;
+  });
+  translated = translated.replace(/Exalted/g, lang === 'mr' || lang === 'hi' ? 'उच्च' : 'ઉચ્ચ');
+  translated = translated.replace(/Debilitated/g, lang === 'mr' || lang === 'hi' ? 'नीच' : 'નીચ');
+  translated = translated.replace(/Own Sign/g, lang === 'mr' || lang === 'hi' ? 'स्वराशी' : 'સ્વરાશિ');
+  translated = translated.replace(/Neutral/g, lang === 'mr' || lang === 'hi' ? 'सम' : 'સમ');
+  translated = translated.replace(/Retrograde/g, lang === 'mr' || lang === 'hi' ? 'वक्री' : 'વક્રી');
+  return translated;
+}
+
+/** Translate Gemstone metal */
+export function getGemMetal(metal, lang = 'en') {
+  const item = ASTRO_CATALOG.gemstones?.metals?.[metal];
+  if (!item) return metal;
+  return item[lang] || item.en || metal;
+}
+
+/** Translate Gemstone finger */
+export function getGemFinger(finger, lang = 'en') {
+  const item = ASTRO_CATALOG.gemstones?.fingers?.[finger];
+  if (!item) return finger;
+  return item[lang] || item.en || finger;
+}
+
+/** Translate Gemstone day & timing */
+export function getGemDayTime(dayTime, lang = 'en') {
+  if (!dayTime || lang === 'en') return dayTime;
+  let res = dayTime;
+  const dayMap = {
+    'Sunday': { mr: 'रविवार', hi: 'रविवार', gu: 'રવિવાર' },
+    'Monday': { mr: 'सोमवार', hi: 'सोमवार', gu: 'સોમવાર' },
+    'Tuesday': { mr: 'मंगळवार', hi: 'मंगलवार', gu: 'મંગળવાર' },
+    'Wednesday': { mr: 'बुधवार', hi: 'बुधवार', gu: 'બુધવાર' },
+    'Thursday': { mr: 'गुरुवार', hi: 'गुरुवार', gu: 'ગુરુવાર' },
+    'Friday': { mr: 'शुक्रवार', hi: 'शुक्रवार', gu: 'શુક્રવાર' },
+    'Saturday': { mr: 'शनिवार', hi: 'शनिवार', gu: 'શનિવાર' },
+  };
+  for (const [enDay, trans] of Object.entries(dayMap)) {
+    if (res.includes(enDay)) {
+      res = res.replace(enDay, trans[lang] || enDay);
+    }
+  }
+  res = res.replace(/morning/gi, lang === 'mr' || lang === 'hi' ? 'सकाळी' : 'સવારે');
+  res = res.replace(/during Shukla Paksha/gi, lang === 'mr' || lang === 'hi' ? 'शुक्ल पक्षात' : 'શુક્લ પક્ષમાં');
+  res = res.replace(/at sunrise/gi, lang === 'mr' || lang === 'hi' ? 'सूर्योदयावेळी' : 'સૂર્યોદય સમયે');
+  res = res.replace(/after sunset/gi, lang === 'mr' || lang === 'hi' ? 'सूर्यास्तानंतर' : 'સૂર્યાસ્ત પછી');
+  return res;
+}
+
+/** Translate Gemstone Contraindication string */
+export function getGemContraindication(warning, lang = 'en') {
+  if (!warning || lang === 'en') return warning;
+  if (warning.includes('rules a Dusthana house')) {
+    const planetMatch = warning.split(' ')[0];
+    if (lang === 'mr') {
+      return `${planetMatch} हा ग्रह त्रिक भावाचा (६, ८ किंवा १२) स्वामी आहे. ज्योतिषी सल्ल्याशिवाय घालू नये.`;
+    } else if (lang === 'hi') {
+      return `${planetMatch} ग्रह त्रिक भाव (६, ८ या १२) का स्वामी है। विशेषज्ञ परामर्श के बिना न पहनें।`;
+    } else if (lang === 'gu') {
+      return `${planetMatch} ત્રિક ભાવ (૬, ૮ કે ૧૨) નો સ્વામી છે. નિષ્ણાત સલાહ વિના ન પહેરવો.`;
+    }
+  }
+  if (warning.includes('is debilitated (Neecha)')) {
+    const planetMatch = warning.split(' ')[0];
+    if (lang === 'mr') {
+      return `${planetMatch} हा ग्रह नीच राशीत आहे. मुख्य रत्नाऐवजी पर्यायी उप-रत्न किंवा रुद्राक्ष घालणे अधिक श्रेयस्कर आहे.`;
+    } else if (lang === 'hi') {
+      return `${planetMatch} ग्रह नीच राशि में स्थित है। मुख्य रत्न के स्थान पर उप-रत्न अथवा रुद्राक्ष धारण करना उत्तम है।`;
+    } else if (lang === 'gu') {
+      return `${planetMatch} નીચ રાશિમાં સ્થિત છે. મુખ્ય રત્નને બદલે ઉપ-રત્ન કે રુદ્રાક્ષ ધારણ કરવું ઉત્તમ છે.`;
+    }
+  }
+  return warning;
+}
+
+/** Translate Gemstone General Safety Rule */
+export function getGemSafetyRule(rule, lang = 'en') {
+  if (!rule || lang === 'en') return rule;
+  const safetyList = ASTRO_CATALOG.gemstones?.safetyRules || [];
+  for (const item of safetyList) {
+    if (rule.includes(item.pattern)) {
+      return item[lang] || item.en || rule;
+    }
+  }
+  return rule;
+}
+
+/** Translate Manglik Severity */
+export function getManglikSeverity(sev, lang = 'en') {
+  if (!sev || lang === 'en') return sev;
+  const severities = ASTRO_CATALOG.manglik?.severities || {};
+  for (const [key, trans] of Object.entries(severities)) {
+    if (sev.startsWith(key) || sev === key) {
+      let base = trans[lang] || trans.en;
+      if (sev.includes('Mars debilitated in Cancer')) {
+        base += (lang === 'mr' ? ' [कर्क राशीत मंगळ नीच — प्रभाव सौम्य]' :
+                 lang === 'hi' ? ' [कर्क में मंगल नीच — प्रभाव क्षीण]' :
+                 lang === 'gu' ? ' [કર્ક રાશિમાં મંગળ નીચ — પ્રભાવ નહિવત]' :
+                 ' [Mars debilitated in Cancer — strength reduced]');
+      }
+      return base;
+    }
+  }
+  if (sev.startsWith('Cancelled')) {
+    return lang === 'mr' ? 'दोष परिहार / रद्द (शुभ ग्रहांची दृष्टी वा स्वराशी)' :
+           lang === 'hi' ? 'दोष परिहार / रद्द (शुभ दृष्टि अथवा स्वराशि)' :
+           lang === 'gu' ? 'દોષ પરિહાર / રદ (શુભ દૃષ્ટિ કે સ્વરાશિ)' :
+           sev;
+  }
+  return sev;
+}
+
+/** Translate Manglik Cancellation Reason */
+export function getCancellationReason(reason, lang = 'en') {
+  if (!reason || lang === 'en') return reason;
+  if (reason.includes('Mars in own sign')) {
+    return lang === 'mr' ? 'मंगळ मेष किंवा वृश्चिक या स्वराशीत असल्याने दोष पूर्णपणे रद्द होतो.' :
+           lang === 'hi' ? 'मंगल मेष अथवा वृश्चिक स्वराशि में होने से दोष पूर्णतः निष्प्रभावी हो जाता है।' :
+           lang === 'gu' ? 'મંગળ મેષ કે વૃશ્ચિક સ્વરાશિમાં હોવાથી દોષ સંપૂર્ણપણે રદ થાય છે.' :
+           reason;
+  }
+  if (reason.includes('Mars exalted in Capricorn')) {
+    return lang === 'mr' ? 'मंगळ मकर राशीत उच्च असल्याने मंगळ दोष रद्द होतो.' :
+           lang === 'hi' ? 'मंगल मकर राशि में उच्च का होने से मांगलिक दोष रद्द होता है।' :
+           lang === 'gu' ? 'મંગળ મકર રાશિમાં ઉચ્ચ હોવાથી માંગલિક દોષ રદ થાય છે.' :
+           reason;
+  }
+  if (reason.includes('Jupiter aspects Mars')) {
+    return lang === 'mr' ? 'गुरुची मंगळावर अमृत दृष्टी असल्याने मुहूर्त चिंतामणी नियमानुसार दोष रद्द होतो.' :
+           lang === 'hi' ? 'बृहस्पति की मंगल पर शुभ दृष्टि होने से मुहूर्त चिंतामणि अनुसार दोष परिहार होता है।' :
+           lang === 'gu' ? 'ગુરુની મંગળ પર શુભ દૃષ્ટિ હોવાથી દોષ પરિહાર થાય છે.' :
+           reason;
+  }
+  return reason;
+}
+
+/** Translate dynamic Choghadiya slot description */
+export function getChoghadiyaDesc(name, defaultDesc = '', lang = 'en') {
+  if (lang === 'en') return defaultDesc;
+  const descMap = {
+    'Amrit': { mr: 'अमृत — सर्व शुभ कार्ये, प्रवास, पूजा व आरोग्य लाभासाठी सर्वोत्तम चौघडिया.', hi: 'अमृत — सभी शुभ कार्यों, यात्रा, पूजन एवं आरोग्य हेतु सर्वश्रेष्ठ चौघड़िया।', gu: 'અમૃત — તમામ શુભ કાર્યો, યાત્રા અને પૂજા માટે સર્વશ્રેષ્ઠ ચોઘડિયું.' },
+    'Shubh': { mr: 'शुभ — विवाह, धार्मिक संस्कार, शिक्षण व मंगल कार्यांसाठी अत्यंत अनुकूल.', hi: 'शुभ — विवाह, धार्मिक संस्कार, विद्या एवं मंगल कार्यों के लिए अत्यंत उत्तम।', gu: 'શુભ — વિવાહ, ધાર્મિક સંસ્કાર અને મંગલ કાર્યો માટે ઉત્તમ.' },
+    'Labh':  { mr: 'लाभ — व्यापार, आर्थिक व्यवहार, नवीन काम सुरू करणे व खरेदीसाठी लाभदायक.', hi: 'लाभ — व्यापार, वित्तीय कार्य, नवीन शुरुआत एवं खरीदारी हेतु लाभप्रद।', gu: 'લાભ — વેપાર, આર્થિક વ્યવહારો અને નવી શરૂઆત માટે લાભદાયી.' },
+    'Char':  { mr: 'चल — प्रवास, वाहन खरेदी, स्थान बदल आणि गतिशील उपक्रमांसाठी उपयुक्त.', hi: 'चल — यात्रा, वाहन क्रय, स्थान परिवर्तन एवं गतिमान कार्यों के लिए उपयुक्त।', gu: 'ચલ — યાત્રા, વાહન ખરીદી અને પરિવર્તનશીલ કાર્યો માટે યોગ્ય.' },
+    'Rog':   { mr: 'रोग — अशुभ चौघडिया; नवीन कार्य, प्रवास अथवा वैद्यकीय शस्त्रक्रिया टाळावी.', hi: 'रोग — अशुभ चौघड़िया; नया कार्य, यात्रा अथवा चिकित्सा आरंभ न करें।', gu: 'રોગ — અશુભ ચોઘડિયું; નવું કાર્ય કે યાત્રા ટાળવી.' },
+    'Kaal':  { mr: 'काल — शनीचे अमंगल चौघडिया; भांडवल गुंतवणूक व करार करणे टाळावे.', hi: 'काल — शनि का अशुभ चौघड़िया; वित्तीय निवेश एवं अनुबंध करने से बचें।', gu: 'કાલ — અશુભ ચોઘડિયું; રોકાણ કે મહત્વના સોદા ટાળવા.' },
+    'Udveg': { mr: 'उद्वेग — सूर्याचे अशांत चौघडिया; शासकीय वाद, कर्ज व मतभेद टाळावेत.', hi: 'उद्वेग — सूर्य का अशांत चौघड़िया; विवाद, ऋण एवं सरकारी कार्यों में सावधानी रखें।', gu: 'ઉદ્વેગ — અશાંત ચોઘડિયું; વાદવિવાદ અને જોખમી નિર્ણયો ટાળવા.' },
+  };
+  return descMap[name]?.[lang] || defaultDesc;
 }

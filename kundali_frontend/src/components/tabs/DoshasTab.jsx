@@ -64,42 +64,67 @@ export default function DoshasTab({ report }) {
 
       {/* ── 1. Mangal Dosha & Papa Samyam ────────────────────────────── */}
       <div className="tab-section" data-pdf-section="mangal-dosha">
-        <p className="tab-section__title">Mangal (Kuja) Dosha &amp; Papa Samyam</p>
+        <p className="tab-section__title">
+          {lang === 'mr' ? 'मंगळ (भौम) दोष आणि पाप साम्य' :
+           lang === 'hi' ? 'मंगल (भौम) दोष एवं पाप साम्य' :
+           lang === 'gu' ? 'મંગળ (ભૌમ) દોષ અને પાપ સામ્ય' :
+           'Mangal (Kuja) Dosha & Papa Samyam'}
+        </p>
         <p className="tab-section__subtitle">
-          Evaluated from Lagna, Moon, and Venus using standard Parashari houses (1, 4, 7, 8, 12).
+          {lang === 'mr' ? 'लग्न, चंद्र आणि शुक्रापासून १, ४, ७, ८, १२ या भावांनुसार शास्त्रीय विश्लेषण.' :
+           lang === 'hi' ? 'लग्न, चंद्र और शुक्र से १, ४, ७, ८, १२ भावों के अनुसार शास्त्रीय विश्लेषण।' :
+           lang === 'gu' ? 'લગ્ન, ચંદ્ર અને શુક્રથી ૧, ૪, ૭, ૮, ૧૨ ભાવો અનુસાર શાસ્ત્રીય મૂલ્યાંકન.' :
+           'Evaluated from Lagna, Moon, and Venus using standard Parashari houses (1, 4, 7, 8, 12).'}
         </p>
         <ManglikBadge manglik={manglik_dosha} />
 
         {/* Papa Samyam score breakdown */}
         {manglik_dosha && (
           <div className="dosha-papa-table">
-            <p className="dosha-papa-table__title">Papa Samyam Score Breakdown</p>
+            <p className="dosha-papa-table__title">
+              {lang === 'mr' ? 'पाप साम्य गुण विवरण (Papa Samyam Breakdown)' :
+               lang === 'hi' ? 'पाप साम्य अंक विवरण (Papa Samyam Breakdown)' :
+               lang === 'gu' ? 'પાપ સામ્ય ગુણ વિવરણ' :
+               'Papa Samyam Score Breakdown'}
+            </p>
             <p className="dosha-papa-table__note">
-              Total = S_Lagna + (0.75 × S_Moon) + (0.50 × S_Venus)
+              {lang === 'mr' ? 'एकूण गुण = लग्न गुण + (०.७५ × चंद्र गुण) + (०.५० × शुक्र गुण)' :
+               lang === 'hi' ? 'कुल अंक = लग्न अंक + (०.७५ × चंद्र अंक) + (०.५० × शुक्र अंक)' :
+               lang === 'gu' ? 'કુલ ગુણ = લગ્ન ગુણ + (૦.૭૫ × ચંદ્ર ગુણ) + (૦.૫૦ × શુક્ર ગુણ)' :
+               'Total = S_Lagna + (0.75 × S_Moon) + (0.50 × S_Venus)'}
             </p>
             <div className="dosha-papa-row">
-              <span>From Lagna</span>
-              <span>Mars H{manglik_dosha.mars_house_lagna ?? '—'} &nbsp;
-                {manglik_dosha.manglik_from_lagna ? '⚠ Manglik' : '— Not Manglik'}
+              <span>{lang === 'mr' || lang === 'hi' ? 'लग्नानुसार' : lang === 'gu' ? 'લગ્ન અનુસાર' : 'From Lagna'}</span>
+              <span>
+                {lang === 'mr' || lang === 'hi' ? `मंगळ भाव ${manglik_dosha.mars_house_lagna ?? '—'}` : lang === 'gu' ? `મંગળ ${manglik_dosha.mars_house_lagna ?? '—'}મો ભાવ` : `Mars H${manglik_dosha.mars_house_lagna ?? '—'}`} &nbsp;
+                {manglik_dosha.manglik_from_lagna ? 
+                  (lang === 'mr' || lang === 'hi' ? '⚠ मंगळ दोष' : lang === 'gu' ? '⚠ મંગળ દોષ' : '⚠ Manglik') : 
+                  (lang === 'mr' || lang === 'hi' ? '✓ निर्दोष' : lang === 'gu' ? '✓ નિર્દોષ' : '— Not Manglik')}
               </span>
               <span className="mono">{manglik_dosha.papa_breakdown?.lagna ?? 0}</span>
             </div>
             <div className="dosha-papa-row">
-              <span>From Moon</span>
-              <span>Mars H{manglik_dosha.mars_house_moon ?? '—'} &nbsp;
-                {manglik_dosha.manglik_from_moon ? '⚠ Manglik' : '— Not Manglik'}
+              <span>{lang === 'mr' || lang === 'hi' ? 'चंद्रानुसार' : lang === 'gu' ? 'ચંદ્ર અનુસાર' : 'From Moon'}</span>
+              <span>
+                {lang === 'mr' || lang === 'hi' ? `मंगळ भाव ${manglik_dosha.mars_house_moon ?? '—'}` : lang === 'gu' ? `મંગળ ${manglik_dosha.mars_house_moon ?? '—'}મો ભાવ` : `Mars H${manglik_dosha.mars_house_moon ?? '—'}`} &nbsp;
+                {manglik_dosha.manglik_from_moon ? 
+                  (lang === 'mr' || lang === 'hi' ? '⚠ मंगळ दोष' : lang === 'gu' ? '⚠ મંગળ દોષ' : '⚠ Manglik') : 
+                  (lang === 'mr' || lang === 'hi' ? '✓ निर्दोष' : lang === 'gu' ? '✓ નિર્દોષ' : '— Not Manglik')}
               </span>
               <span className="mono">{manglik_dosha.papa_breakdown?.moon ?? 0} × 0.75 = {((manglik_dosha.papa_breakdown?.moon ?? 0) * 0.75).toFixed(2)}</span>
             </div>
             <div className="dosha-papa-row">
-              <span>From Venus</span>
-              <span>Mars H{manglik_dosha.mars_house_venus ?? '—'} &nbsp;
-                {manglik_dosha.manglik_from_venus ? '⚠ Manglik' : '— Not Manglik'}
+              <span>{lang === 'mr' || lang === 'hi' ? 'शुक्रानुसार' : lang === 'gu' ? 'શુક્ર અનુસાર' : 'From Venus'}</span>
+              <span>
+                {lang === 'mr' || lang === 'hi' ? `मंगळ भाव ${manglik_dosha.mars_house_venus ?? '—'}` : lang === 'gu' ? `મંગળ ${manglik_dosha.mars_house_venus ?? '—'}મો ભાવ` : `Mars H${manglik_dosha.mars_house_venus ?? '—'}`} &nbsp;
+                {manglik_dosha.manglik_from_venus ? 
+                  (lang === 'mr' || lang === 'hi' ? '⚠ मंगळ दोष' : lang === 'gu' ? '⚠ મંગળ દોષ' : '⚠ Manglik') : 
+                  (lang === 'mr' || lang === 'hi' ? '✓ निर्दोष' : lang === 'gu' ? '✓ નિર્દોષ' : '— Not Manglik')}
               </span>
               <span className="mono">{manglik_dosha.papa_breakdown?.venus ?? 0} × 0.50 = {((manglik_dosha.papa_breakdown?.venus ?? 0) * 0.50).toFixed(2)}</span>
             </div>
             <div className="dosha-papa-row dosha-papa-row--total">
-              <span>Total Papa Samyam</span>
+              <span>{lang === 'mr' ? 'एकूण पाप साम्य गुण' : lang === 'hi' ? 'कुल पाप साम्य अंक' : lang === 'gu' ? 'કુલ પાપ સામ્ય ગુણ' : 'Total Papa Samyam'}</span>
               <span></span>
               <span className="mono">{manglik_dosha.papa_points ?? 0}</span>
             </div>
@@ -109,21 +134,37 @@ export default function DoshasTab({ report }) {
 
       {/* ── 2. Other Classical Doshas & Karmic Influences ──────────────── */}
       <div className="tab-section" data-pdf-section="special-doshas">
-        <p className="tab-section__title">Special Doshas &amp; Planetary Afflictions</p>
+        <p className="tab-section__title">
+          {lang === 'mr' ? 'विशिष्ट दोष व ग्रहांची पीडा' :
+           lang === 'hi' ? 'विशिष्ट दोष एवं ग्रह पीड़ा' :
+           lang === 'gu' ? 'વિશિષ્ટ દોષ અને ગ્રહ પીડા' :
+           'Special Doshas & Planetary Afflictions'}
+        </p>
         <p className="tab-section__subtitle">
-          Kaal Sarp variants, Guru Chandal, Pitra Dosha, Kemadruma, and Classical Afflictions.
+          {lang === 'mr' ? 'कालसर्प योग, गुरु चांडाळ, पितृ दोष, केमद्रुम आणि इतर शास्त्रीय योग.' :
+           lang === 'hi' ? 'कालसर्प योग, गुरु चांडाल, पितृ दोष, केमद्रुम एवं अन्य शास्त्रीय योग।' :
+           lang === 'gu' ? 'કાલસર્પ યોગ, ગુરુ ચાંડાલ, પિતૃ દોષ, કેમદ્રુમ અને અન્ય શાસ્ત્રીય યોગ.' :
+           'Kaal Sarp variants, Guru Chandal, Pitra Dosha, Kemadruma, and Classical Afflictions.'}
         </p>
         {yogas && <YogaList yogas={yogas} filterType="malefic" />}
       </div>
 
       {/* ── 3. Gemstone & Rudraksha Remedies ─────────────────────────── */}
       <div className="tab-section" data-pdf-section="gemstone-remedies">
-        <p className="tab-section__title">Vedic Astrological Remedies</p>
+        <p className="tab-section__title">
+          {lang === 'mr' ? 'वैदिक ज्योतिष उपाय व रत्न' :
+           lang === 'hi' ? 'वैदिक ज्योतिष उपाय एवं रत्न' :
+           lang === 'gu' ? 'વૈદિક જ્યોતિષ ઉપાય અને રત્ન' :
+           'Vedic Astrological Remedies'}
+        </p>
         <p className="tab-section__subtitle">
-          Gemstones, Rudraksha, Mantras, and Charitable remedies tailored to your functional benefics.
+          {lang === 'mr' ? 'आपल्या कुंडलीतील शुभ योगकारक ग्रहांवर आधारित रत्न, रुद्राक्ष आणि मंत्र.' :
+           lang === 'hi' ? 'आपकी कुंडली के शुभ योगकारक ग्रहों पर आधारित रत्न, रुद्राक्ष एवं मंत्र।' :
+           lang === 'gu' ? 'તમારી કુંડળીના શુભ યોગકારક ગ્રહો પર આધારિત રત્ન, રુદ્રાક્ષ અને મંત્ર.' :
+           'Gemstones, Rudraksha, Mantras, and Charitable remedies tailored to your functional benefics.'}
         </p>
         {gemstone_recommendations && (
-          <GemstonePanel recommendations={gemstone_recommendations} />
+          <GemstonePanel data={gemstone_recommendations} />
         )}
       </div>
     </div>

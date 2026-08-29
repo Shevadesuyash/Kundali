@@ -10,6 +10,31 @@ import './GunaMilanScorecard.css';
  *   - Active parihara count shown in flags strip
  *   - "No hard doshas" badge now includes Rajju check
  */
+function localizeCombinedVerdict(verdict, lang) {
+  if (!verdict || lang === 'en') return verdict;
+  if (verdict.includes('Neither partner has an active Manglik')) {
+    return lang === 'mr' ? 'दोन्ही पत्रिकेत मंगळ दोष नाही — पत्रिका निर्दोष असून विवाह योग्य आहे.' :
+           lang === 'hi' ? 'दोनों कुंडलियों में मांगलिक दोष नहीं है — पत्रिकाएं निर्दोष एवं विवाह योग्य हैं।' :
+           lang === 'gu' ? 'બંને કુંડળીમાં માંગલિક દોષ નથી — બંને પત્રિકા નિર્દોષ છે.' : verdict;
+  }
+  if (verdict.includes('balanced and mutually neutralized')) {
+    return lang === 'mr' ? 'वराचे पाप गुण वधूपेक्षा अधिक/समान आहेत — मंगळ दोष व पाप प्रभाव परस्पर संतुलित व शांत होतो.' :
+           lang === 'hi' ? 'वर का पाप स्कोर वधू से अधिक/समान है — मांगलिक प्रभाव संतुलित एवं परस्पर निष्प्रभावी हो जाता है।' :
+           lang === 'gu' ? 'વરનો પાપ સ્કોર કન્યા કરતાં વધારે/સમાન છે — દોષ પરસ્પર સંતુલિત થાય છે.' : verdict;
+  }
+  if (verdict.includes('within the acceptable tolerance')) {
+    return lang === 'mr' ? 'पाप गुणांमध्ये सूक्ष्म फरक आहे — शास्त्रीय नियमानुसार स्वीकार्य. विवाहपूर्व मंगळ शांती जप करावा.' :
+           lang === 'hi' ? 'पाप अंकों में मामूली अंतर है — शास्त्रीय सहिष्णुता सीमा में। विवाह पूर्व मंगल शांति पाठ अनुशंसित है।' :
+           lang === 'gu' ? 'પાપ ગુણમાં સામાન્ય તફાવત છે — શાસ્ત્રીય સીમામાં સ્વીકાર્ય. મંગળ શાંતિ ઉપાય કરવો.' : verdict;
+  }
+  if (verdict.includes('significant malefic excess') || verdict.includes('significant')) {
+    return lang === 'mr' ? 'पाप गुणांमध्ये मोठा फरक आहे — ज्येष्ठ ज्योतिषांचा सल्ला व कुंभ/विष्णू विवाह उपाय आवश्यक.' :
+           lang === 'hi' ? 'पाप अंकों में अत्यधिक अंतर है — योग्य ज्योतिषी परामर्श एवं विशेष शांति उपाय आवश्यक हैं।' :
+           lang === 'gu' ? 'પાપ ગુણમાં મોટો તફાવત છે — નિષ્ણાત જ્યોતિષીની સલાહ અને શાંતિ ઉપાય આવશ્યક.' : verdict;
+  }
+  return verdict;
+}
+
 export default function GunaMilanScorecard({ gunaMilan, manglikAnalysis }) {
   const { lang } = useLang();
   const {
@@ -94,7 +119,9 @@ export default function GunaMilanScorecard({ gunaMilan, manglikAnalysis }) {
       </div>
 
       {/* ── Manglik verdict strip ── */}
-      <p className="scorecard__manglik-verdict">{manglikAnalysis?.combined_verdict || ''}</p>
+      <p className="scorecard__manglik-verdict">
+        {localizeCombinedVerdict(manglikAnalysis?.combined_verdict, lang)}
+      </p>
 
       {/* ── Rajju supplementary panel ── */}
       {rajju && (
