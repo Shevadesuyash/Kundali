@@ -50,7 +50,7 @@ class KundaliAnalyzer:
         Cancellation rules applied (per Muhurta Chintamani & BPHS):
           a. Mars in own sign      : Aries (0) or Scorpio (7)
           b. Mars exalted          : Capricorn (9)
-          c. Jupiter aspects Mars  : Jupiter's 4th, 7th, or 9th aspect on Mars's sign
+          c. Jupiter aspects Mars  : Jupiter's 5th, 7th, or 9th aspect on Mars's sign
 
         NOTE on debilitation (Cancer=3):
           Debilitation weakens Mars's positive significations but does NOT cancel
@@ -98,11 +98,11 @@ class KundaliAnalyzer:
             elif mars_idx == 9:         # Exaltation: Capricorn
                 cancellation_reason = "Mars exalted in Capricorn — Dosha cancelled"
 
-        # (c) Jupiter aspect on Mars (4th, 7th, 9th special aspects of Jupiter)
+        # (c) Jupiter aspect on Mars (5th, 7th, 9th special aspects of Jupiter)
         if is_manglik and cancellation_reason is None:
             jupiter_idx  = jupiter["sign_index"]
             aspect_dist  = (mars_idx - jupiter_idx) % 12 + 1   # 1-12
-            if aspect_dist in {4, 7, 9}:
+            if aspect_dist in {5, 7, 9}:
                 cancellation_reason = (
                     f"Jupiter aspects Mars from {jupiter['sign']} "
                     f"({aspect_dist}th aspect) — Dosha cancelled per Muhurta Chintamani"

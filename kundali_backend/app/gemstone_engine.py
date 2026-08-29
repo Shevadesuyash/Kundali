@@ -201,7 +201,7 @@ class GemstoneEngine:
             planet_placement = planets.get(planet, {})
             planet_house = planet_placement.get("house_from_lagna", 1)
             planet_dignity = planet_placement.get("dignity", "Neutral")
-            is_retrograde = planet_placement.get("is_retrograde", False)
+            is_retrograde = planet_placement.get("retrograde", False)
 
             # Safety evaluation
             contraindications: List[str] = []

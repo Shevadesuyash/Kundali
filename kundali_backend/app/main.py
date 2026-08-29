@@ -54,10 +54,19 @@ app = FastAPI(
 # Initialise SQLite DB — creates tables + seeds regional locations on first run
 database.init_db()
 
+# Configure CORS
+import os
+cors_env = os.environ.get("CORS_ORIGINS", "*")
+if cors_env == "*":
+    allowed_origins = ["*"]
+else:
+    allowed_origins = [o.strip() for o in cors_env.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # tighten to your frontend origin(s) in production
-    allow_methods=["*"],
+    allow_origins=allowed_origins,
+    allow_credentials=True if allowed_origins != ["*"] else False,
+    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
