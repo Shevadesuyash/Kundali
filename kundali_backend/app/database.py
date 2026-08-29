@@ -1,20 +1,16 @@
 """
 app/database.py
 ---------------
-SQLite persistence layer for Kundali user profiles and location cache.
-Uses Python built-in sqlite3 — zero extra dependencies.
+Dual-mode persistence layer for Kundali user profiles, AI usage logs, user wallets, and location cache.
+Supports:
+1. Supabase PostgreSQL (via DATABASE_URL in .env)
+2. Local SQLite3 (profiles.db fallback for offline / local testing)
 
 Tables:
-  profiles       — saved birth profiles (name, gender, birth details, computed astro fields)
+  profiles       — saved birth profiles (with optional user_id for multi-user cloud sync)
+  ai_usage_logs  — IP-based & user-based query tracking for rate limiting
+  user_wallets   — AI Question credits & 24h consultation day passes
   location_cache — cached geocoding results (query -> Nominatim JSON)
-
-Cache strategy for geocoding:
-  L1: in-process Python dict (_mem_cache) — microsecond access
-  L2: location_cache SQLite table         — millisecond access
-  L3: live Nominatim HTTP call            — 500ms-2s, result saved to L1+L2
-
-SCHEMA VERSION: 2 (Phase 1 — fresh start, adds lagna, active_dasha, tag columns)
-Gender values: 'male' | 'female' only.
 """
 from __future__ import annotations
 
@@ -29,17 +25,12 @@ from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
+DB_URL = os.getenv("DATABASE_URL", "").strip()
+IS_POSTGRES = DB_URL.startswith("postgresql://") or DB_URL.startswith("postgres://")
 DB_PATH = Path(os.getenv("KUNDALI_DB_PATH", "profiles.db"))
 
-# ---------------------------------------------------------------------------
-# L1 in-memory geocode cache  {normalised_query -> list[dict]}
-# ---------------------------------------------------------------------------
 _mem_cache: Dict[str, List[Dict]] = {}
 
-# ---------------------------------------------------------------------------
-# Pre-seeded locations — Kolhapur / Satara / Sangli region + major cities
-# Format: (display_name, lat, lon, country_code)
-# ---------------------------------------------------------------------------
 SEED_LOCATIONS = [
     ("Kolhapur, Maharashtra, India",     "16.7050", "74.2433", "in"),
     ("Sangli, Maharashtra, India",        "16.8524", "74.5815", "in"),
@@ -74,102 +65,182 @@ SEED_LOCATIONS = [
 
 @contextmanager
 def _conn():
-    """Thread-safe SQLite connection context manager."""
-    con = sqlite3.connect(str(DB_PATH), check_same_thread=False)
-    con.row_factory = sqlite3.Row
-    con.execute("PRAGMA journal_mode=WAL")
-    try:
-        yield con
-        con.commit()
-    except Exception:
-        con.rollback()
-        raise
-    finally:
-        con.close()
+    """Connection manager supporting Supabase PostgreSQL or SQLite fallback."""
+    if IS_POSTGRES:
+        import psycopg2
+        from psycopg2.extras import RealDictCursor
+        con = psycopg2.connect(DB_URL, cursor_factory=RealDictCursor)
+        try:
+            yield con
+            con.commit()
+        except Exception:
+            con.rollback()
+            raise
+        finally:
+            con.close()
+    else:
+        con = sqlite3.connect(str(DB_PATH), check_same_thread=False)
+        con.row_factory = sqlite3.Row
+        con.execute("PRAGMA journal_mode=WAL")
+        try:
+            yield con
+            con.commit()
+        except Exception:
+            con.rollback()
+            raise
+        finally:
+            con.close()
 
 
 def init_db() -> None:
-    """
-    Create tables and seed location cache. Called once at app startup.
-
-    Schema strategy (safe — NEVER drops data):
-      - CREATE TABLE IF NOT EXISTS for initial setup.
-      - ALTER TABLE ADD COLUMN for each Phase-1 column if missing.
-      - SQLite ignores duplicate ADD COLUMN via try/except.
-
-    BUG FIX: The original Phase-1 init had DROP TABLE IF EXISTS profiles
-    which wiped ALL saved profiles on every server restart. This is removed.
-    Safe migration via ALTER TABLE ensures new columns exist without data loss.
-    """
+    """Create tables and seed cache across Supabase Postgres or SQLite."""
     with _conn() as con:
-        # ── Core profiles table (safe: no-op if already exists) ──────────
-        con.executescript("""
-            CREATE TABLE IF NOT EXISTS profiles (
-                id           INTEGER PRIMARY KEY AUTOINCREMENT,
-                name         TEXT    NOT NULL,
-                gender       TEXT    NOT NULL DEFAULT 'male',
-                year         INTEGER NOT NULL,
-                month        INTEGER NOT NULL,
-                day          INTEGER NOT NULL,
-                hour         INTEGER NOT NULL,
-                minute       INTEGER NOT NULL,
-                lat          REAL    NOT NULL,
-                lon          REAL    NOT NULL,
-                timezone_str TEXT    NOT NULL,
-                birth_place  TEXT,
-                moon_sign    TEXT,
-                nakshatra    TEXT,
-                lagna        TEXT,
-                is_manglik   INTEGER NOT NULL DEFAULT 0,
-                active_dasha TEXT,
-                tag          TEXT    NOT NULL DEFAULT 'self',
-                created_at   TEXT    NOT NULL
-            );
+        if IS_POSTGRES:
+            cur = con.cursor()
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS profiles (
+                    id           SERIAL PRIMARY KEY,
+                    user_id      TEXT,
+                    name         TEXT NOT NULL,
+                    gender       TEXT NOT NULL DEFAULT 'male',
+                    year         INTEGER NOT NULL,
+                    month        INTEGER NOT NULL,
+                    day          INTEGER NOT NULL,
+                    hour         INTEGER NOT NULL,
+                    minute       INTEGER NOT NULL,
+                    lat          REAL NOT NULL,
+                    lon          REAL NOT NULL,
+                    timezone_str TEXT NOT NULL,
+                    birth_place  TEXT,
+                    moon_sign    TEXT,
+                    nakshatra    TEXT,
+                    lagna        TEXT,
+                    is_manglik   INTEGER NOT NULL DEFAULT 0,
+                    active_dasha TEXT,
+                    tag          TEXT NOT NULL DEFAULT 'self',
+                    created_at   TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                );
 
-            CREATE INDEX IF NOT EXISTS idx_profiles_name   ON profiles(name COLLATE NOCASE);
-            CREATE INDEX IF NOT EXISTS idx_profiles_gender ON profiles(gender);
-            CREATE INDEX IF NOT EXISTS idx_profiles_tag    ON profiles(tag);
+                CREATE INDEX IF NOT EXISTS idx_profiles_user_id ON profiles(user_id);
+                CREATE INDEX IF NOT EXISTS idx_profiles_name    ON profiles(name);
+                CREATE INDEX IF NOT EXISTS idx_profiles_gender  ON profiles(gender);
 
-            CREATE TABLE IF NOT EXISTS location_cache (
-                id           INTEGER PRIMARY KEY AUTOINCREMENT,
-                query        TEXT    NOT NULL UNIQUE COLLATE NOCASE,
-                results_json TEXT    NOT NULL,
-                source       TEXT    DEFAULT 'nominatim',
-                hit_count    INTEGER DEFAULT 1,
-                created_at   TEXT    NOT NULL
-            );
+                CREATE TABLE IF NOT EXISTS ai_usage_logs (
+                    ip_address             TEXT PRIMARY KEY,
+                    user_id                TEXT,
+                    last_query_timestamp   TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                    query_count            INTEGER DEFAULT 1,
+                    cost_type              TEXT DEFAULT 'free_ip'
+                );
 
-            CREATE INDEX IF NOT EXISTS idx_loc_query ON location_cache(query COLLATE NOCASE);
-        """)
+                CREATE TABLE IF NOT EXISTS user_wallets (
+                    user_id          TEXT PRIMARY KEY,
+                    credits          INTEGER DEFAULT 0,
+                    unlimited_until  TIMESTAMP WITH TIME ZONE,
+                    tier             TEXT DEFAULT 'free',
+                    updated_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                );
 
-        # ── Safe column migrations (ALTER TABLE IF NOT EXISTS equivalent) ─
-        # SQLite does not support IF NOT EXISTS on ADD COLUMN — use try/except.
-        for col_sql in [
-            "ALTER TABLE profiles ADD COLUMN lagna        TEXT",
-            "ALTER TABLE profiles ADD COLUMN active_dasha TEXT",
-            "ALTER TABLE profiles ADD COLUMN tag          TEXT NOT NULL DEFAULT 'self'",
-        ]:
-            try:
-                con.execute(col_sql)
-            except Exception:
-                pass  # column already exists — safe to ignore
+                CREATE TABLE IF NOT EXISTS location_cache (
+                    id           SERIAL PRIMARY KEY,
+                    query        TEXT NOT NULL UNIQUE,
+                    results_json TEXT NOT NULL,
+                    source       TEXT DEFAULT 'nominatim',
+                    hit_count    INTEGER DEFAULT 1,
+                    created_at   TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            logger.info("Supabase PostgreSQL initialized successfully")
+        else:
+            con.executescript("""
+                CREATE TABLE IF NOT EXISTS profiles (
+                    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id      TEXT,
+                    name         TEXT    NOT NULL,
+                    gender       TEXT    NOT NULL DEFAULT 'male',
+                    year         INTEGER NOT NULL,
+                    month        INTEGER NOT NULL,
+                    day          INTEGER NOT NULL,
+                    hour         INTEGER NOT NULL,
+                    minute       INTEGER NOT NULL,
+                    lat          REAL    NOT NULL,
+                    lon          REAL    NOT NULL,
+                    timezone_str TEXT    NOT NULL,
+                    birth_place  TEXT,
+                    moon_sign    TEXT,
+                    nakshatra    TEXT,
+                    lagna        TEXT,
+                    is_manglik   INTEGER NOT NULL DEFAULT 0,
+                    active_dasha TEXT,
+                    tag          TEXT    NOT NULL DEFAULT 'self',
+                    created_at   TEXT    NOT NULL
+                );
 
-        now = datetime.now(timezone.utc).isoformat()
-        for display, lat, lon, cc in SEED_LOCATIONS:
-            result = [{
-                "display_name": display,
-                "lat": lat,
-                "lon": lon,
-                "address": {"country_code": cc},
-                "source": "seed",
-            }]
-            query_key = display.split(",")[0].strip().lower()
-            con.execute(
-                "INSERT OR IGNORE INTO location_cache(query, results_json, source, created_at) "
-                "VALUES (?, ?, 'seed', ?)",
-                (query_key, json.dumps(result), now)
-            )
-    logger.info("DB initialised at %s", DB_PATH)
+                CREATE TABLE IF NOT EXISTS ai_usage_logs (
+                    ip_address             TEXT PRIMARY KEY,
+                    user_id                TEXT,
+                    last_query_timestamp   TEXT NOT NULL,
+                    query_count            INTEGER DEFAULT 1,
+                    cost_type              TEXT DEFAULT 'free_ip'
+                );
+
+                CREATE TABLE IF NOT EXISTS user_wallets (
+                    user_id          TEXT PRIMARY KEY,
+                    credits          INTEGER DEFAULT 0,
+                    unlimited_until  TEXT,
+                    tier             TEXT DEFAULT 'free',
+                    updated_at       TEXT NOT NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS location_cache (
+                    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+                    query        TEXT    NOT NULL UNIQUE COLLATE NOCASE,
+                    results_json TEXT    NOT NULL,
+                    source       TEXT    DEFAULT 'nominatim',
+                    hit_count    INTEGER DEFAULT 1,
+                    created_at   TEXT    NOT NULL
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_loc_query ON location_cache(query COLLATE NOCASE);
+            """)
+            for col_sql in [
+                "ALTER TABLE profiles ADD COLUMN user_id TEXT",
+                "ALTER TABLE profiles ADD COLUMN lagna TEXT",
+                "ALTER TABLE profiles ADD COLUMN active_dasha TEXT",
+                "ALTER TABLE profiles ADD COLUMN tag TEXT NOT NULL DEFAULT 'self'",
+            ]:
+                try:
+                    con.execute(col_sql)
+                except Exception:
+                    pass
+
+            for idx_sql in [
+                "CREATE INDEX IF NOT EXISTS idx_profiles_user_id ON profiles(user_id)",
+                "CREATE INDEX IF NOT EXISTS idx_profiles_name   ON profiles(name COLLATE NOCASE)",
+                "CREATE INDEX IF NOT EXISTS idx_profiles_gender ON profiles(gender)",
+                "CREATE INDEX IF NOT EXISTS idx_profiles_tag    ON profiles(tag)",
+            ]:
+                try:
+                    con.execute(idx_sql)
+                except Exception:
+                    pass
+
+            now = datetime.now(timezone.utc).isoformat()
+            for display, lat, lon, cc in SEED_LOCATIONS:
+                result = [{
+                    "display_name": display,
+                    "lat": lat,
+                    "lon": lon,
+                    "address": {"country_code": cc},
+                    "source": "seed",
+                }]
+                query_key = display.split(",")[0].strip().lower()
+                con.execute(
+                    "INSERT OR IGNORE INTO location_cache(query, results_json, source, created_at) "
+                    "VALUES (?, ?, 'seed', ?)",
+                    (query_key, json.dumps(result), now)
+                )
+            logger.info("Local SQLite DB initialized at %s", DB_PATH)
 
 
 # ---------------------------------------------------------------------------
@@ -189,32 +260,44 @@ def save_profile(
     is_manglik: bool = False,
     active_dasha: Optional[str] = None,
     tag: str = "self",
+    user_id: Optional[str] = None,
 ) -> int:
     """Insert a new profile and return its id."""
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(timezone.utc).isoformat() if not IS_POSTGRES else datetime.now(timezone.utc)
     with _conn() as con:
-        cur = con.execute(
-            """
-            INSERT INTO profiles
-              (name,gender,year,month,day,hour,minute,lat,lon,timezone_str,
-               birth_place,moon_sign,nakshatra,lagna,is_manglik,active_dasha,tag,created_at)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-            """,
-            (name, gender, year, month, day, hour, minute, lat, lon,
-             timezone_str, birth_place, moon_sign, nakshatra, lagna,
-             1 if is_manglik else 0, active_dasha, tag, now)
-        )
-        return cur.lastrowid
+        if IS_POSTGRES:
+            cur = con.cursor()
+            cur.execute(
+                """
+                INSERT INTO profiles
+                  (user_id, name, gender, year, month, day, hour, minute, lat, lon, timezone_str,
+                   birth_place, moon_sign, nakshatra, lagna, is_manglik, active_dasha, tag, created_at)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                RETURNING id
+                """,
+                (user_id, name, gender, year, month, day, hour, minute, lat, lon,
+                 timezone_str, birth_place, moon_sign, nakshatra, lagna,
+                 1 if is_manglik else 0, active_dasha, tag, now)
+            )
+            row = cur.fetchone()
+            return row["id"] if row else 1
+        else:
+            cur = con.execute(
+                """
+                INSERT INTO profiles
+                  (user_id, name, gender, year, month, day, hour, minute, lat, lon, timezone_str,
+                   birth_place, moon_sign, nakshatra, lagna, is_manglik, active_dasha, tag, created_at)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                """,
+                (user_id, name, gender, year, month, day, hour, minute, lat, lon,
+                 timezone_str, birth_place, moon_sign, nakshatra, lagna,
+                 1 if is_manglik else 0, active_dasha, tag, now)
+            )
+            return cur.lastrowid
 
 
-def update_profile(profile_id: int, **fields) -> bool:
-    """
-    Partially update a profile. Only the supplied keyword arguments are updated.
-    Returns True if a row was modified, False if the id was not found.
-    Allowed fields: name, gender, year, month, day, hour, minute, lat, lon,
-                    timezone_str, birth_place, tag, moon_sign, nakshatra, lagna,
-                    is_manglik, active_dasha.
-    """
+def update_profile(profile_id: int, user_id: Optional[str] = None, **fields) -> bool:
+    """Partially update a profile."""
     ALLOWED = {
         "name", "gender", "year", "month", "day", "hour", "minute",
         "lat", "lon", "timezone_str", "birth_place", "tag",
@@ -224,117 +307,199 @@ def update_profile(profile_id: int, **fields) -> bool:
     if not updates:
         return False
 
-    set_clause = ", ".join(f"{k} = ?" for k in updates)
-    values = list(updates.values()) + [profile_id]
-
     with _conn() as con:
-        cur = con.execute(
-            f"UPDATE profiles SET {set_clause} WHERE id = ?", values
-        )
-    return cur.rowcount > 0
+        if IS_POSTGRES:
+            cur = con.cursor()
+            set_clause = ", ".join(f"{k} = %s" for k in updates)
+            values = list(updates.values()) + [profile_id]
+            extra_where = " AND user_id = %s" if user_id else ""
+            if user_id:
+                values.append(user_id)
+            cur.execute(f"UPDATE profiles SET {set_clause} WHERE id = %s{extra_where}", values)
+            return cur.rowcount > 0
+        else:
+            set_clause = ", ".join(f"{k} = ?" for k in updates)
+            values = list(updates.values()) + [profile_id]
+            extra_where = " AND user_id = ?" if user_id else ""
+            if user_id:
+                values.append(user_id)
+            cur = con.execute(f"UPDATE profiles SET {set_clause} WHERE id = ?{extra_where}", values)
+            return cur.rowcount > 0
 
 
-def delete_profile(profile_id: int) -> bool:
-    """Hard-delete a profile by id. Returns True if deleted."""
+def delete_profile(profile_id: int, user_id: Optional[str] = None) -> bool:
+    """Delete a profile by id."""
     with _conn() as con:
-        cur = con.execute("DELETE FROM profiles WHERE id = ?", (profile_id,))
-    return cur.rowcount > 0
+        if IS_POSTGRES:
+            cur = con.cursor()
+            if user_id:
+                cur.execute("DELETE FROM profiles WHERE id = %s AND user_id = %s", (profile_id, user_id))
+            else:
+                cur.execute("DELETE FROM profiles WHERE id = %s", (profile_id,))
+            return cur.rowcount > 0
+        else:
+            if user_id:
+                cur = con.execute("DELETE FROM profiles WHERE id = ? AND user_id = ?", (profile_id, user_id))
+            else:
+                cur = con.execute("DELETE FROM profiles WHERE id = ?", (profile_id,))
+            return cur.rowcount > 0
 
 
 def search_profiles(
     q: Optional[str] = None,
     gender: Optional[str] = None,
     tag: Optional[str] = None,
+    user_id: Optional[str] = None,
     page: int = 1,
     per_page: int = 20,
 ) -> List[Dict]:
-    """Search profiles by name substring, gender, and/or tag."""
+    """Search profiles by name, gender, tag, and/or user_id."""
     conditions: List[str] = []
     params: List[Any] = []
+    placeholder = "%s" if IS_POSTGRES else "?"
+
+    if user_id:
+        conditions.append(f"user_id = {placeholder}")
+        params.append(user_id)
     if q:
-        conditions.append("name LIKE ? COLLATE NOCASE")
+        if IS_POSTGRES:
+            conditions.append(f"name ILIKE {placeholder}")
+        else:
+            conditions.append(f"name LIKE {placeholder} COLLATE NOCASE")
         params.append(f"%{q}%")
     if gender and gender in ("male", "female"):
-        conditions.append("gender = ?")
+        conditions.append(f"gender = {placeholder}")
         params.append(gender)
     if tag:
-        conditions.append("tag = ?")
+        conditions.append(f"tag = {placeholder}")
         params.append(tag)
 
-    where  = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+    where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
     offset = (page - 1) * per_page
     params.extend([per_page, offset])
 
     with _conn() as con:
-        rows = con.execute(
-            f"SELECT id,name,gender,birth_place,year,month,day,"
-            f"moon_sign,nakshatra,lagna,is_manglik,active_dasha,tag,created_at "
-            f"FROM profiles {where} ORDER BY created_at DESC LIMIT ? OFFSET ?",
-            params
-        ).fetchall()
-    return [dict(r) for r in rows]
+        query_sql = (
+            f"SELECT id, name, gender, birth_place, year, month, day, hour, minute, "
+            f"lat, lon, timezone_str, moon_sign, nakshatra, lagna, is_manglik, active_dasha, tag, created_at "
+            f"FROM profiles {where} ORDER BY created_at DESC LIMIT {placeholder} OFFSET {placeholder}"
+        )
+        if IS_POSTGRES:
+            cur = con.cursor()
+            cur.execute(query_sql, params)
+            rows = cur.fetchall()
+            return [dict(r) for r in rows]
+        else:
+            rows = con.execute(query_sql, params).fetchall()
+            return [dict(r) for r in rows]
 
 
-def search_profiles_typeahead(q: str, limit: int = 5) -> List[Dict]:
-    """
-    Lightweight search for the auto-fill typeahead dropdown.
-    Returns minimal fields needed to populate the birth details form.
-    """
+def search_profiles_typeahead(q: str, user_id: Optional[str] = None, limit: int = 5) -> List[Dict]:
+    """Lightweight search for typeahead dropdown."""
+    placeholder = "%s" if IS_POSTGRES else "?"
+    conditions = [f"name ILIKE {placeholder}" if IS_POSTGRES else f"name LIKE {placeholder} COLLATE NOCASE"]
+    params = [f"%{q}%"]
+
+    if user_id:
+        conditions.append(f"user_id = {placeholder}")
+        params.append(user_id)
+
+    where = "WHERE " + " AND ".join(conditions)
+    params.append(limit)
+
+    query_sql = (
+        f"SELECT id, name, gender, year, month, day, hour, minute, "
+        f"lat, lon, timezone_str, birth_place, lagna, moon_sign "
+        f"FROM profiles {where} ORDER BY created_at DESC LIMIT {placeholder}"
+    )
+
     with _conn() as con:
-        rows = con.execute(
-            "SELECT id,name,gender,year,month,day,hour,minute,"
-            "lat,lon,timezone_str,birth_place,lagna,moon_sign "
-            "FROM profiles WHERE name LIKE ? COLLATE NOCASE "
-            "ORDER BY created_at DESC LIMIT ?",
-            (f"%{q}%", limit)
-        ).fetchall()
-    return [dict(r) for r in rows]
+        if IS_POSTGRES:
+            cur = con.cursor()
+            cur.execute(query_sql, params)
+            rows = cur.fetchall()
+            return [dict(r) for r in rows]
+        else:
+            rows = con.execute(query_sql, params).fetchall()
+            return [dict(r) for r in rows]
 
 
 def get_profile_by_id(profile_id: int) -> Optional[Dict]:
     """Return full profile dict or None."""
+    placeholder = "%s" if IS_POSTGRES else "?"
     with _conn() as con:
-        row = con.execute(
-            "SELECT * FROM profiles WHERE id = ?", (profile_id,)
-        ).fetchone()
-    return dict(row) if row else None
+        if IS_POSTGRES:
+            cur = con.cursor()
+            cur.execute(f"SELECT * FROM profiles WHERE id = {placeholder}", (profile_id,))
+            row = cur.fetchone()
+            return dict(row) if row else None
+        else:
+            row = con.execute(f"SELECT * FROM profiles WHERE id = {placeholder}", (profile_id,)).fetchone()
+            return dict(row) if row else None
 
 
 def count_profiles(
     q: Optional[str] = None,
     gender: Optional[str] = None,
     tag: Optional[str] = None,
+    user_id: Optional[str] = None,
 ) -> int:
+    """Return total count of matching profiles."""
     conditions: List[str] = []
     params: List[Any] = []
+    placeholder = "%s" if IS_POSTGRES else "?"
+
+    if user_id:
+        conditions.append(f"user_id = {placeholder}")
+        params.append(user_id)
     if q:
-        conditions.append("name LIKE ? COLLATE NOCASE")
+        if IS_POSTGRES:
+            conditions.append(f"name ILIKE {placeholder}")
+        else:
+            conditions.append(f"name LIKE {placeholder} COLLATE NOCASE")
         params.append(f"%{q}%")
     if gender and gender in ("male", "female"):
-        conditions.append("gender = ?")
+        conditions.append(f"gender = {placeholder}")
         params.append(gender)
     if tag:
-        conditions.append("tag = ?")
+        conditions.append(f"tag = {placeholder}")
         params.append(tag)
+
     where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
     with _conn() as con:
-        row = con.execute(
-            f"SELECT COUNT(*) FROM profiles {where}", params
-        ).fetchone()
-    return row[0]
+        if IS_POSTGRES:
+            cur = con.cursor()
+            cur.execute(f"SELECT COUNT(*) as cnt FROM profiles {where}", params)
+            row = cur.fetchone()
+            return row["cnt"] if row else 0
+        else:
+            row = con.execute(f"SELECT COUNT(*) FROM profiles {where}", params).fetchone()
+            return row[0] if row else 0
 
 
-def get_gender_counts() -> Dict[str, int]:
+def get_gender_counts(user_id: Optional[str] = None) -> Dict[str, int]:
     """Return counts of male and female profiles."""
+    placeholder = "%s" if IS_POSTGRES else "?"
+    where = f"WHERE user_id = {placeholder}" if user_id else ""
+    params = [user_id] if user_id else []
+
     with _conn() as con:
-        rows = con.execute(
-            "SELECT gender, COUNT(*) as cnt FROM profiles GROUP BY gender"
-        ).fetchall()
-    counts = {"male": 0, "female": 0}
-    for row in rows:
-        if row["gender"] in counts:
-            counts[row["gender"]] = row["cnt"]
-    return counts
+        if IS_POSTGRES:
+            cur = con.cursor()
+            cur.execute(f"SELECT gender, COUNT(*) as cnt FROM profiles {where} GROUP BY gender", params)
+            rows = cur.fetchall()
+            counts = {"male": 0, "female": 0}
+            for row in rows:
+                if row["gender"] in counts:
+                    counts[row["gender"]] = row["cnt"]
+            return counts
+        else:
+            rows = con.execute(f"SELECT gender, COUNT(*) as cnt FROM profiles {where} GROUP BY gender", params).fetchall()
+            counts = {"male": 0, "female": 0}
+            for row in rows:
+                if row["gender"] in counts:
+                    counts[row["gender"]] = row["cnt"]
+            return counts
 
 
 # ---------------------------------------------------------------------------
@@ -342,44 +507,61 @@ def get_gender_counts() -> Dict[str, int]:
 # ---------------------------------------------------------------------------
 
 def get_cached_location(query: str) -> Optional[List[Dict]]:
-    """Check L1 (memory) then L2 (SQLite). Returns parsed list or None."""
+    """Check L1 then database cache."""
     key = query.strip().lower()
-
     if key in _mem_cache:
         return _mem_cache[key]
 
+    placeholder = "%s" if IS_POSTGRES else "?"
     with _conn() as con:
-        row = con.execute(
-            "SELECT results_json FROM location_cache WHERE query = ? COLLATE NOCASE",
-            (key,)
-        ).fetchone()
-        if row:
-            con.execute(
-                "UPDATE location_cache SET hit_count = hit_count + 1 "
-                "WHERE query = ? COLLATE NOCASE",
-                (key,)
-            )
-
-    if row:
-        results = json.loads(row[0])
-        _mem_cache[key] = results
-        return results
-
+        if IS_POSTGRES:
+            cur = con.cursor()
+            cur.execute(f"SELECT results_json FROM location_cache WHERE query = {placeholder}", (key,))
+            row = cur.fetchone()
+            if row:
+                cur.execute(f"UPDATE location_cache SET hit_count = hit_count + 1 WHERE query = {placeholder}", (key,))
+                results = json.loads(row["results_json"])
+                _mem_cache[key] = results
+                return results
+        else:
+            row = con.execute(f"SELECT results_json FROM location_cache WHERE query = {placeholder} COLLATE NOCASE", (key,)).fetchone()
+            if row:
+                con.execute(f"UPDATE location_cache SET hit_count = hit_count + 1 WHERE query = {placeholder} COLLATE NOCASE", (key,))
+                results = json.loads(row[0])
+                _mem_cache[key] = results
+                return results
     return None
 
 
-def save_location_cache(
-    query: str, results: List[Dict], source: str = "nominatim"
-) -> None:
-    """Save geocoding results to L1 and L2."""
+def save_location_cache(query: str, results: List[Dict], source: str = "nominatim") -> None:
+    """Save geocoding results."""
     key = query.strip().lower()
     _mem_cache[key] = results
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(timezone.utc).isoformat() if not IS_POSTGRES else datetime.now(timezone.utc)
+
     with _conn() as con:
-        con.execute(
-            "INSERT INTO location_cache(query,results_json,source,created_at) "
-            "VALUES(?,?,?,?) "
-            "ON CONFLICT(query) DO UPDATE SET results_json=excluded.results_json, "
-            "source=excluded.source, hit_count=hit_count+1",
-            (key, json.dumps(results), source, now)
-        )
+        if IS_POSTGRES:
+            cur = con.cursor()
+            cur.execute(
+                """
+                INSERT INTO location_cache(query, results_json, source, created_at)
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT(query) DO UPDATE SET
+                  results_json = EXCLUDED.results_json,
+                  source = EXCLUDED.source,
+                  hit_count = location_cache.hit_count + 1
+                """,
+                (key, json.dumps(results), source, now)
+            )
+        else:
+            con.execute(
+                """
+                INSERT INTO location_cache(query, results_json, source, created_at)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT(query) DO UPDATE SET
+                  results_json = excluded.results_json,
+                  source = excluded.source,
+                  hit_count = hit_count + 1
+                """,
+                (key, json.dumps(results), source, now)
+            )

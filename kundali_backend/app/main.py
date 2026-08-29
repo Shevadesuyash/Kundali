@@ -17,11 +17,12 @@ import datetime
 import logging
 from typing import List, Optional
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app import ai_service, database
+from app.rate_limiter import get_client_ip, check_ai_quota, record_ai_usage
 from app.astro_engine import VedicAstrologyEngine
 from app.database import (
     count_profiles, delete_profile, get_gender_counts,
@@ -240,20 +241,49 @@ def get_kp_system(request: KundaliRequest):
     "/api/v1/ai-chat",
     responses={400: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
 )
-def ask_ai_assistant(request: AIChatRequest):
+def ask_ai_assistant(request: AIChatRequest, http_req: Request):
     """
     Answers an interactive user question regarding a computed Kundali chart
-    using Gemini 2.0 Flash with context-aware astrological facts.
+    using Gemini 2.0 Flash with context-aware astrological facts and IP/wallet rate limiting.
     """
     try:
         if not request.question or not request.question.strip():
             raise HTTPException(status_code=400, detail="Question cannot be empty")
+
+        user_ip = get_client_ip(http_req)
+        user_id = getattr(request, "user_id", None)
+
+        allowed, next_avail, reason, meta = check_ai_quota(user_ip, user_id=user_id)
+        if not allowed:
+            next_str = next_avail.strftime('%H:%M UTC') if next_avail else '24 hours'
+            return {
+                "question": request.question,
+                "answer": (
+                    f"Free daily AI consultation limit reached (1 question per 24h). "
+                    f"Your next free question opens at {next_str}. "
+                    f"Upgrade to Explorer Pack (50 Questions for ₹49) or 24-Hour Consultation Pass for unlimited queries."
+                ),
+                "limit_reached": True,
+                "next_available": meta.get("next_available"),
+                "credits_remaining": 0,
+                "reason": reason,
+            }
+
         answer = ai_service.answer_chart_question(
             request.report,
             request.question.strip(),
             request.language or "en",
         )
-        return {"question": request.question, "answer": answer}
+
+        record_ai_usage(user_ip, user_id=user_id)
+
+        return {
+            "question": request.question,
+            "answer": answer,
+            "limit_reached": False,
+            "credits_remaining": max(0, meta.get("credits_remaining", 1) - 1) if meta.get("type") == "credit" else 0,
+            "quota_type": meta.get("type"),
+        }
     except HTTPException:
         raise
     except Exception as exc:

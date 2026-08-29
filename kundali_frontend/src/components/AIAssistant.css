@@ -397,3 +397,54 @@
   opacity: 0.55;
   cursor: not-allowed;
 }
+
+/* Paywall / Rate Limit Banner */
+.ai-msg--limit {
+  border-left-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.ai-limit-banner {
+  margin-top: 0.5rem;
+  padding: 0.85rem;
+  background: #ffffff;
+  border: 1px dashed #f59e0b;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.ai-limit-badge {
+  display: inline-block;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  margin-bottom: 0.4rem;
+}
+
+.ai-limit-banner p {
+  margin: 0 0 0.75rem;
+  font-size: 0.82rem;
+  color: #78350f;
+  line-height: 1.4;
+}
+
+.btn-unlock-wallet {
+  display: inline-block;
+  background: linear-gradient(135deg, #c8720a, #9c4b00);
+  color: #ffffff;
+  border: none;
+  padding: 0.55rem 1rem;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(200, 114, 10, 0.3);
+  transition: opacity 0.2s;
+}
+
+.btn-unlock-wallet:hover {
+  opacity: 0.92;
+}

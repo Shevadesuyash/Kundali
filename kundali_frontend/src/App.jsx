@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { LanguageProvider, useLang } from './context/LanguageContext';
+import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import ErrorBoundary from './components/ErrorBoundary';
 import HomePage from './pages/HomePage';
@@ -42,9 +43,11 @@ function AppRoutes() {
 export default function App() {
   return (
     <LanguageProvider>
-      <ErrorBoundary>
-        <AppRoutes />
-      </ErrorBoundary>
+      <AuthProvider>
+        <ErrorBoundary>
+          <AppRoutes />
+        </ErrorBoundary>
+      </AuthProvider>
     </LanguageProvider>
   );
 }

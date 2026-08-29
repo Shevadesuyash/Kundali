@@ -3,6 +3,8 @@ import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { askAIChat } from '../api/kundaliApi';
 import { useLang } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
+import SupportDeveloper from './SupportDeveloper';
 import './AIAssistant.css';
 
 const QUICK_CHIPS = [
@@ -12,10 +14,9 @@ const QUICK_CHIPS = [
   '🌿 Most beneficial Gemstone & Vedic remedies?',
 ];
 
-function BotMessageItem({ text }) {
+function BotMessageItem({ text, isLimitReached, onOpenSupport }) {
   const [showDetails, setShowDetails] = useState(true);
 
-  // Parse Executive Summary vs In-Depth Details
   const { executiveSummary, detailsMarkdown } = useMemo(() => {
     if (!text) return { executiveSummary: '', detailsMarkdown: '' };
 
@@ -43,8 +44,7 @@ function BotMessageItem({ text }) {
   }, [detailsMarkdown]);
 
   return (
-    <div className="ai-msg ai-msg--bot">
-      {/* 1. Executive Summary Highlight Box */}
+    <div className={`ai-msg ai-msg--bot${isLimitReached ? ' ai-msg--limit' : ''}`}>
       {executiveSummary && (
         <div className="ai-summary-highlight">
           <span className="ai-summary-badge">
@@ -54,7 +54,6 @@ function BotMessageItem({ text }) {
         </div>
       )}
 
-      {/* 2. In-Depth Details Toggle & Rich Markdown Preview */}
       {detailsMarkdown && (
         <>
           <button
@@ -73,31 +72,37 @@ function BotMessageItem({ text }) {
           )}
         </>
       )}
+
+      {isLimitReached && (
+        <div className="ai-limit-banner">
+          <div className="ai-limit-badge">🌟 Daily Free Quota Used</div>
+          <p>You have asked your 1 free question for today. Unlock 50 questions for ₹49 or 24-hour pass:</p>
+          <button
+            type="button"
+            className="btn-unlock-wallet"
+            onClick={onOpenSupport}
+          >
+            ⚡ Unlock 50 Questions (₹49) / Support Creator
+          </button>
+        </div>
+      )}
     </div>
   );
 }
 
-/**
- * AIAssistant — Right-Side Floating Interactive Astrologer Bot.
- *
- * Features:
- * - Floating Launcher on bottom-right (doesn't obstruct chart tabs).
- * - Full-featured right-side chat drawer.
- * - Concise Executive Summary at top + rich formatted Markdown preview.
- * - Quick inquiry suggestion chips.
- */
 export default function AIAssistant({ report }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showSupportModal, setShowSupportModal] = useState(false);
   const bodyRef = useRef(null);
 
   const { lang, t } = useLang();
+  const { user } = useAuth();
   const { profile, ascendant, moon_sign } = report || {};
   const personName = profile?.name || 'Friend';
 
-  // Scroll to bottom of message list on new messages
   useEffect(() => {
     if (bodyRef.current) {
       bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
@@ -108,15 +113,21 @@ export default function AIAssistant({ report }) {
     const q = (questionText || inputValue).trim();
     if (!q || loading) return;
 
-    // Add user message to conversation
     const newMessages = [...messages, { sender: 'user', text: q }];
     setMessages(newMessages);
     setInputValue('');
     setLoading(true);
 
     try {
-      const res = await askAIChat(report, q, lang);
-      setMessages([...newMessages, { sender: 'bot', text: res.answer || 'Reading unavailable.' }]);
+      const res = await askAIChat(report, q, lang, user?.id || null);
+      setMessages([
+        ...newMessages,
+        {
+          sender: 'bot',
+          text: res.answer || 'Reading unavailable.',
+          isLimitReached: Boolean(res.limit_reached),
+        },
+      ]);
     } catch (err) {
       setMessages([
         ...newMessages,
@@ -187,7 +198,6 @@ export default function AIAssistant({ report }) {
 
   return (
     <>
-      {/* 1. Floating Right-Side Action Button */}
       {!isOpen && (
         <button
           type="button"
@@ -200,30 +210,19 @@ export default function AIAssistant({ report }) {
         </button>
       )}
 
-      {/* 2. Backdrop (on mobile / focus) */}
       {isOpen && (
-        <div
-          className="ai-bot-backdrop"
-          onClick={() => setIsOpen(false)}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* 3. Right-Side Interactive Chat Drawer */}
-      {isOpen && (
-        <aside className="ai-bot-drawer" role="dialog" aria-label="Vedic AI Astrologer">
-          {/* Header */}
+        <aside className="ai-bot-drawer" aria-label="Astrology Consultation Assistant">
           <header className="ai-bot-header">
-            <div className="ai-bot-header__info">
-              <div className="ai-bot-avatar">🕉️</div>
+            <div className="ai-bot-header__title-group">
+              <span className="ai-bot-header__icon">🕉️</span>
               <div>
-                <h3 className="ai-bot-title">{botTitle}</h3>
-                <p className="ai-bot-subtitle">Gemini 2.5 Flash · Chart-Aware</p>
+                <h3 className="ai-bot-header__name">{botTitle}</h3>
+                <span className="ai-bot-header__status">● Gemini 2.0 Flash Active</span>
               </div>
             </div>
             <button
               type="button"
-              className="ai-bot-close-btn"
+              className="ai-bot-header__close"
               onClick={() => setIsOpen(false)}
               aria-label="Close Assistant"
             >
@@ -231,16 +230,13 @@ export default function AIAssistant({ report }) {
             </button>
           </header>
 
-          {/* Conversation Feed */}
           <div className="ai-bot-body" ref={bodyRef}>
-            {/* Welcome Bubble */}
             <div className="ai-bot-welcome">
-              Namaste <strong>{personName}</strong>! I have analyzed your{' '}
-              <strong>{ascendant?.sign || 'Lagna'}</strong> Ascendant and{' '}
-              <strong>{moon_sign || 'Moon'}</strong> Rashi. Ask me anything about your chart:
+              Namaste <strong>{personName}</strong>! I have loaded your birth chart with{' '}
+              <strong>{ascendant?.sign || 'Ascendant'}</strong> Lagna and{' '}
+              <strong>{moon_sign || 'Moon'}</strong> Rashi. (1 Free Question / Day):
             </div>
 
-            {/* Quick Chips (if no conversation yet) */}
             {messages.length === 0 && (
               <div className="ai-bot-chips">
                 <span className="ai-bot-chips-label">{chipsLabel}</span>
@@ -261,18 +257,21 @@ export default function AIAssistant({ report }) {
               </div>
             )}
 
-            {/* Render Chat Messages */}
             {messages.map((msg, index) =>
               msg.sender === 'user' ? (
                 <div key={index} className="ai-msg ai-msg--user">
                   {msg.text}
                 </div>
               ) : (
-                <BotMessageItem key={index} text={msg.text} />
+                <BotMessageItem
+                  key={index}
+                  text={msg.text}
+                  isLimitReached={msg.isLimitReached}
+                  onOpenSupport={() => setShowSupportModal(true)}
+                />
               )
             )}
 
-            {/* Loading animation */}
             {loading && (
               <div className="ai-bot-loading">
                 <span>{loadingText}</span>
@@ -280,7 +279,6 @@ export default function AIAssistant({ report }) {
             )}
           </div>
 
-          {/* Footer Input Bar */}
           <footer className="ai-bot-footer">
             <form
               className="ai-bot-input-form"
@@ -308,6 +306,14 @@ export default function AIAssistant({ report }) {
             </form>
           </footer>
         </aside>
+      )}
+
+      {showSupportModal && (
+        <div className="auth-modal-overlay" onClick={() => setShowSupportModal(false)}>
+          <div className="auth-modal-content" style={{ maxWidth: '640px' }} onClick={(e) => e.stopPropagation()}>
+            <SupportDeveloper onClose={() => setShowSupportModal(false)} />
+          </div>
+        </div>
       )}
     </>
   );
