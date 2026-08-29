@@ -260,6 +260,22 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-08-29 12:52 IST] — Commit `eaba27a` / 100% Dynamic Multi-Language Localization Across All Tabs
+- **Summary**: Completed 100% end-to-end multi-language localization across all 8 report tabs (Overview, Planets, Dasha, Doshas, Panchang, KP System, Varshapal, Health), eliminating all remaining raw keys and hardcoded English labels in Marathi, Hindi, and Gujarati.
+- **Key Enhancements**:
+  1. **HealthTab & HealthReport**: Added full translations for all 12 ascendant signs, Prakriti, constitution, body parts, diseases, fever risk levels, mental balance factors, and 6th/8th house disease indicators.
+  2. **Live Transit & Sade Sati Tracker**: Localized live Gochara banners, phase badges (Setting/Rising/Peak), phase descriptions, and 9-graha transit table headers and cells.
+  3. **OverviewTab**: Localized Ascendant and Moon signs, Nakshatra names, Varna, Gana, Nadi classifications, and D1 house strip occupants.
+  4. **DashaTab & DashaTree**: Localized Vimshottari Mahadasha titles, timeline headings, active badges, elapsed progress labels, and duration units (`yrs`/`mos`).
+  5. **GemstonePanel**: Localized primary gemstone names, substitute stones, metals, fingers, wearing schedules, and Rudraksha recommendations.
+  6. **KPTab**: Localized Ruling Planets (RP), 12 Placidus House Cusps, Planetary KP Positions, and 4-Fold Significators table.
+  7. **VarshapalTab**: Localized Mudda Dasha timeline, planet names, day units, and Varshapal planetary positions table.
+  8. **Build & Test Verification**: Vite frontend built in 420ms; all 99 backend tests passing in 0.91s.
+- **Status**: Completed & Verified.
+- **Files Modified**: `kundali_frontend/src/utils/i18n.js`, `kundali_frontend/src/utils/healthAnalysis.js`, `kundali_frontend/src/utils/astroTranslations.js`, `kundali_frontend/src/components/HealthReport.jsx`, `kundali_frontend/src/components/TransitTracker.jsx`, `kundali_frontend/src/components/tabs/OverviewTab.jsx`, `kundali_frontend/src/components/tabs/DashaTab.jsx`, `kundali_frontend/src/components/DashaTree.jsx`, `kundali_frontend/src/components/GemstonePanel.jsx`, `kundali_frontend/src/components/tabs/KPTab.jsx`, `kundali_frontend/src/components/tabs/VarshapalTab.jsx`, `docs/PROJECT_STATUS.md`.
+
+---
+
 ### [2026-08-29 12:00 IST] — Commit `fdc1603` / Full Dynamic Multi-Language Translation Engine & Multilingual AI Prompts
 - **Summary**: Implemented full dynamic translation across all runtime-generated content, backend string interpolations, and Gemini AI outputs in English, Marathi (मराठी), Hindi (हिंदी), and Gujarati (ગુજરાતી).
 - **Key Enhancements & Translations**:
