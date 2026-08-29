@@ -138,6 +138,7 @@ export const TRANSLATIONS = {
   'planet.Venus':   { en: 'Venus',   mr: 'शुक्र',   hi: 'शुक्र',   gu: 'શુક્ર',   abbr_en: 'Ve',  abbr_mr: 'शु', abbr_hi: 'शु', abbr_gu: 'શુ' },
   'planet.Saturn':  { en: 'Saturn',  mr: 'शनी',     hi: 'शनि',     gu: 'શનિ',     abbr_en: 'Sa',  abbr_mr: 'श', abbr_hi: 'श', abbr_gu: 'શ' },
   'planet.Rahu':    { en: 'Rahu',    mr: 'राहू',    hi: 'राहु',    gu: 'રાહુ',    abbr_en: 'Ra',  abbr_mr: 'रा', abbr_hi: 'रा', abbr_gu: 'રા' },
+  'planet.Ketu':    { en: 'Ketu',    mr: 'केतू',    hi: 'केतु',    gu: 'કેતુ',    abbr_en: 'Ke',  abbr_mr: 'के', abbr_hi: 'के', abbr_gu: 'કે' },
   // ─── Planet Table Columns ──────────────────────────────────────
   'planet.graha':      { en: 'Planet (Graha)', mr: 'ग्रह', hi: 'ग्रह', gu: 'ગ્રહ' },
   'planet.sign':       { en: 'Sign (Rashi)', mr: 'राशी', hi: 'राशि', gu: 'રાશિ' },
@@ -249,27 +250,109 @@ export function t(key, lang = 'en') {
 }
 
 /** Translate a sign name by its 0-based index */
-export function signName(idx, lang = 'en') {
-  const entry = TRANSLATIONS[`sign.${idx}`];
-  if (!entry) return String(idx + 1);
-  return entry[lang] || entry.en || String(idx + 1);
+const SIGN_NAME_TO_INDEX = {
+  'aries': 0, 'mesha': 0, 'mesh': 0,
+  'taurus': 1, 'vrishabha': 1, 'vrishabh': 1,
+  'gemini': 2, 'mithuna': 2, 'mithun': 2,
+  'cancer': 3, 'karka': 3, 'kark': 3,
+  'leo': 4, 'simha': 4, 'singh': 4,
+  'virgo': 5, 'kanya': 5,
+  'libra': 6, 'tula': 6,
+  'scorpio': 7, 'vrishchika': 7, 'vrischika': 7, 'vrishchik': 7,
+  'sagittarius': 8, 'dhanu': 8,
+  'capricorn': 9, 'makara': 9, 'makar': 9,
+  'aquarius': 10, 'kumbha': 10, 'kumbh': 10,
+  'pisces': 11, 'meena': 11, 'meen': 11
+};
+
+export function getSignIndex(val) {
+  if (val === undefined || val === null) return -1;
+  if (typeof val === 'number') return (val >= 0 && val <= 11) ? val : -1;
+  const str = String(val).trim().toLowerCase();
+  if (/^\d+$/.test(str)) {
+    const n = parseInt(str, 10);
+    return (n >= 0 && n <= 11) ? n : (n >= 1 && n <= 12) ? n - 1 : -1;
+  }
+  const clean = str.replace(/[^a-z]/g, ' ').split(/\s+/)[0];
+  if (SIGN_NAME_TO_INDEX[clean] !== undefined) {
+    return SIGN_NAME_TO_INDEX[clean];
+  }
+  for (const [k, idx] of Object.entries(SIGN_NAME_TO_INDEX)) {
+    if (str.includes(k)) return idx;
+  }
+  return -1;
 }
 
-/** Translate a sign abbreviation by its 0-based index */
-export function signAbbr(idx, lang = 'en') {
-  const entry = TRANSLATIONS[`sign.${idx}`];
-  if (!entry) return String(idx + 1);
-  if (lang === 'mr') return entry.abbr_mr || entry.abbr_en;
-  if (lang === 'hi') return entry.abbr_hi || entry.abbr_en;
-  if (lang === 'gu') return entry.abbr_gu || entry.abbr_en;
-  return entry.abbr_en;
+/** Translate a sign name by index or string name (e.g. 0, "Leo", "Aquarius (Kumbha)") */
+export function signName(val, lang = 'en') {
+  const idx = getSignIndex(val);
+  if (idx !== -1) {
+    const entry = TRANSLATIONS[`sign.${idx}`];
+    if (entry) return entry[lang] || entry.en;
+  }
+  return String(val || '');
 }
 
-/** Translate a planet name */
+/** Translate a sign abbreviation by index or string name */
+export function signAbbr(val, lang = 'en') {
+  const idx = getSignIndex(val);
+  if (idx !== -1) {
+    const entry = TRANSLATIONS[`sign.${idx}`];
+    if (entry) {
+      if (lang === 'mr') return entry.abbr_mr || entry.abbr_en;
+      if (lang === 'hi') return entry.abbr_hi || entry.abbr_en;
+      if (lang === 'gu') return entry.abbr_gu || entry.abbr_en;
+      return entry.abbr_en;
+    }
+  }
+  return String(val || '');
+}
+
+const PLANET_NAME_TO_KEY = {
+  'sun': 'Sun', 'surya': 'Sun', 'ravi': 'Sun',
+  'moon': 'Moon', 'chandra': 'Moon', 'soma': 'Moon',
+  'mars': 'Mars', 'mangal': 'Mars', 'bhauma': 'Mars', 'kuja': 'Mars',
+  'mercury': 'Mercury', 'budha': 'Mercury', 'budh': 'Mercury',
+  'jupiter': 'Jupiter', 'guru': 'Jupiter', 'brihaspati': 'Jupiter',
+  'venus': 'Venus', 'shukra': 'Venus',
+  'saturn': 'Saturn', 'shani': 'Saturn',
+  'rahu': 'Rahu',
+  'ketu': 'Ketu',
+};
+
+/** Translate a planet name or planet string */
 export function planetName(name, lang = 'en') {
-  const entry = TRANSLATIONS[`planet.${name}`];
-  if (!entry) return name;
-  return entry[lang] || entry.en || name;
+  if (!name) return '';
+  const str = String(name).trim();
+  const clean = str.toLowerCase().replace(/[^a-z]/g, ' ').split(/\s+/)[0];
+  const canonical = PLANET_NAME_TO_KEY[clean] || (clean.charAt(0).toUpperCase() + clean.slice(1));
+  const entry = TRANSLATIONS[`planet.${canonical}`] || TRANSLATIONS[`planet.${name}`];
+  if (entry) {
+    let trans = entry[lang] || entry.en;
+    return trans;
+  }
+  return name;
+}
+
+/** Get localized planet abbreviation */
+export function getPlanetAbbr(planetOrAbbr, lang = 'en') {
+  if (!planetOrAbbr) return '';
+  const str = String(planetOrAbbr).trim();
+  const key = str.slice(0, 2);
+  const map = {
+    Su: { mr: 'सू', hi: 'सू', gu: 'સૂ', en: 'Su' },
+    Mo: { mr: 'चं', hi: 'चं', gu: 'ચં', en: 'Mo' },
+    Ma: { mr: 'मं', hi: 'मं', gu: 'મં', en: 'Ma' },
+    Me: { mr: 'बु', hi: 'बु', gu: 'બુ', en: 'Me' },
+    Ju: { mr: 'गु', hi: 'गु', gu: 'ગુ', en: 'Ju' },
+    Ve: { mr: 'शु', hi: 'शु', gu: 'શુ', en: 'Ve' },
+    Sa: { mr: 'श',  hi: 'श',  gu: 'શ',  en: 'Sa' },
+    Ra: { mr: 'रा', hi: 'रा', gu: 'રા', en: 'Ra' },
+    Ke: { mr: 'के', hi: 'के', gu: 'કે', en: 'Ke' },
+    As: { mr: 'ल',  hi: 'ल',  gu: 'લ',  en: 'L'  },
+  };
+  if (map[key]) return map[key][lang] || map[key].en || key;
+  return str;
 }
 
 /** Translate a dignity string */
@@ -281,6 +364,7 @@ export function dignityName(dignity, lang = 'en') {
 
 /** Translate a nakshatra name */
 export function nakshatraName(name, lang = 'en') {
+  if (!name) return '';
   const entry = TRANSLATIONS[`nakshatra.${name}`];
   if (!entry) return name;
   return entry[lang] || entry.en || name;

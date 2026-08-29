@@ -186,14 +186,14 @@ export default function VarshapalTab({ report }) {
               <span className="varshapal-card-label">{praveshLabel}</span>
               <h4 className="varshapal-card-val">{data.varsha_pravesh_ist}</h4>
               <span className="varshapal-card-sub">
-                {varshaLagnaLabel}: <strong>{data.varsha_lagna.sign}</strong> ({lang === 'mr' ? 'स्वामी:' : lang === 'hi' ? 'स्वामी:' : lang === 'gu' ? 'સ્વામી:' : 'Ruled by'} {planetName(data.varsha_lagna.sign_lord, lang)})
+                {varshaLagnaLabel}: <strong>{signName(data.varsha_lagna.sign, lang)}</strong> ({lang === 'mr' ? 'स्वामी:' : lang === 'hi' ? 'स्वामी:' : lang === 'gu' ? 'સ્વામી:' : 'Ruled by'} {planetName(data.varsha_lagna.sign_lord, lang)})
               </span>
             </div>
 
             <div className={`varshapal-hero-card ${data.muntha.is_auspicious ? 'varshapal-hero-card--muntha' : 'varshapal-hero-card--muntha-challenging'}`}>
               <span className="varshapal-card-label">{munthaLabel}</span>
               <h4 className="varshapal-card-val">
-                {data.muntha.sign} ({lang === 'mr' ? 'भाव' : lang === 'hi' ? 'भाव' : lang === 'gu' ? 'ભાવ' : 'House'} {data.muntha.house})
+                {signName(data.muntha.sign, lang)} ({lang === 'mr' ? 'भाव' : lang === 'hi' ? 'भाव' : lang === 'gu' ? 'ભાવ' : 'House'} {data.muntha.house})
               </h4>
               <span className="varshapal-card-sub">
                 {getMunthaInterpretation(data.muntha.house, data.muntha.interpretation, lang)}
@@ -251,7 +251,7 @@ export default function VarshapalTab({ report }) {
                   {data.planets.map((p) => (
                     <tr key={p.planet}>
                       <td><strong>{planetName(p.planet, lang)}</strong></td>
-                      <td>{p.sign}</td>
+                      <td>{signName(p.sign, lang)}</td>
                       <td className="mono">{p.longitude}°</td>
                       <td className="mono">
                         <strong>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import NorthIndianChart from './NorthIndianChart';
 import EastIndianChart from './EastIndianChart';
 import { useLang } from '../context/LanguageContext';
-import { signAbbr } from '../utils/i18n';
+import { signAbbr, getPlanetAbbr } from '../utils/i18n';
 import './ChartGrid.css';
 
 // South Indian: Fixed sign_index -> [row, col] position in 4x4 grid.
@@ -54,7 +54,7 @@ export default function ChartGrid({ houses, title, ascendantSignIndex, allowTogg
                 className={`chart-grid__planet${p.retrograde ? ' is-retro' : ''}`}
                 title={`${p.planet} ${p.degree_str}${p.retrograde ? ` (${t('chart.retrograde')})` : ''}`}
               >
-                {lang === 'mr' ? getMrAbbr(p.abbr) : p.abbr}
+                {getPlanetAbbr(p.abbr, lang)}
                 {p.retrograde && <sup>व</sup>}
               </span>
             ))}

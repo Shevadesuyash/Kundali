@@ -3,6 +3,7 @@ import YogaList from '../YogaList';
 import GemstonePanel from '../GemstonePanel';
 import HelpAccordion from '../HelpAccordion';
 import { useLang } from '../../context/LanguageContext';
+import { signName } from '../../utils/i18n';
 import './tabs.css';
 
 /**

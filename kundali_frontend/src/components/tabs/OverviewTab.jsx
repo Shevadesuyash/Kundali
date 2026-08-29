@@ -32,7 +32,8 @@ export default function OverviewTab({ report }) {
 
   const ascSignName = ascendant?.sign_index !== undefined ? signName(ascendant.sign_index, lang) : (ascendant?.sign || '—');
   const ascNakName  = ascendant?.nakshatra ? nakshatraName(ascendant.nakshatra, lang) : '—';
-  const moonSignName = report.moon_sign_index !== undefined ? signName(report.moon_sign_index, lang) : (moon_sign || '—');
+  const moonSignIdx = report.moon_sign_index ?? report._technical_profile?.moon_sign_index ?? report.planets?.Moon?.sign_index;
+  const moonSignName = moonSignIdx !== undefined ? signName(moonSignIdx, lang) : (moon_sign ? signName(moon_sign, lang) : '—');
   const moonNakName  = moon_nakshatra ? nakshatraName(moon_nakshatra, lang) : '—';
   const moonLordName = classification?.moon_sign_lord ? planetName(classification.moon_sign_lord, lang) : '—';
 
