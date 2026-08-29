@@ -260,6 +260,20 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-08-29 14:20 IST] — Commit `e2537ee` / Auth Pages (Login, Register, VerifyEmail), JWT Validation & Test User Support (on `develop` branch)
+- **Summary**: Implemented dedicated auth pages (`/login`, `/register`, `/verify-email`), backend JWT token validation (`app/auth.py`), local SQLite test account support (`test@test.test` / `Test@test`), automatic Bearer token injection in frontend API client, and updated LinkedIn developer profile link.
+- **Key Enhancements**:
+  1. **Dedicated Auth Pages**: Added `LoginPage.jsx` (with 1-click test user auto-fill), `RegisterPage.jsx` (with password confirmation and redirect), and `VerifyEmailPage.jsx` (with verification notice and direct login button).
+  2. **Backend JWT Security Dependency (`app/auth.py`)**: Validates Supabase JWTs and local test tokens; extracts `user_id` and `email` for user-owned profiles and rate-limiting.
+  3. **Offline / Test User Support**: Configured seamless local testing with `test@test.test` / `Test@test` returning persistent mock token `mock_jwt_test_user_token_123`.
+  4. **Automatic Bearer Token Injection (`src/api/kundaliApi.js`)**: Automatically attaches `Authorization: Bearer <token>` from `localStorage` on all API requests.
+  5. **Verified Developer Profile Link**: Updated developer LinkedIn URL to `https://www.linkedin.com/in/suyash-shevade-8b07a9236/` in `SupportDeveloper.jsx`.
+  6. **Build & Test Verification**: Vite build succeeded in 1.60s; all 105 pytest unit & regression tests passed in 1.92s.
+- **Status**: Completed & Verified on `develop` branch.
+- **Files Modified**: `kundali_backend/app/auth.py`, `kundali_backend/tests/test_auth.py`, `kundali_backend/app/main.py`, `kundali_frontend/src/context/AuthContext.jsx`, `kundali_frontend/src/pages/LoginPage.jsx`, `kundali_frontend/src/pages/RegisterPage.jsx`, `kundali_frontend/src/pages/VerifyEmailPage.jsx`, `kundali_frontend/src/pages/AuthPages.css`, `kundali_frontend/src/App.jsx`, `kundali_frontend/src/components/Navbar.jsx`, `kundali_frontend/src/components/SupportDeveloper.jsx`, `kundali_frontend/src/api/kundaliApi.js`, `docs/PROJECT_STATUS.md`.
+
+---
+
 ### [2026-08-29 14:06 IST] — Commit `203c7a3` / Supabase Dual-Mode DB, Rate Limiter, Cloud Profile Gating & Dev Support (on `develop` branch)
 - **Summary**: Successfully transitioned architecture to cloud-ready foundation on new `develop` branch (keeping `main` safe). Integrated Supabase PostgreSQL (`ap-south-1` Mumbai) with seamless SQLite fallback, IP rate-limiting (1 free query/24h per IP), AI Wallet monetization architecture, Cloud Profile gating, and Developer Support section.
 - **Key Enhancements**:
