@@ -86,7 +86,7 @@ export function checkHealth() {
 // ---------------------------------------------------------------------------
 export function geocodeSearch(query) {
   return fetch(`${API_BASE}/api/v1/geocode?q=${encodeURIComponent(query)}`, {
-    headers: { Accept: 'application/json' },
+    headers: { Accept: 'application/json', ...(localStorage.getItem('kundali_auth_token') ? { Authorization: `Bearer ${localStorage.getItem('kundali_auth_token')}` } : {}) },
   }).then((r) => (r.ok ? r.json() : []));
 }
 
@@ -115,7 +115,7 @@ export function searchProfiles({ q = '', gender = '', tag = '', page = 1, perPag
   params.set('page',     String(page));
   params.set('per_page', String(perPage));
   return fetch(`${API_BASE}/api/v1/profiles?${params}`, {
-    headers: { Accept: 'application/json' },
+    headers: { Accept: 'application/json', ...(localStorage.getItem('kundali_auth_token') ? { Authorization: `Bearer ${localStorage.getItem('kundali_auth_token')}` } : {}) },
   }).then((r) => r.json());
 }
 
@@ -126,14 +126,14 @@ export function searchProfiles({ q = '', gender = '', tag = '', page = 1, perPag
 export function searchProfilesTypeahead(q, limit = 5) {
   const params = new URLSearchParams({ q, limit: String(limit) });
   return fetch(`${API_BASE}/api/v1/profiles/search?${params}`, {
-    headers: { Accept: 'application/json' },
+    headers: { Accept: 'application/json', ...(localStorage.getItem('kundali_auth_token') ? { Authorization: `Bearer ${localStorage.getItem('kundali_auth_token')}` } : {}) },
   }).then((r) => (r.ok ? r.json() : []));
 }
 
 /** Get a single full profile by ID. */
 export function getProfile(id) {
   return fetch(`${API_BASE}/api/v1/profiles/${id}`, {
-    headers: { Accept: 'application/json' },
+    headers: { Accept: 'application/json', ...(localStorage.getItem('kundali_auth_token') ? { Authorization: `Bearer ${localStorage.getItem('kundali_auth_token')}` } : {}) },
   }).then((r) => r.json());
 }
 
@@ -162,7 +162,7 @@ export function matchSaved(boyId, girlId, includeAiReading = false, language = '
 // ---------------------------------------------------------------------------
 export function getLiveTransits(moonSignIndex, lagnaSignIndex) {
   return fetch(`${API_BASE}/api/v1/transits/live?moon_sign_index=${moonSignIndex}&lagna_sign_index=${lagnaSignIndex}`, {
-    headers: { Accept: 'application/json' },
+    headers: { Accept: 'application/json', ...(localStorage.getItem('kundali_auth_token') ? { Authorization: `Bearer ${localStorage.getItem('kundali_auth_token')}` } : {}) },
   }).then((r) => r.json());
 }
 
@@ -187,7 +187,7 @@ export function getPanchang({ date = '', lat = 18.5204, lon = 73.8567, tz = 'Asi
   params.set('tz', tz);
 
   return fetch(`${API_BASE}/api/v1/panchang?${params}`, {
-    headers: { Accept: 'application/json' },
+    headers: { Accept: 'application/json', ...(localStorage.getItem('kundali_auth_token') ? { Authorization: `Bearer ${localStorage.getItem('kundali_auth_token')}` } : {}) },
   }).then((r) => r.json());
 }
 

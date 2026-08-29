@@ -17,12 +17,13 @@ import datetime
 import logging
 from typing import List, Optional
 
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import FastAPI, HTTPException, Query, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app import ai_service, database
 from app.rate_limiter import get_client_ip, check_ai_quota, record_ai_usage
+from app.auth import get_optional_user, get_required_user
 from app.astro_engine import VedicAstrologyEngine
 from app.database import (
     count_profiles, delete_profile, get_gender_counts,
@@ -241,7 +242,7 @@ def get_kp_system(request: KundaliRequest):
     "/api/v1/ai-chat",
     responses={400: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
 )
-def ask_ai_assistant(request: AIChatRequest, http_req: Request):
+def ask_ai_assistant(request: AIChatRequest, http_req: Request, current_user: Optional[dict] = Depends(get_optional_user)):
     """
     Answers an interactive user question regarding a computed Kundali chart
     using Gemini 2.0 Flash with context-aware astrological facts and IP/wallet rate limiting.
@@ -251,7 +252,7 @@ def ask_ai_assistant(request: AIChatRequest, http_req: Request):
             raise HTTPException(status_code=400, detail="Question cannot be empty")
 
         user_ip = get_client_ip(http_req)
-        user_id = getattr(request, "user_id", None)
+        user_id = (current_user["id"] if current_user else None) or getattr(request, "user_id", None)
 
         allowed, next_avail, reason, meta = check_ai_quota(user_ip, user_id=user_id)
         if not allowed:
@@ -448,7 +449,7 @@ def _extract_active_dasha(dasha_periods: list) -> Optional[str]:
 
 def _row_to_summary(row: dict) -> ProfileSummary:
     return ProfileSummary(
-        id=row["id"], name=row["name"], gender=row["gender"],
+        id=row["id"], user_id=row.get("user_id"), name=row["name"], gender=row["gender"],
         birth_place=row["birth_place"],
         year=row["year"], month=row["month"], day=row["day"],
         moon_sign=row["moon_sign"], nakshatra=row["nakshatra"],
@@ -462,7 +463,7 @@ def _row_to_summary(row: dict) -> ProfileSummary:
 
 def _row_to_detail(row: dict) -> ProfileDetail:
     return ProfileDetail(
-        id=row["id"], name=row["name"], gender=row["gender"],
+        id=row["id"], user_id=row.get("user_id"), name=row["name"], gender=row["gender"],
         birth_place=row["birth_place"],
         year=row["year"], month=row["month"], day=row["day"],
         hour=row["hour"], minute=row["minute"],
@@ -484,9 +485,10 @@ def _row_to_detail(row: dict) -> ProfileDetail:
 @app.post(
     "/api/v1/profiles",
     response_model=ProfileDetail,
+    status_code=200,
     responses={400: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
 )
-def create_profile(request: SaveProfileRequest):
+def create_profile(request: SaveProfileRequest, current_user: Optional[dict] = Depends(get_optional_user)):
     """Save a birth profile. Moon sign, Lagna, active Dasha & Manglik status computed at save time."""
     try:
         person = request.person.to_person()
@@ -509,6 +511,7 @@ def create_profile(request: SaveProfileRequest):
         is_manglik = False
 
     bd = request.person
+    effective_user_id = (current_user["id"] if current_user else None) or request.user_id
     profile_id = save_profile(
         name=bd.name, gender=request.gender,
         year=bd.year, month=bd.month, day=bd.day,
@@ -521,6 +524,7 @@ def create_profile(request: SaveProfileRequest):
         is_manglik=is_manglik,
         active_dasha=active_dasha,
         tag=request.tag or "self",
+        user_id=effective_user_id,
     )
     return _row_to_detail(get_profile_by_id(profile_id))
 

@@ -79,7 +79,7 @@ export default function SupportDeveloper({ onClose }) {
             <span>🐙 GitHub: Shevadesuyash</span>
           </a>
           <a
-            href="https://linkedin.com/in/suyashshevade"
+            href="https://www.linkedin.com/in/suyash-shevade-8b07a9236/"
             target="_blank"
             rel="noopener noreferrer"
             className="social-pill"

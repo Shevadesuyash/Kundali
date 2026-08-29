@@ -64,13 +64,9 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <button
-                type="button"
-                className="navbar__login-btn"
-                onClick={() => setShowAuthModal(true)}
-              >
+              <NavLink to="/login" className="navbar__login-btn">
                 🔑 {lang === 'mr' ? 'लॉग इन' : 'Sign In'}
-              </button>
+              </NavLink>
             )}
 
             {/* Clean Native Vedic Multi-Language Selector */}
