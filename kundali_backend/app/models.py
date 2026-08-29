@@ -34,6 +34,7 @@ class Person:
         lat: float,
         lon: float,
         timezone_str: str = "Asia/Kolkata",
+        second: int = 0,
     ):
         self.name = name
         self.year = year
@@ -41,6 +42,7 @@ class Person:
         self.day = day
         self.hour = hour
         self.minute = minute
+        self.second = second
         self.lat = lat
         self.lon = lon
         self.timezone_str = timezone_str
@@ -50,13 +52,14 @@ class Person:
         except pytz.UnknownTimeZoneError as exc:
             raise ValueError(f"Unknown timezone: {timezone_str}") from exc
 
-        local_dt = datetime.datetime(year, month, day, hour, minute)
+        local_dt = datetime.datetime(year, month, day, hour, minute, second)
         self.utc_dt = local_tz.localize(local_dt).astimezone(pytz.utc)
 
     def display_info(self) -> str:
+        time_str = f"{self.hour:02d}:{self.minute:02d}:{self.second:02d}" if self.second else f"{self.hour:02d}:{self.minute:02d}"
         return (
             f"Profile: {self.name} | DOB: {self.day}-{self.month}-{self.year} "
-            f"| Time: {self.hour:02d}:{self.minute:02d} | "
+            f"| Time: {time_str} | "
             f"Coordinates: {self.lat}, {self.lon}"
         )
 
@@ -74,6 +77,7 @@ class BirthDetails(BaseModel):
     day: int = Field(..., ge=1, le=31)
     hour: int = Field(..., ge=0, le=23)
     minute: int = Field(..., ge=0, le=59)
+    second: int = Field(default=0, ge=0, le=59)
     lat: float = Field(..., ge=-90, le=90)
     lon: float = Field(..., ge=-180, le=180)
     timezone_str: str = Field(default="Asia/Kolkata")
@@ -94,6 +98,7 @@ class BirthDetails(BaseModel):
         return Person(
             self.name, self.year, self.month, self.day,
             self.hour, self.minute, self.lat, self.lon, self.timezone_str,
+            second=self.second,
         )
 
 

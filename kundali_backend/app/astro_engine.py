@@ -63,6 +63,41 @@ import os
 MANGLIK_MODE = os.environ.get("MANGLIK_MODE", "STANDARD")
 MANGLIK_HOUSES = {1, 2, 4, 7, 8, 12} if MANGLIK_MODE == "SOUTH" else {1, 4, 7, 8, 12}
 
+NODE_MODE = os.environ.get("NODE_MODE", "TRUE").upper()
+
+EXALTATION_SIGNS = {
+    "Sun": 0,      # Aries (Mesha)
+    "Moon": 1,     # Taurus (Vrishabha)
+    "Mars": 9,     # Capricorn (Makara)
+    "Mercury": 5,  # Virgo (Kanya)
+    "Jupiter": 3,  # Cancer (Karka)
+    "Venus": 11,   # Pisces (Meena)
+    "Saturn": 6,   # Libra (Tula)
+    "Rahu": 1,     # Taurus
+    "Ketu": 7,     # Scorpio
+}
+
+DEBILITATION_SIGNS = {
+    "Sun": 6,      # Libra
+    "Moon": 7,     # Scorpio
+    "Mars": 3,     # Cancer
+    "Mercury": 11, # Pisces
+    "Jupiter": 9,  # Capricorn
+    "Venus": 5,    # Virgo
+    "Saturn": 0,   # Aries
+    "Rahu": 7,     # Scorpio
+    "Ketu": 1,     # Taurus
+}
+
+OWN_SIGNS = {
+    "Sun": {4},
+    "Moon": {3},
+    "Mars": {0, 7},
+    "Mercury": {2, 5},
+    "Jupiter": {8, 11},
+    "Venus": {1, 6},
+    "Saturn": {9, 10},
+}
 
 
 class VedicAstrologyEngine:
@@ -71,18 +106,24 @@ class VedicAstrologyEngine:
     (Lahiri Ayanamsha) mode, matching mainstream Vedic (Nirayana) usage.
     """
 
-    def __init__(self):
+    def __init__(self, node_mode: str = NODE_MODE):
         swe.set_sid_mode(swe.SIDM_LAHIRI)
         self.rasi_names = RASI_NAMES
         self.nakshatra_names = NAKSHATRA_NAMES
+        self.node_mode = node_mode.upper()
 
     # ---------------------------------------------------------- utilities
     def get_julian_day(self, person: Person) -> float:
+        hour_decimal = (
+            person.utc_dt.hour
+            + (person.utc_dt.minute / 60.0)
+            + (getattr(person, "second", 0) / 3600.0)
+        )
         return swe.julday(
             person.utc_dt.year,
             person.utc_dt.month,
             person.utc_dt.day,
-            person.utc_dt.hour + (person.utc_dt.minute / 60.0),
+            hour_decimal,
         )
 
     def get_ayanamsha(self, jd: float) -> float:
@@ -145,7 +186,13 @@ class VedicAstrologyEngine:
         """Returns sidereal longitude + sign/nakshatra data for all 9 grahas
         (7 classical planets + Rahu, with Ketu derived as Rahu + 180deg)."""
         result: Dict[str, Dict] = {}
-        for name, pid in PLANET_IDS.items():
+        planet_ids = dict(PLANET_IDS)
+        if self.node_mode == "MEAN":
+            planet_ids["Rahu"] = swe.MEAN_NODE
+        else:
+            planet_ids["Rahu"] = swe.TRUE_NODE
+
+        for name, pid in planet_ids.items():
             data, _flag = swe.calc_ut(jd, pid, swe.FLG_SIDEREAL)
             lon = data[0] % 360
             speed = data[3] if len(data) > 3 else None
@@ -201,6 +248,14 @@ class VedicAstrologyEngine:
                 ascendant["sign_index"], p["sign_index"]
             )
             p["sign_lord"] = SIGN_LORDS[p["sign_index"]]
+            if p["sign_index"] == EXALTATION_SIGNS.get(name):
+                p["dignity"] = "Exalted"
+            elif p["sign_index"] == DEBILITATION_SIGNS.get(name):
+                p["dignity"] = "Debilitated"
+            elif p["sign_index"] in OWN_SIGNS.get(name, set()):
+                p["dignity"] = "Own Sign"
+            else:
+                p["dignity"] = "Neutral"
 
         moon = planets["Moon"]
         mars_house = planets["Mars"]["house_from_lagna"]
@@ -213,9 +268,12 @@ class VedicAstrologyEngine:
                 "day": person.day,
                 "hour": person.hour,
                 "minute": person.minute,
+                "second": getattr(person, "second", 0),
                 "timezone_str": person.timezone_str,
                 "local": f"{person.day:02d}-{person.month:02d}-{person.year} "
-                         f"{person.hour:02d}:{person.minute:02d} {person.timezone_str}",
+                         f"{person.hour:02d}:{person.minute:02d}"
+                         f"{(':' + f'{person.second:02d}') if getattr(person, 'second', 0) else ''} "
+                         f"{person.timezone_str}",
                 "utc": person.utc_dt.isoformat(),
                 "lat": person.lat,
                 "lon": person.lon,
@@ -224,6 +282,7 @@ class VedicAstrologyEngine:
             "julian_day": jd,
             "ayanamsha": self.get_ayanamsha(jd),
             "ascendant": ascendant,
+            "lagna_sign_index": ascendant["sign_index"],
             "planets": planets,
             "moon_sign_index": moon["sign_index"],
             "moon_sign": moon["sign"],

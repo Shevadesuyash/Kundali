@@ -34,6 +34,12 @@ VARA_NAMES = [
     ("Saturday", "Shanivar", "Saturn (Shani)", "Lord Shani & Hanuman", "Om Sham Shanaishcharaya Namah (ॐ शं शनैश्चराय नमः)", "Mustard oil lamp, Hanuman Chalisa, charity to needy"),
 ]
 
+RASI_NAMES = [
+    "Aries (Mesha)", "Taurus (Vrishabha)", "Gemini (Mithuna)", "Cancer (Karka)",
+    "Leo (Simha)", "Virgo (Kanya)", "Libra (Tula)", "Scorpio (Vrishchika)",
+    "Sagittarius (Dhanu)", "Capricorn (Makara)", "Aquarius (Kumbha)", "Pisces (Meena)",
+]
+
 NAKSHATRA_NAMES = [
     "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", "Ardra",
     "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni",
@@ -281,8 +287,10 @@ class PanchangEngine:
             "sun_moon_timings": {
                 "sunrise": sunrise_dt.strftime("%I:%M %p"),
                 "sunset": sunset_dt.strftime("%I:%M %p"),
-                "sun_sign": NAKSHATRA_NAMES[int(sun_lon // nak_span)],
-                "moon_sign": NAKSHATRA_NAMES[int(moon_lon // nak_span)],
+                "sun_sign": RASI_NAMES[int(sun_lon // 30.0)],
+                "sun_nakshatra": NAKSHATRA_NAMES[int(sun_lon // nak_span)],
+                "moon_sign": RASI_NAMES[int(moon_lon // 30.0)],
+                "moon_nakshatra": NAKSHATRA_NAMES[int(moon_lon // nak_span)],
             },
             "auspicious_timings": {
                 "brahma_muhurta": f"{brahma_start} – {brahma_end}",
