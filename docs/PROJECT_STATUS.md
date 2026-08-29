@@ -260,6 +260,23 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-08-29 11:16 IST] — Commit `7f5962c` / Core Engine Bugfixes, Planetary Dignity, Aspect Correction & Regression Test Suite
+- **Summary**: Implemented all verified roadmap and audit fixes: Lagna index in technical profile, planetary dignity population, retrograde key mismatch fix, Jupiter 5/7/9 aspect correction, Panchang Rashi/Nakshatra clarification, seconds precision, node mode toggle, and CORS configuration.
+- **Architectural & Calculation Fixes**:
+  1. **Lagna Fix**: Added `lagna_sign_index` to `get_technical_profile()` in `astro_engine.py`. Prevents `AshtakvargaEngine`, `YogaEngine`, and `GemstoneEngine` from silently falling back to Aries (0).
+  2. **Planetary Dignity**: Pre-computed `"dignity"` (`"Exalted"`, `"Debilitated"`, `"Own Sign"`, `"Neutral"`) in `astro_engine.py`, activating the Debilitated (Neecha) contraindication warning in `GemstoneEngine`.
+  3. **Retrograde Key**: Corrected `gemstone_engine.py` to read `"retrograde"` instead of `"is_retrograde"`, restoring the `Retrograde ℞` badge.
+  4. **Jupiter Aspects**: Fixed Jupiter aspect on Mars from `{4, 7, 9}` to classical Parashari special drishti `{5, 7, 9}` in `kundali_analyzer.py`.
+  5. **Panchang Sun/Moon Output**: Corrected `panchang_engine.py` `sun_moon_timings` to return `sun_sign` (Rashi), `sun_nakshatra` (Nakshatra), `moon_sign` (Rashi), and `moon_nakshatra` (Nakshatra).
+  6. **Seconds Precision**: Added `second: int = Field(default=0, ge=0, le=59)` to `BirthDetails`/`Person` and integrated `/ 3600.0` into `swe.julday()` calculation in `astro_engine.py`.
+  7. **Node Mode**: Supported `NODE_MODE` environment variable (`TRUE` vs `MEAN` lunar node).
+  8. **CORS Hardening**: Configured origin whitelist via `CORS_ORIGINS` with restricted HTTP methods.
+  9. **Automated Regression Test Suite**: Created `tests/test_engines_regression.py` with 9 end-to-end tests (all 65 backend tests passing).
+- **Status**: Completed & Verified.
+- **Files Modified / Created**: `kundali_backend/app/astro_engine.py`, `kundali_backend/app/gemstone_engine.py`, `kundali_backend/app/kundali_analyzer.py`, `kundali_backend/app/panchang_engine.py`, `kundali_backend/app/models.py`, `kundali_backend/app/main.py`, `kundali_backend/tests/test_engines_regression.py`, `docs/PROJECT_STATUS.md`.
+
+---
+
 ### [2026-08-28 14:04 IST] — Commit `e51c992` / Full-Suite Native Jyotish Multi-Language Translation Engine
 - **Summary**: Implemented 100% complete native multi-language translation across all 8 Kundali tabs, Varshapal, Guna Milan, Doshas, Gemstones, and Vedic Guide in English, Marathi, Hindi, and Gujarati.
 - **Architectural Enhancements**:
