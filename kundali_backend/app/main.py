@@ -537,20 +537,22 @@ def list_profiles(
     tag: str = "",
     page: int = 1,
     per_page: int = 20,
+    current_user: Optional[dict] = Depends(get_optional_user),
 ):
-    """Search / list saved profiles. Supports name search, gender filter, and tag filter."""
-    rows  = search_profiles(q or None, gender or None, tag or None, page, per_page)
-    total = count_profiles(q or None, gender or None, tag or None)
+    """Search / list saved profiles for the current user (or all if admin)."""
+    # Determine which user_id to filter by
+    if current_user:
+        effective_user_id = current_user["id"]
+    else:
+        effective_user_id = None  # guest: show profiles with no user_id
+
+    rows  = search_profiles(q or None, gender or None, tag or None, effective_user_id, page, per_page)
+    total = count_profiles(q or None, gender or None, tag or None, effective_user_id)
     items = [_row_to_summary(r) for r in rows]
 
-    # Attach gender breakdown counts for dashboard stats bar
-    gender_counts = get_gender_counts()
+    # Gender counts scoped to this user
+    gender_counts = get_gender_counts(user_id=effective_user_id)
 
-    response = ProfileListResponse(
-        profiles=items, total=total, page=page, per_page=per_page
-    )
-    # Inject counts as extra fields (FastAPI/Pydantic v2 allows this via model_config extra=allow,
-    # but for simplicity we return a plain dict here)
     return {
         "profiles": [p.model_dump() for p in items],
         "total": total,

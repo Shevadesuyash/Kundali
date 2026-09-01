@@ -242,6 +242,19 @@ def init_db() -> None:
                 )
             logger.info("Local SQLite DB initialized at %s", DB_PATH)
 
+            # --- Auto-migration: link any orphan profiles (user_id IS NULL) to ADMIN ---
+            # This runs safely every startup; only affects rows with NULL user_id.
+            admin_id = os.getenv("ADMIN_USER_ID", "local_test_user_1").strip()
+            if admin_id:
+                migrated = con.execute(
+                    "UPDATE profiles SET user_id = ? WHERE user_id IS NULL",
+                    (admin_id,)
+                ).rowcount
+                if migrated:
+                    logger.info(
+                        "Auto-migrated %d orphan profile(s) -> user_id=%s", migrated, admin_id
+                    )
+
 
 # ---------------------------------------------------------------------------
 # Profile CRUD
@@ -380,7 +393,7 @@ def search_profiles(
 
     with _conn() as con:
         query_sql = (
-            f"SELECT id, name, gender, birth_place, year, month, day, hour, minute, "
+            f"SELECT id, user_id, name, gender, birth_place, year, month, day, hour, minute, "
             f"lat, lon, timezone_str, moon_sign, nakshatra, lagna, is_manglik, active_dasha, tag, created_at "
             f"FROM profiles {where} ORDER BY created_at DESC LIMIT {placeholder} OFFSET {placeholder}"
         )
