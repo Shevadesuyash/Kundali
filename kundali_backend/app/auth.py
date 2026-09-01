@@ -35,6 +35,11 @@ TEST_USER_ID = "local_test_user_1"
 TEST_TOKEN = "mock_jwt_test_user_token_123"
 
 SUPABASE_JWT_SECRET = os.environ.get("SUPABASE_JWT_SECRET", "").strip()
+# Admin user ID — set ADMIN_USER_ID in .env to your Supabase user UUID
+# This grants access to /api/v1/admin/* endpoints
+ADMIN_USER_ID = os.environ.get("ADMIN_USER_ID", "local_test_user_1").strip()
+# For offline testing: the local test user IS the admin by default
+ADMIN_TEST_TOKENS = {"mock_jwt_test_user_token_123", "test_token", "mock_jwt_test_user_1"}
 
 
 def decode_jwt_unverified_claims(token: str) -> Optional[Dict[str, Any]]:
@@ -144,5 +149,28 @@ def get_required_user(authorization: Optional[str] = Header(None)) -> Dict[str, 
             status_code=401,
             detail="Authentication required. Please sign in to access this feature.",
             headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
+def is_admin(user: Optional[Dict[str, Any]]) -> bool:
+    """Returns True if the given user dict matches the configured ADMIN_USER_ID."""
+    if not user:
+        return False
+    return user.get("id") == ADMIN_USER_ID
+
+
+def get_admin_user(authorization: Optional[str] = Header(None)) -> Dict[str, Any]:
+    """FastAPI dependency: requires admin privileges. Returns 403 if not admin."""
+    user = get_current_user_from_token(authorization)
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication required.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    if not is_admin(user):
+        raise HTTPException(
+            status_code=403,
+            detail="Admin access required. Only the application administrator can access this endpoint.",
         )
     return user

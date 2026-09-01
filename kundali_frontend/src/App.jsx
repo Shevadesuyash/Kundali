@@ -12,6 +12,7 @@ import GuidePage from './pages/GuidePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
+import AdminPage from './pages/AdminPage';
 
 function AppFooter() {
   const { t } = useLang();
@@ -39,6 +40,7 @@ function AppRoutes() {
           <Route path="/login"        element={<LoginPage />} />
           <Route path="/register"     element={<RegisterPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="/admin"        element={<AdminPage />} />
         </Routes>
       </ErrorBoundary>
       <AppFooter />
