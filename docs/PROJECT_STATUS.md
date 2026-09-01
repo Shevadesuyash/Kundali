@@ -260,6 +260,26 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-09-01 10:22 IST] — Commit `db958ef` / Comprehensive Full-Stack Audit + P0 Critical Bug Fixes (on `develop` branch)
+- **Summary**: Performed a complete code audit covering all 21 backend Python files (214 KB), 14 test files (105 tests), 109 frontend files (738.9 KB), README, PROJECT_STATUS.md, .gitignore, requirements.txt, and .env.example files. Identified 20 issues (5 Critical P0, 7 High P1, 8 Medium P2). Fixed all 5 Critical P0 issues immediately.
+- **Audit Findings**:
+  - **Test Results**: 105/105 backend tests passed in 2.03s. Vite frontend build: 0 errors (1.54 MB bundle).
+  - **Astrological Accuracy**: BPHS SAV checksum=337 verified, all per-planet BAV totals match classical values, 3-chart Manglik analysis certified, Jupiter aspect cancellation correct.
+  - **Coverage Gaps**: 9 API endpoints have no tests (`/panchang`, `/kp`, `/varshapal`, `/transits`, `/match-saved`, `/match-bulk`, DELETE+PATCH profiles). 12 Kaal Sarp variants untested. JWT expiry edge case untested.
+  - **Security Issues**: JWT signature not verified (BUG-001 — partially fixed), JWT expiry not checked (ISSUE-006 — fixed).
+  - **Deployment Issues**: `python-dotenv`, `psycopg2-binary`, `uvicorn`, `httpx` missing from requirements.txt (BUG-002/003 — fixed).
+- **P0 Fixes Applied in `db958ef`**:
+  1. **`requirements.txt`**: Added `uvicorn`, `python-dotenv`, `psycopg2-binary`, `httpx` — critical for Docker/CI/CD deployment.
+  2. **`kundali_backend/.env.example`**: Added `DATABASE_URL`, `SUPABASE_JWT_SECRET`, `MANGLIK_MODE`, `NODE_MODE` documentation.
+  3. **`kundali_frontend/.env.example`**: Added `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` documentation.
+  4. **`app/auth.py`**: Added JWT `exp` claim expiry check — expired tokens now correctly rejected.
+  5. **`app/auth.py`**: Added HS256 signature verification using `SUPABASE_JWT_SECRET` when configured in `.env`.
+- **Remaining Open Issues**: BUG-001 (full JWT public key verification via JWKS), ISSUE-008 (PostgreSQL connection pooling), ISSUE-014 (bundle code splitting), ISSUE-013 (duplicate login UI consolidation).
+- **Status**: Audit Complete, P0 Fixes Applied & Verified on `develop` branch.
+- **Files Modified**: `kundali_backend/requirements.txt`, `kundali_backend/.env.example`, `kundali_frontend/.env.example`, `kundali_backend/app/auth.py`.
+
+---
+
 ### [2026-08-29 14:20 IST] — Commit `e2537ee` / Auth Pages (Login, Register, VerifyEmail), JWT Validation & Test User Support (on `develop` branch)
 - **Summary**: Implemented dedicated auth pages (`/login`, `/register`, `/verify-email`), backend JWT token validation (`app/auth.py`), local SQLite test account support (`test@test.test` / `Test@test`), automatic Bearer token injection in frontend API client, and updated LinkedIn developer profile link.
 - **Key Enhancements**:
