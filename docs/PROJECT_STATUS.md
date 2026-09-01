@@ -260,6 +260,31 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-09-01 15:59 IST] — Commit `b5ba927` / Admin Control Panel (on `develop` branch)
+- **Summary**: Implemented a complete Admin Control Panel with authentication-gated access. The admin is identified by `ADMIN_USER_ID` in `.env`. Admin can view ALL profiles from all users (not just their own), see system-wide statistics, and permanently delete any profile.
+- **Backend Changes**:
+  - **`app/auth.py`**: Added `ADMIN_USER_ID` env var, `is_admin()` helper, `get_admin_user()` FastAPI dependency (returns 403 if not admin).
+  - **`app/database.py`**: Added `search_all_profiles_admin()`, `count_all_profiles_admin()`, `get_admin_stats()` — all bypass `user_id` filtering.
+  - **`app/main.py`**: Added 3 new endpoints:
+    - `GET /api/v1/admin/stats` — System-wide stats (total profiles, users, AI queries).
+    - `GET /api/v1/admin/profiles` — All profiles from all users, with search/filter/pagination.
+    - `DELETE /api/v1/admin/profiles/{id}` — Admin-only hard delete of any profile.
+- **Frontend Changes**:
+  - **`src/pages/AdminPage.jsx`** (NEW): Full admin dashboard — stats cards, searchable/sortable/paginated profile table, delete-with-confirm, pagination.
+  - **`src/pages/AdminPage.css`** (NEW): Vedic-themed admin panel styling.
+  - **`src/App.jsx`**: Added `/admin` route.
+  - **`src/components/Navbar.jsx`**: `🛡️ Admin` link appears only for admin user.
+  - **`kundali_frontend/.env.example`**: Added `VITE_ADMIN_EMAIL` documentation.
+- **Credentials for Local Dev**:
+  - **Email**: `test@test.test` | **Password**: `Test@test`
+  - This account is admin by default (`ADMIN_USER_ID=local_test_user_1` in `.env`).
+  - Access admin panel at: [http://localhost:5173/admin](http://localhost:5173/admin)
+- **Production Setup**: Replace `ADMIN_USER_ID` in `kundali_backend/.env` with your Supabase UUID after registering.
+- **All 105 backend tests still passing. Vite build clean (0 errors).**
+- **Files Modified**: `app/auth.py`, `app/database.py`, `app/main.py`, `src/pages/AdminPage.jsx` (NEW), `src/pages/AdminPage.css` (NEW), `src/App.jsx`, `src/components/Navbar.jsx`, `kundali_backend/.env`, `kundali_frontend/.env.example`.
+
+---
+
 ### [2026-09-01 10:22 IST] — Commit `db958ef` / Comprehensive Full-Stack Audit + P0 Critical Bug Fixes (on `develop` branch)
 - **Summary**: Performed a complete code audit covering all 21 backend Python files (214 KB), 14 test files (105 tests), 109 frontend files (738.9 KB), README, PROJECT_STATUS.md, .gitignore, requirements.txt, and .env.example files. Identified 20 issues (5 Critical P0, 7 High P1, 8 Medium P2). Fixed all 5 Critical P0 issues immediately.
 - **Audit Findings**:
