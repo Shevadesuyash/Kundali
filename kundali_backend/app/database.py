@@ -565,3 +565,112 @@ def save_location_cache(query: str, results: List[Dict], source: str = "nominati
                 """,
                 (key, json.dumps(results), source, now)
             )
+
+
+def search_all_profiles_admin(
+    q: Optional[str] = None,
+    gender: Optional[str] = None,
+    tag: Optional[str] = None,
+    page: int = 1,
+    per_page: int = 50,
+) -> List[Dict]:
+    """Admin-only: Returns ALL profiles from ALL users without user_id filtering.
+    Only callable from endpoints protected by get_admin_user() dependency.
+    """
+    placeholder = "%s" if IS_POSTGRES else "?"
+    conditions: List[str] = []
+    params: List[Any] = []
+
+    if q:
+        conditions.append(f"LOWER(name) LIKE {placeholder}")
+        params.append(f"%{q.lower()}%")
+    if gender:
+        conditions.append(f"gender = {placeholder}")
+        params.append(gender)
+    if tag:
+        conditions.append(f"tag = {placeholder}")
+        params.append(tag)
+
+    where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+    offset = (page - 1) * per_page
+
+    with _conn() as con:
+        if IS_POSTGRES:
+            cur = con.cursor()
+            cur.execute(
+                f"SELECT * FROM profiles {where} ORDER BY id DESC LIMIT %s OFFSET %s",
+                params + [per_page, offset]
+            )
+            return [dict(r) for r in cur.fetchall()]
+        else:
+            rows = con.execute(
+                f"SELECT * FROM profiles {where} ORDER BY id DESC LIMIT ? OFFSET ?",
+                params + [per_page, offset]
+            ).fetchall()
+            return [dict(r) for r in rows]
+
+
+def count_all_profiles_admin(
+    q: Optional[str] = None,
+    gender: Optional[str] = None,
+    tag: Optional[str] = None,
+) -> int:
+    """Admin-only: Count ALL profiles regardless of user_id."""
+    placeholder = "%s" if IS_POSTGRES else "?"
+    conditions: List[str] = []
+    params: List[Any] = []
+
+    if q:
+        conditions.append(f"LOWER(name) LIKE {placeholder}")
+        params.append(f"%{q.lower()}%")
+    if gender:
+        conditions.append(f"gender = {placeholder}")
+        params.append(gender)
+    if tag:
+        conditions.append(f"tag = {placeholder}")
+        params.append(tag)
+
+    where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+    with _conn() as con:
+        if IS_POSTGRES:
+            cur = con.cursor()
+            cur.execute(f"SELECT COUNT(*) as cnt FROM profiles {where}", params)
+            row = cur.fetchone()
+            return row["cnt"] if row else 0
+        else:
+            row = con.execute(f"SELECT COUNT(*) FROM profiles {where}", params).fetchone()
+            return row[0] if row else 0
+
+
+def get_admin_stats() -> dict:
+    """Admin dashboard statistics across ALL users."""
+    with _conn() as con:
+        if IS_POSTGRES:
+            cur = con.cursor()
+            cur.execute("SELECT COUNT(*) as total FROM profiles")
+            total = (cur.fetchone() or {}).get("total", 0)
+            cur.execute("SELECT COUNT(*) as cnt FROM profiles WHERE gender='male'")
+            male = (cur.fetchone() or {}).get("cnt", 0)
+            cur.execute("SELECT COUNT(*) as cnt FROM profiles WHERE gender='female'")
+            female = (cur.fetchone() or {}).get("cnt", 0)
+            cur.execute("SELECT COUNT(DISTINCT user_id) as cnt FROM profiles WHERE user_id IS NOT NULL")
+            users = (cur.fetchone() or {}).get("cnt", 0)
+            cur.execute("SELECT COUNT(*) as cnt FROM ai_usage_logs")
+            ai_queries = (cur.fetchone() or {}).get("cnt", 0)
+            cur.execute("SELECT COALESCE(SUM(query_count),0) as cnt FROM ai_usage_logs")
+            total_ai = (cur.fetchone() or {}).get("cnt", 0)
+        else:
+            total  = con.execute("SELECT COUNT(*) FROM profiles").fetchone()[0]
+            male   = con.execute("SELECT COUNT(*) FROM profiles WHERE gender='male'").fetchone()[0]
+            female = con.execute("SELECT COUNT(*) FROM profiles WHERE gender='female'").fetchone()[0]
+            users  = con.execute("SELECT COUNT(DISTINCT user_id) FROM profiles WHERE user_id IS NOT NULL").fetchone()[0]
+            ai_queries = con.execute("SELECT COUNT(*) FROM ai_usage_logs").fetchone()[0]
+            total_ai   = con.execute("SELECT COALESCE(SUM(query_count),0) FROM ai_usage_logs").fetchone()[0]
+    return {
+        "total_profiles": total,
+        "male_profiles": male,
+        "female_profiles": female,
+        "unique_users": users,
+        "unique_ips_queried_ai": ai_queries,
+        "total_ai_queries": total_ai,
+    }

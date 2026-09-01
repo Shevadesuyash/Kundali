@@ -16,6 +16,12 @@ const LANGUAGES = [
 export default function Navbar() {
   const { lang, setLang, t } = useLang();
   const { user, isLoggedIn, signOut } = useAuth();
+  const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || '';
+  const isAdmin = isLoggedIn && user && (
+    user.id === 'local_test_user_1' || // offline test admin
+    (ADMIN_EMAIL && user.email === ADMIN_EMAIL) ||
+    user.email === 'test@test.test' // test user is admin in dev
+  );
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
 

@@ -23,12 +23,13 @@ from pydantic import BaseModel
 
 from app import ai_service, database
 from app.rate_limiter import get_client_ip, check_ai_quota, record_ai_usage
-from app.auth import get_optional_user, get_required_user
+from app.auth import get_optional_user, get_required_user, get_admin_user, is_admin, ADMIN_USER_ID
 from app.astro_engine import VedicAstrologyEngine
 from app.database import (
     count_profiles, delete_profile, get_gender_counts,
     get_profile_by_id, save_profile, search_profiles,
     search_profiles_typeahead, update_profile,
+    search_all_profiles_admin, count_all_profiles_admin, get_admin_stats,
 )
 from app.geocode_service import search_locations
 from app.kundali_analyzer import KundaliAnalyzer
@@ -701,6 +702,59 @@ def match_saved_profiles(request: MatchSavedRequest):
         result["ai_reading"] = ai_service.generate_match_reading(result, language=request.language or "en")
 
     return result
+
+
+
+
+# ===========================================================================
+# Admin Endpoints — Protected by get_admin_user() (ADMIN_USER_ID in .env)
+# ===========================================================================
+
+@app.get("/api/v1/admin/stats")
+def admin_stats(current_admin: dict = Depends(get_admin_user)):
+    """Admin dashboard: system-wide statistics across all users."""
+    stats = get_admin_stats()
+    return {
+        **stats,
+        "admin_id": current_admin["id"],
+        "admin_email": current_admin.get("email"),
+    }
+
+
+@app.get("/api/v1/admin/profiles")
+def admin_list_all_profiles(
+    q: str = "",
+    gender: str = "",
+    tag: str = "",
+    page: int = Query(default=1, ge=1),
+    per_page: int = Query(default=50, ge=1, le=200),
+    current_admin: dict = Depends(get_admin_user),
+):
+    """Admin: List ALL profiles from ALL users (no user_id filter)."""
+    rows  = search_all_profiles_admin(q or None, gender or None, tag or None, page, per_page)
+    total = count_all_profiles_admin(q or None, gender or None, tag or None)
+    items = [_row_to_summary(r) for r in rows]
+    gender_counts = get_gender_counts()
+    return {
+        "profiles": [p.model_dump() for p in items],
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "male_count": gender_counts.get("male", 0),
+        "female_count": gender_counts.get("female", 0),
+        "admin_mode": True,
+    }
+
+
+@app.delete(
+    "/api/v1/admin/profiles/{profile_id}",
+    responses={404: {"model": ErrorResponse}},
+)
+def admin_delete_profile(profile_id: int, current_admin: dict = Depends(get_admin_user)):
+    """Admin: Hard-delete any profile by ID (bypasses user ownership check)."""
+    if not delete_profile(profile_id):
+        raise HTTPException(status_code=404, detail="Profile not found")
+    return {"deleted": True, "id": profile_id, "deleted_by_admin": current_admin["id"]}
 
 
 @app.get("/api/v1/geocode")
