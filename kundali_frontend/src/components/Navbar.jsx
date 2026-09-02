@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { useLang } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import SupportDeveloper from './SupportDeveloper';
@@ -17,7 +17,6 @@ const LANGUAGES = [
 export default function Navbar() {
   const { lang, setLang, t } = useLang();
   const { user, isLoggedIn, signOut } = useAuth();
-  const location = useLocation();
 
   const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@kundali.app';
   const isAdmin = isLoggedIn && user && (
@@ -35,33 +34,29 @@ export default function Navbar() {
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Close mobile menu on route change
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [location.pathname]);
-
   return (
     <>
-      <header className="navbar-wrapper">
-        <div className="navbar-container">
+      <header className="navbar">
+        <div className="container navbar__inner">
           {/* Brand */}
-          <NavLink to="/" className="navbar-brand">
-            <span className="brand-icon">✦</span>
-            <span className="brand-text">{t('nav.brand')}</span>
+          <NavLink to="/" className="navbar__brand">
+            <span className="navbar__brand-mark">✦</span>
+            <span>{t('nav.brand')}</span>
           </NavLink>
 
           {/* Desktop Navigation Links */}
-          <nav className="navbar-nav-links">
-            <NavLink to="/kundali"  className={({ isActive }) => `nav-item${isActive ? ' is-active' : ''}`}>{t('nav.kundali')}</NavLink>
-            <NavLink to="/match"    className={({ isActive }) => `nav-item${isActive ? ' is-active' : ''}`}>{t('nav.match')}</NavLink>
-            <NavLink to="/panchang" className={({ isActive }) => `nav-item${isActive ? ' is-active' : ''}`}>{t('nav.panchang')}</NavLink>
-            <NavLink to="/profiles" className={({ isActive }) => `nav-item${isActive ? ' is-active' : ''}`}>{t('nav.profiles')}</NavLink>
-            <NavLink to="/guide"    className={({ isActive }) => `nav-item${isActive ? ' is-active' : ''}`}>📖 {t('nav.guide')}</NavLink>
+          <nav className="navbar__links">
+            <NavLink to="/kundali"  className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.kundali')}</NavLink>
+            <NavLink to="/match"    className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.match')}</NavLink>
+            <NavLink to="/panchang" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.panchang')}</NavLink>
+            <NavLink to="/profiles" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.profiles')}</NavLink>
+            <NavLink to="/guide"    className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>📖 {t('nav.guide')}</NavLink>
 
+            {/* 🛡️ Admin Panel Link */}
             {isAdmin && (
               <NavLink
                 to="/admin"
-                className={({ isActive }) => `nav-item nav-item--admin${isActive ? ' is-active' : ''}`}
+                className={({ isActive }) => `navbar__link navbar__link--admin${isActive ? ' is-active' : ''}`}
                 title="Admin Control Panel"
               >
                 🛡️ Admin
@@ -69,35 +64,63 @@ export default function Navbar() {
             )}
           </nav>
 
-          {/* Action Cluster */}
-          <div className="navbar-actions">
-            {/* Wallet / Pricing Button */}
+          {/* Right Action Cluster */}
+          <div className="navbar__actions">
+            {/* 🪙 Plans Button */}
             <button
               type="button"
-              className="action-btn action-btn--wallet"
+              className="navbar__dev-btn navbar__plan-btn"
               onClick={() => setShowWalletModal(true)}
-              title="Astro Wallet & Question Plans"
+              title="Astro Wallet & Plans"
             >
-              🪙 <span className="btn-label-desktop">{lang === 'mr' ? 'प्लॅन्स' : lang === 'hi' ? 'प्लान्स' : 'Plans'}</span>
+              🪙 <span className="btn-text-desktop">{lang === 'mr' ? 'प्लॅन्स' : lang === 'hi' ? 'प्लान्स' : 'Plans'}</span>
             </button>
 
-            {/* Support Creator */}
+            {/* ☕ Support Button */}
             <button
               type="button"
-              className="action-btn action-btn--support"
+              className="navbar__dev-btn"
               onClick={() => setShowSupportModal(true)}
               title="Support the Creator"
             >
-              ☕ <span className="btn-label-desktop">{lang === 'mr' ? 'सहकार्य' : lang === 'hi' ? 'सहयोग' : 'Support'}</span>
+              ☕ <span className="btn-text-desktop">{lang === 'mr' ? 'सहकार्य' : 'Support'}</span>
             </button>
 
-            {/* Language Selector (Desktop) */}
-            <div className="lang-switcher" role="group" aria-label="Language Selector">
+            {/* 👤 Auth Pill or Sign In */}
+            {isLoggedIn ? (
+              <div className="navbar__user-pill" title={user.email}>
+                <span className="user-avatar">👤</span>
+                <span className="user-email">{user.email?.split('@')[0]}</span>
+                <button
+                  type="button"
+                  className="btn-signout"
+                  onClick={() => setShowSettingsModal(true)}
+                  title="Account Settings / Change Password"
+                >
+                  ⚙️
+                </button>
+                <button
+                  type="button"
+                  className="btn-signout"
+                  onClick={signOut}
+                  title="Sign Out"
+                >
+                  🚪
+                </button>
+              </div>
+            ) : (
+              <NavLink to="/login" className="navbar__link navbar__login-btn">
+                🔑 <span>{lang === 'mr' ? 'लॉग इन' : lang === 'hi' ? 'लॉग इन' : 'Sign In'}</span>
+              </NavLink>
+            )}
+
+            {/* 🌐 Language Switcher */}
+            <div className="lang-toggle" role="group" aria-label="Language">
               {LANGUAGES.map((l) => (
                 <button
                   key={l.code}
                   type="button"
-                  className={`lang-pill${lang === l.code ? ' is-active' : ''}`}
+                  className={`lang-btn${lang === l.code ? ' is-active' : ''}`}
                   onClick={() => setLang(l.code)}
                   aria-pressed={lang === l.code}
                 >
@@ -106,40 +129,12 @@ export default function Navbar() {
               ))}
             </div>
 
-            {/* Auth Pill or Login Button */}
-            {isLoggedIn ? (
-              <div className="user-pill-container" title={user.email}>
-                <span className="user-icon">👤</span>
-                <span className="user-name">{user.email?.split('@')[0]}</span>
-                <button
-                  type="button"
-                  className="user-pill-btn"
-                  onClick={() => setShowSettingsModal(true)}
-                  title="Account Settings / Change Password"
-                >
-                  ⚙️
-                </button>
-                <button
-                  type="button"
-                  className="user-pill-btn"
-                  onClick={signOut}
-                  title="Sign Out"
-                >
-                  🚪
-                </button>
-              </div>
-            ) : (
-              <NavLink to="/login" className="action-btn action-btn--login">
-                🔑 <span className="btn-label-desktop">{lang === 'mr' ? 'लॉग इन' : lang === 'hi' ? 'लॉग इन' : 'Sign In'}</span>
-              </NavLink>
-            )}
-
             {/* Mobile Hamburger Toggle */}
             <button
               type="button"
-              className={`hamburger-toggle${mobileMenuOpen ? ' is-open' : ''}`}
+              className={`navbar__hamburger${mobileMenuOpen ? ' is-active' : ''}`}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle Navigation Menu"
+              aria-label="Toggle Menu"
             >
               <span />
               <span />
@@ -148,45 +143,48 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Dropdown Menu */}
+        {/* Mobile Slide-down Drawer */}
         {mobileMenuOpen && (
-          <div className="mobile-drawer">
-            <nav className="mobile-nav-links">
-              <NavLink to="/kundali"  className={({ isActive }) => `mobile-nav-item${isActive ? ' is-active' : ''}`}>{t('nav.kundali')}</NavLink>
-              <NavLink to="/match"    className={({ isActive }) => `mobile-nav-item${isActive ? ' is-active' : ''}`}>{t('nav.match')}</NavLink>
-              <NavLink to="/panchang" className={({ isActive }) => `mobile-nav-item${isActive ? ' is-active' : ''}`}>{t('nav.panchang')}</NavLink>
-              <NavLink to="/profiles" className={({ isActive }) => `mobile-nav-item${isActive ? ' is-active' : ''}`}>{t('nav.profiles')}</NavLink>
-              <NavLink to="/guide"    className={({ isActive }) => `mobile-nav-item${isActive ? ' is-active' : ''}`}>📖 {t('nav.guide')}</NavLink>
+          <div className="navbar__mobile-drawer">
+            <nav className="navbar__mobile-nav">
+              <NavLink to="/kundali"  onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `navbar__mobile-link${isActive ? ' is-active' : ''}`}>{t('nav.kundali')}</NavLink>
+              <NavLink to="/match"    onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `navbar__mobile-link${isActive ? ' is-active' : ''}`}>{t('nav.match')}</NavLink>
+              <NavLink to="/panchang" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `navbar__mobile-link${isActive ? ' is-active' : ''}`}>{t('nav.panchang')}</NavLink>
+              <NavLink to="/profiles" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `navbar__mobile-link${isActive ? ' is-active' : ''}`}>{t('nav.profiles')}</NavLink>
+              <NavLink to="/guide"    onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `navbar__mobile-link${isActive ? ' is-active' : ''}`}>📖 {t('nav.guide')}</NavLink>
 
               {isAdmin && (
-                <NavLink to="/admin" className={({ isActive }) => `mobile-nav-item mobile-nav-item--admin${isActive ? ' is-active' : ''}`}>
-                  🛡️ Admin Control Panel
+                <NavLink to="/admin" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `navbar__mobile-link navbar__mobile-link--admin${isActive ? ' is-active' : ''}`}>
+                  🛡️ Admin Panel
                 </NavLink>
               )}
             </nav>
 
-            <div className="mobile-drawer-actions">
+            <div className="navbar__mobile-actions">
               <button
                 type="button"
-                className="action-btn action-btn--wallet mobile-action-btn"
+                className="navbar__dev-btn navbar__plan-btn"
                 onClick={() => { setMobileMenuOpen(false); setShowWalletModal(true); }}
+                style={{ width: '100%', justifyContent: 'center' }}
               >
                 🪙 {lang === 'mr' ? 'प्लॅन्स आणि वॉलेट' : lang === 'hi' ? 'प्लान्स एवं वॉलेट' : 'Plans & Wallet'}
               </button>
               <button
                 type="button"
-                className="action-btn action-btn--support mobile-action-btn"
+                className="navbar__dev-btn"
                 onClick={() => { setMobileMenuOpen(false); setShowSupportModal(true); }}
+                style={{ width: '100%', justifyContent: 'center' }}
               >
-                ☕ {lang === 'mr' ? 'सहकार्य' : lang === 'hi' ? 'सहयोग' : 'Support Creator'}
+                ☕ {lang === 'mr' ? 'सहकार्य' : 'Support Developer'}
               </button>
               {isLoggedIn && (
                 <button
                   type="button"
-                  className="action-btn mobile-action-btn"
+                  className="navbar__dev-btn"
                   onClick={() => { setMobileMenuOpen(false); setShowSettingsModal(true); }}
+                  style={{ width: '100%', justifyContent: 'center' }}
                 >
-                  ⚙️ {lang === 'mr' ? 'पासवर्ड बदला' : lang === 'hi' ? 'पासवर्ड बदलें' : 'Change Password'}
+                  ⚙️ {lang === 'mr' ? 'पासवर्ड बदला' : 'Change Password'}
                 </button>
               )}
             </div>
@@ -217,3 +215,4 @@ export default function Navbar() {
     </>
   );
 }
+
