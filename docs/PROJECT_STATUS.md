@@ -260,6 +260,20 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-09-02 17:21 IST] — Commit `555dd22` / Phase 4 Visual Browser Testing & Fluid Multi-Screen Fixes (on `develop` branch)
+- **Context**: Session `bb79b74f` — Automated headless Chrome browser capture and verification across 1366px (Desktop), 1280px (Standard Laptop), 1100px (Compact Laptop), 768px (Tablet), and 390px (Mobile).
+- **Issues Identified from Visual Screenshots**:
+  1. Desktop (1280px/1100px): Verbose navigation labels (`Individual Kundali`, `Match Compatibility`, `Profiles Hub`, `📖 Astro Guide`) caused the 4-language toggle to be partially clipped off-screen on the right (`हिंदी` and `ગુજરાતી` hidden).
+  2. Mobile (390px): Chart style buttons (`[South Indian (Fixed Signs)] ...`) and 440px fixed chart grid exceeded screen boundaries, causing the whole page to stretch horizontally and push the mobile top-bar buttons out of view.
+- **Fixes Applied**:
+  1. Streamlined desktop nav labels (`Kundali`, `Match`, `Panchang`, `Profiles`, `📖 Guide`) so all elements, action buttons, and all 4 language pills (`EN | मराठी | हिंदी | ગુજરાતી`) fit comfortably on any standard laptop without clipping.
+  2. Added responsive flex-wrapping and container width clamping (`min(420px, calc(100vw - 32px))`) to `ChartGrid.css` and `HomePage.css`.
+  3. Integrated clean mobile drawer containing language selection, Astro Plans, and Support Developer buttons with fluid transitions.
+- **Test Results**: **134/134 pytest passed**. Build: **0 errors, 33 chunks**. Visual screenshots verified across all target viewports.
+- **Files Modified**: `kundali_frontend/src/components/ChartGrid.css`, `kundali_frontend/src/components/Navbar.css`, `kundali_frontend/src/components/Navbar.jsx`, `kundali_frontend/src/pages/HomePage.css`, `kundali_frontend/src/styles/tokens.css`, `kundali_frontend/src/utils/i18n.js`.
+
+---
+
 ### [2026-09-02 16:35 IST] — Commit `fb244db` / Phase 4 UI Restoration & Vedic Tokens Fix (on `develop` branch)
 - **Context**: Session `bb79b74f` — User reported overlapping buttons and CSS regression in fonts/buttons.
 - **Root Cause & Fixes**:
