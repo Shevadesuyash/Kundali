@@ -260,6 +260,14 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-09-02 15:46 IST] — Commit `81596f4` / Phase 4 Bugfix — Synchronized Root .env & Hardened Supabase JWT Verification (on `develop` branch)
+- **Context**: Session `bb79b74f` — User encountered "⚠️ Authentication required" on `/admin` after login. Root cause analysis revealed root `c:\Users\sheva\antigravity\Kundali\.env` still held template placeholders, overriding `kundali_backend/.env` during uvicorn startup.
+- **Summary**: Fully synchronized root `.env` and `kundali_backend/.env` with valid Supabase PostgreSQL credentials, JWT secret, and admin UUID. Upgraded `app/auth.py` to support dynamic environment lookup and dual secret parsing (raw string + base64-decoded binary keys). Verified all admin endpoints (`/api/v1/admin/stats`, `/profiles`, `/users`, `/wallet`) return HTTP 200 with live Supabase JWTs.
+- **Test Results**: **134/134 passed**. Build: **0 errors, 33 chunks**.
+- **Files Modified**: `c:\Users\sheva\antigravity\Kundali\.env`, `kundali_backend\.env`, `kundali_backend/app/auth.py`, `kundali_backend/app/main.py`.
+
+---
+
 ### [2026-09-02 15:33 IST] — Commit `e981911` / Phase 4 UX & Auth Polish — Strict Profile Isolation, Supabase Anon Key, Wallet & Plans Modal, Modern Responsive Navbar (on `develop` branch)
 - **Context**: Session `bb79b74f` — User feedback resolution: (1) Test users were seeing all 49 profiles due to missing Supabase anon key triggering mock fallback IDs; (2) Admin page showed "Authentication required" for mock token; (3) Requested Wallet / Plans option in UI; (4) Navbar layout and mobile responsiveness needed modern polish and proper spacing.
 - **Summary**: Configured `VITE_SUPABASE_ANON_KEY` in frontend environment to connect seamlessly with Supabase Auth API. Implemented strict profile isolation in `list_profiles` so each user sees only their own saved profiles. Added `GET /api/v1/wallet` endpoint and designed a full-featured `WalletModal.jsx` (Plans & Credits). Redesigned `Navbar.jsx` & `Navbar.css` with a modern, responsive layout, proper top-bar height, action buttons (Plans, Support, Admin, User Pill with Settings & Logout, Language selector), and a mobile hamburger drawer.
