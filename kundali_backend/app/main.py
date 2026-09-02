@@ -611,7 +611,7 @@ def get_user_wallet_endpoint(
     current_user: Optional[dict] = Depends(get_optional_user),
 ):
     """Return user wallet status, credits, active 24h pass, and daily free quota."""
-    client_ip = _get_client_ip(request)
+    client_ip = get_client_ip(request)
     user_id = current_user["id"] if current_user else None
     return database.get_wallet_status(user_id=user_id, ip_address=client_ip)
 
