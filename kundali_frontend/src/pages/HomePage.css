@@ -80,9 +80,22 @@
 }
 
 @media (max-width: 860px) {
-  .hero__inner { grid-template-columns: 1fr; }
-  .hero__chart { order: -1; max-width: 340px; margin: 0 auto; }
+  .hero__inner { 
+    grid-template-columns: 1fr; 
+    gap: 28px;
+    padding: 0 12px;
+  }
+  .hero__chart { 
+    order: -1; 
+    width: 100%;
+    max-width: 100%; 
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+  }
 }
+
+
 
 /* ---- How it works ---- */
 .how {

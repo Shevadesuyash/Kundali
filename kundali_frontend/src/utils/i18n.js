@@ -227,7 +227,11 @@ export const TRANSLATIONS = {
   'nadi.Antya (Kapha)':  { en: 'Antya (Kapha)',                       mr: 'अंत्य (कफ)',                           hi: 'अंत्य (कफ)',                           gu: 'અંત્ય (કફ)' },
   'nadi.Adi':            { en: 'Aadi (Vata)',                         mr: 'आदि (वात)',                            hi: 'आदि (वात)',                            gu: 'આદિ (વાત)' },
   'nadi.Madhya':         { en: 'Madhya (Pitta)',                      mr: 'मध्य (पित्त)',                         hi: 'मध्य (पित्त)',                         gu: 'મધ્ય (પિત્ત)' },
-  'nadi.Antya':          { en: 'Antya (Kapha)',                       mr: 'अंत्य (कफ)',                           hi: 'अंत्य (कफ)',                           gu: 'અંત્ય (કફ)' },
+  'chart.south.btn':   { en: 'South Indian', mr: 'दक्षिण भारतीय', hi: 'दक्षिण भारतीय', gu: 'દક્ષિણ ભારતીય' },
+  'chart.north.btn':   { en: 'North Indian', mr: 'उत्तर भारतीय', hi: 'उत्तर भारतीय', gu: 'ઉત્તર ભારતીય' },
+  'chart.east.btn':    { en: 'East Indian', mr: 'पूर्व भारतीय', hi: 'पूर्व भारतीय', gu: 'પૂર્વ ભારતીય' },
+  'chart.south.label': { en: 'SOUTH INDIAN GRID', mr: 'दक्षिण भारतीय चक्र', hi: 'दक्षिण भारतीय चक्र', gu: 'દક્ષિણ ભારતીય ચક્ર' },
+  'chart.no.data':     { en: 'No chart data available', mr: 'कुंडली डेटा उपलब्ध नाही', hi: 'कुंडली डेटा उपलब्ध नहीं', gu: 'કુંડળી ડેટા ઉપલબ્ધ નથી' },
 
   // ─── General UI ───────────────────────────────────────────────
   'general.loading': { en: 'Calculating your Kundali…', mr: 'आपली कुंडली काढत आहे…', hi: 'आपकी कुंडली बन रही है…', gu: 'તમારી કુંડળી બની રહી છે…' },
@@ -236,6 +240,7 @@ export const TRANSLATIONS = {
   'general.export':  { en: 'Export PDF',                mr: 'पीडीएफ डाउनलोड',       hi: 'पीडीएफ डाउनलोड',        gu: 'પીડીએફ ડાઉનલોડ' },
   'general.search':  { en: 'Search…',                   mr: 'शोधा…',                hi: 'खोजें…',                gu: 'શોધો…' },
 };
+
 
 /**
  * Get a translated string.

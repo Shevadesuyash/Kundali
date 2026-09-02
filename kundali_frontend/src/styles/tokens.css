@@ -125,6 +125,13 @@ input, select {
   padding: 0 24px;
 }
 
+@media (max-width: 640px) {
+  .container {
+    padding: 0 12px;
+  }
+}
+
+
 .hairline {
   border: none;
   border-top: 1px solid var(--color-hairline);
