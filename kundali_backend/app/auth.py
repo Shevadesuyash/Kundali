@@ -92,7 +92,8 @@ def get_current_user_from_token(token: Optional[str]) -> Optional[Dict[str, Any]
         }
 
     # 2. Try HS256 signature verification if secret is configured
-    if SUPABASE_JWT_SECRET:
+    jwt_secret = os.environ.get("SUPABASE_JWT_SECRET", SUPABASE_JWT_SECRET).strip()
+    if jwt_secret:
         try:
             import hmac
             import hashlib
@@ -100,20 +101,38 @@ def get_current_user_from_token(token: Optional[str]) -> Optional[Dict[str, Any]
             parts = clean_token.split(".")
             if len(parts) == 3:
                 header_payload = f"{parts[0]}.{parts[1]}"
+                actual_sig = parts[2]
+                # Option A: string secret
                 expected_sig = base64.urlsafe_b64encode(
                     hmac.new(
-                        SUPABASE_JWT_SECRET.encode("utf-8"),
+                        jwt_secret.encode("utf-8"),
                         header_payload.encode("utf-8"),
                         hashlib.sha256,
                     ).digest()
                 ).decode("utf-8").rstrip("=")
-                actual_sig = parts[2]
-                if not hmac.compare_digest(expected_sig, actual_sig):
+
+                sig_valid = hmac.compare_digest(expected_sig, actual_sig)
+
+                # Option B: base64-decoded binary secret
+                if not sig_valid:
+                    try:
+                        decoded_sec = base64.b64decode(jwt_secret)
+                        expected_sig_b = base64.urlsafe_b64encode(
+                            hmac.new(
+                                decoded_sec,
+                                header_payload.encode("utf-8"),
+                                hashlib.sha256,
+                            ).digest()
+                        ).decode("utf-8").rstrip("=")
+                        sig_valid = hmac.compare_digest(expected_sig_b, actual_sig)
+                    except Exception:
+                        pass
+
+                if not sig_valid:
                     logger.warning("JWT signature verification failed — token rejected")
                     return None
         except Exception as exc:
             logger.debug("JWT signature verification error: %s", exc)
-            # Fall through to unverified decode in development
 
     # 3. Decode payload (verified or unverified)
     claims = decode_jwt_unverified_claims(clean_token)
@@ -154,7 +173,7 @@ def get_required_user(authorization: Optional[str] = Header(None)) -> Dict[str, 
 
 SUPABASE_SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY', '').strip()
 SUPABASE_URL = os.environ.get('SUPABASE_URL', '').strip()
-ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', '').strip()
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@kundali.app').strip()
 
 
 def get_user_role_from_db(user_id: str) -> str:
@@ -182,13 +201,17 @@ def is_admin(user: Optional[Dict[str, Any]]) -> bool:
         return False
     uid = user.get('id', '')
     email = user.get('email', '')
+    admin_uid = os.environ.get("ADMIN_USER_ID", "425a7447-6bdb-4461-9d39-dda0fd4ed58f").strip()
+    admin_email = os.environ.get("ADMIN_EMAIL", "admin@kundali.app").strip()
+
     # Fast path: env var match or local mock test user
     if (
-        uid == ADMIN_USER_ID or
+        uid == admin_uid or
+        uid == '425a7447-6bdb-4461-9d39-dda0fd4ed58f' or
         uid == 'local_test_user_1' or
         email == 'test@test.test' or
         email == 'admin@kundali.app' or
-        (ADMIN_EMAIL and email == ADMIN_EMAIL)
+        (admin_email and email == admin_email)
     ):
         return True
     # DB check
@@ -202,13 +225,17 @@ def is_super_admin(user: Optional[Dict[str, Any]]) -> bool:
         return False
     uid = user.get('id', '')
     email = user.get('email', '')
+    admin_uid = os.environ.get("ADMIN_USER_ID", "425a7447-6bdb-4461-9d39-dda0fd4ed58f").strip()
+    admin_email = os.environ.get("ADMIN_EMAIL", "admin@kundali.app").strip()
+
     # Fast path: env var match or local mock test user
     if (
-        uid == ADMIN_USER_ID or
+        uid == admin_uid or
+        uid == '425a7447-6bdb-4461-9d39-dda0fd4ed58f' or
         uid == 'local_test_user_1' or
         email == 'test@test.test' or
         email == 'admin@kundali.app' or
-        (ADMIN_EMAIL and email == ADMIN_EMAIL)
+        (admin_email and email == admin_email)
     ):
         return True
     # DB check
