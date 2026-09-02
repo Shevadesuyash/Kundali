@@ -260,6 +260,17 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-09-02 16:20 IST] — Commit `d9bea56` / Phase 4 PostgreSQL Bugfix — Location Cache Schema & Profile Typeahead Postgres Fix (on `develop` branch)
+- **Context**: Session `bb79b74f` — User reported birthplace location search and profile auto-fill failed during new profile creation.
+- **Root Cause & Resolution**:
+  1. `location_cache` in Supabase PostgreSQL lacked the `hit_count` column, causing `ON CONFLICT DO UPDATE` to fail with `column location_cache.hit_count does not exist` when caching Nominatim responses. Added `hit_count` column and fixed `COALESCE` query in `save_location_cache()`.
+  2. `search_profiles_typeahead()` had inverted parameter ordering `(q, user_id, limit)` vs `main.py` calling `(q, limit)`, causing PostgreSQL to attempt `user_id = 6` comparison against a `TEXT` column (`operator does not exist: text = integer`). Fixed signature, parameter parsing, and explicit string casting.
+  3. Re-ran live endpoint tests against running server: `GET /api/v1/geocode?q=Mumbai` returned HTTP 200 OK (`Mumbai, Maharashtra... 19.054999, 72.869203`), and `POST /api/v1/profiles` successfully created profile ID 69 with full birth place coordinates.
+- **Test Results**: **134/134 passed**. Build: **0 errors, 33 chunks**.
+- **Files Modified**: `kundali_backend/app/database.py`, `kundali_backend/app/main.py`.
+
+---
+
 ### [2026-09-02 15:46 IST] — Commit `81596f4` / Phase 4 Bugfix — Synchronized Root .env & Hardened Supabase JWT Verification (on `develop` branch)
 - **Context**: Session `bb79b74f` — User encountered "⚠️ Authentication required" on `/admin` after login. Root cause analysis revealed root `c:\Users\sheva\antigravity\Kundali\.env` still held template placeholders, overriding `kundali_backend/.env` during uvicorn startup.
 - **Summary**: Fully synchronized root `.env` and `kundali_backend/.env` with valid Supabase PostgreSQL credentials, JWT secret, and admin UUID. Upgraded `app/auth.py` to support dynamic environment lookup and dual secret parsing (raw string + base64-decoded binary keys). Verified all admin endpoints (`/api/v1/admin/stats`, `/profiles`, `/users`, `/wallet`) return HTTP 200 with live Supabase JWTs.
