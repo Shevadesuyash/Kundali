@@ -39,10 +39,11 @@ def test_kundali_endpoint_success():
     assert "_technical_profile" not in body  # internal field must not leak
 
 
-def test_kundali_endpoint_invalid_date_returns_400():
+def test_kundali_endpoint_invalid_date_returns_422():
+    """Feb 30 is invalid — Pydantic model_validator raises 422 Unprocessable Entity."""
     bad_person = dict(VALID_PERSON, month=2, day=30)
     resp = client.post("/api/v1/kundali", json={"person": bad_person})
-    assert resp.status_code == 400
+    assert resp.status_code == 422  # Pydantic model_validator returns 422 (standard FastAPI)
 
 
 def test_kundali_endpoint_out_of_range_hour_returns_422():

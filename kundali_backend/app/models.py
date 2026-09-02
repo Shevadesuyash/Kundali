@@ -10,7 +10,7 @@ import datetime
 from typing import Any, Dict, List, Literal, Optional
 
 import pytz
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 # --------------------------------------------------------------------------
@@ -82,19 +82,26 @@ class BirthDetails(BaseModel):
     lon: float = Field(..., ge=-180, le=180)
     timezone_str: str = Field(default="Asia/Kolkata")
 
-    @field_validator("day")
+    @field_validator("name", mode="before")
     @classmethod
-    def validate_real_date(cls, v, info):
-        # Cross-field validation happens in model_validator normally,
-        # but a simple calendar check is done in to_person() to keep
-        # this validator lightweight and field-order independent.
+    def strip_and_validate_name(cls, v):
+        """Strip whitespace and reject pure-whitespace names (ISSUE-017)."""
+        if isinstance(v, str):
+            v = v.strip()
+        if not v:
+            raise ValueError("Name must not be empty or whitespace-only.")
         return v
 
-    def to_person(self) -> Person:
+    @model_validator(mode="after")
+    def validate_calendar_date(self) -> "BirthDetails":
+        """Cross-field validation: reject invalid calendar dates like Feb 30, Feb 29 on non-leap years (ISSUE-007)."""
         try:
             datetime.date(self.year, self.month, self.day)
         except ValueError as exc:
             raise ValueError(f"Invalid calendar date: {exc}") from exc
+        return self
+
+    def to_person(self) -> Person:
         return Person(
             self.name, self.year, self.month, self.day,
             self.hour, self.minute, self.lat, self.lon, self.timezone_str,
