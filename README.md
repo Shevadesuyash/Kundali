@@ -234,74 +234,96 @@ npm run dev
 
 ```
 Kundali/
-├── README.md                      # Comprehensive Project Documentation
-├── GEMINI.md                      # Project Directives & Core Rules
+├── README.md                          # Comprehensive Project Documentation
+├── GEMINI.md                          # Project Directives & Core Rules (gitignored)
 ├── docs/
-│   └── PROJECT_STATUS.md          # Single Source of Truth & Append-Only Ledger
-├── kundali_backend/               # FastAPI Backend Service
+│   ├── PROJECT_STATUS.md              # Single Source of Truth & Append-Only Ledger
+│   └── Kundali_Milan_Architecture.png # System Architecture Diagram
+├── kundali_backend/                   # FastAPI Backend Service
 │   ├── app/
-│   │   ├── main.py                # FastAPI Application & 13 REST Endpoints
-│   │   ├── models.py              # Pydantic v2 Schemas & Data Models
-│   │   ├── database.py            # SQLite Persistence Layer & Migrations
-│   │   ├── astro_engine.py        # Swiss Ephemeris Wrapper & Technical Profiles
-│   │   ├── kundali_analyzer.py    # Report Orchestrator
-│   │   ├── dasha.py               # Vimshottari Mahadasha & Antardasha Engine
-│   │   ├── yoga_engine.py         # Classical Vedic Yoga & 12 Kaal Sarp Detector
-│   │   ├── ashtakvarga_engine.py  # BPHS Ashtakvarga (SAV & BAV) Engine
-│   │   ├── chart_engine.py        # D1, D9, and Chandra Chart Formatter
-│   │   ├── matchmaker.py          # Ashtakoot Guna Milan & Papa Samyam Engine
-│   │   ├── ashtakoot.py           # 8-Koota Matching Algorithm
-│   │   ├── kp_engine.py           # Krishnamurti Paddhati (Placidus, Sub Lords, RP)
-│   │   ├── varshapal_engine.py    # Tajika Solar Return, Muntha & Mudda Dasha
-│   │   ├── panchang_engine.py     # Astronomical Panchang (swe.rise_trans)
-│   │   ├── gemstone_engine.py     # Gemstone & Rudraksha Recommendation Engine
-│   │   ├── transit_engine.py      # Real-Time Gochara & Sade Sati Tracker
-│   │   ├── health_analyzer.py     # Ayurvedic Prakriti & Health Engine
-│   │   ├── ai_service.py          # Gemini 2.5 Flash Astrologer Bot
-│   │   └── geocode_service.py     # 3-Tier Geocoding Engine
-│   ├── tests/                     # 56 Backend Pytest Unit Tests
-│   ├── profiles.db                # SQLite Database (Persisted)
-│   └── requirements.txt           # Python Dependencies
-└── kundali_frontend/              # React 18 + Vite Frontend Application
+│   │   ├── main.py                    # FastAPI App, 18 REST Endpoints + Security Middleware
+│   │   ├── models.py                  # Pydantic v2 Schemas & Domain Models
+│   │   ├── database.py                # SQLite/PostgreSQL Dual-Mode Persistence + Connection Pool
+│   │   ├── auth.py                    # JWT Auth: Supabase HS256 Verification + Test User Support
+│   │   ├── rate_limiter.py            # AI Rate Limiter: 1 Free/day (IP), Wallet Credits, 24h Pass
+│   │   ├── astro_engine.py            # Swiss Ephemeris Wrapper & Technical Profile Builder
+│   │   ├── kundali_analyzer.py        # 8-Tab Report Orchestrator
+│   │   ├── dasha.py                   # Vimshottari Mahadasha & 81-Period Antardasha Engine
+│   │   ├── yoga_engine.py             # Classical Vedic Yoga & 12 Kaal Sarp Dosha Detector
+│   │   ├── ashtakvarga_engine.py      # BPHS Ashtakvarga (SAV=337 & BAV) Engine
+│   │   ├── chart_engine.py            # D1, D9, and Chandra Chart Formatter
+│   │   ├── matchmaker.py              # Ashtakoot Guna Milan & Papa Samyam Engine
+│   │   ├── ashtakoot.py               # 8-Koota Matching Algorithm
+│   │   ├── kp_engine.py               # Krishnamurti Paddhati (Placidus, Sub Lords, RP)
+│   │   ├── varshapal_engine.py        # Tajika Solar Return, Muntha & Mudda Dasha
+│   │   ├── panchang_engine.py         # Astronomical Panchang (swe.rise_trans)
+│   │   ├── gemstone_engine.py         # Gemstone & Rudraksha Recommendation Engine
+│   │   ├── transit_engine.py          # Real-Time Gochara & Sade Sati Tracker
+│   │   ├── ai_service.py              # Gemini 2.5 Flash Astrologer Bot
+│   │   └── geocode_service.py         # 3-Tier Geocoding Engine (Memory→SQLite→Nominatim)
+│   ├── tests/                         # 131 Backend Pytest Tests
+│   │   ├── test_api.py                # Core Kundali & Match endpoints
+│   │   ├── test_profiles.py           # Profile CRUD & edge cases
+│   │   ├── test_auth.py               # JWT validation, test user, mock tokens
+│   │   ├── test_astro.py              # Astronomical accuracy & ayanamsha
+│   │   ├── test_matchmaking.py        # Ashtakoot Guna Milan & Papa Samyam
+│   │   └── test_p1_coverage.py        # P1 audit: date edges, Kaal Sarp, endpoints
+│   ├── .env                           # Local secrets (gitignored)
+│   ├── .env.example                   # Template with all required variables
+│   ├── profiles.db                    # SQLite Database (gitignored)
+│   └── requirements.txt               # Python Dependencies
+└── kundali_frontend/                  # React 18 + Vite Frontend Application
     ├── src/
-    │   ├── api/kundaliApi.js      # REST API Client
-    │   ├── pages/
-    │   │   ├── HomePage.jsx       # Landing Page
-    │   │   ├── KundaliPage.jsx    # 8-Tab Kundali Report Page
-    │   │   ├── MatchPage.jsx      # Dual Matchmaking & Jyotish Matrix Page
-    │   │   ├── PanchangPage.jsx   # Standalone Dynamic Panchang Page
-    │   │   ├── ProfilesPage.jsx   # Profile Registry Dashboard Hub
-    │   │   └── GuidePage.jsx      # Vedic Astrology Knowledge Center
-    │   ├── components/
-    │   │   ├── KundaliReport.jsx  # 8-Tab Report Container
-    │   │   ├── ReportTabs.jsx     # Tab Navigation Component
-    │   │   ├── tabs/              # Overview, Planets, Dasha, Doshas, KP, Varshapal, Health
-    │   │   ├── ChartGrid.jsx      # 3-Way Chart Switcher
-    │   │   ├── NorthIndianChart.jsx# North Indian Diamond SVG Chart
-    │   │   ├── SouthIndianChart.jsx# South Indian Box SVG Chart
-    │   │   ├── EastIndianChart.jsx # East Indian Bengali/Odia Rectangular SVG Chart
-    │   │   ├── AIAssistant.jsx    # Context-Aware Gemini AI Astrologer Drawer
-    │   │   ├── JyotishMatchMatrix.jsx# Side-by-Side Comparative Match Matrix
-    │   │   ├── AstroTooltip.jsx   # Contextual '?' Terminology Popovers
-    │   │   ├── HelpAccordion.jsx  # Expandable Beginner & Astrologer Guide Cards
-    │   │   ├── ExportPDFButton.jsx# Client-Side High-Res PDF Export
-    │   │   ├── BulkMatchMatrix.jsx# Multi-Profile Compatibility Leaderboard
-    │   │   ├── TransitTracker.jsx # Live Gochara & Sade Sati Tracker
-    │   │   ├── GemstonePanel.jsx  # Gemstone & Rudraksha Recommendation Panel
-    │   │   ├── DashaTree.jsx      # Interactive Vimshottari Tree
-    │   │   ├── AshtakvargaGrid.jsx# SAV Heatmap & On-Demand BAV Matrices
-    │   │   ├── YogaList.jsx       # Vedic Yogas & Malefic Doshas Cards
-    │   │   ├── ProfileCard.jsx    # Rich Dashboard Profile Card
-    │   │   ├── BirthDetailsForm.jsx# Auto-Fill Birth Details Form
-    │   │   ├── PartnerSlot.jsx    # Dual-Mode Match Partner Card
-    │   │   └── Navbar.jsx         # Navigation Bar with Native 4-Language Switcher
+    │   ├── api/kundaliApi.js           # REST API Client (auto-attaches Bearer token)
     │   ├── context/
-    │   │   └── LanguageContext.jsx# React Context for Language State
+    │   │   ├── LanguageContext.jsx     # React Context for Language State
+    │   │   └── AuthContext.jsx         # Supabase Auth Context + JWT localStorage
+    │   ├── pages/
+    │   │   ├── HomePage.jsx            # Landing Page
+    │   │   ├── KundaliPage.jsx         # 8-Tab Kundali Report Page
+    │   │   ├── MatchPage.jsx           # Dual Matchmaking & Jyotish Matrix Page
+    │   │   ├── PanchangPage.jsx        # Standalone Dynamic Panchang Page
+    │   │   ├── ProfilesPage.jsx        # Profile Registry Dashboard Hub
+    │   │   ├── GuidePage.jsx           # Vedic Astrology Knowledge Center
+    │   │   ├── LoginPage.jsx           # Email/Password + Google OAuth Login
+    │   │   ├── RegisterPage.jsx        # New User Registration
+    │   │   ├── VerifyEmailPage.jsx     # Email Verification Notice
+    │   │   ├── AdminPage.jsx           # 🛡️ Admin Panel — All Users' Profiles + Stats
+    │   │   └── AuthPages.css           # Shared auth page styling
+    │   ├── components/
+    │   │   ├── Navbar.jsx              # Navigation Bar + Language Switcher + Admin Link
+    │   │   ├── KundaliReport.jsx       # 8-Tab Report Container
+    │   │   ├── ReportTabs.jsx          # Tab Navigation Component
+    │   │   ├── tabs/                   # Overview, Planets, Dasha, Doshas, KP, Varshapal, Health
+    │   │   ├── ChartGrid.jsx           # 3-Way Chart Switcher
+    │   │   ├── NorthIndianChart.jsx    # North Indian Diamond SVG Chart
+    │   │   ├── SouthIndianChart.jsx    # South Indian Box SVG Chart
+    │   │   ├── EastIndianChart.jsx     # East Indian Bengali/Odia SVG Chart
+    │   │   ├── AIAssistant.jsx         # Gemini AI Astrologer Drawer + Rate Limit Banner
+    │   │   ├── SaveProfileButton.jsx   # Premium Save — gated for authenticated users
+    │   │   ├── AuthModal.jsx           # Legacy modal (kept for reference)
+    │   │   ├── SupportDeveloper.jsx    # Developer Support Card (PayPal + LinkedIn + Pricing)
+    │   │   ├── JyotishMatchMatrix.jsx  # Side-by-Side Comparative Match Matrix
+    │   │   ├── AstroTooltip.jsx        # Contextual '?' Terminology Popovers
+    │   │   ├── HelpAccordion.jsx       # Expandable Beginner & Astrologer Guide Cards
+    │   │   ├── ExportPDFButton.jsx     # Client-Side High-Res PDF Export
+    │   │   ├── BulkMatchMatrix.jsx     # Multi-Profile Compatibility Leaderboard
+    │   │   ├── TransitTracker.jsx      # Live Gochara & Sade Sati Tracker
+    │   │   ├── GemstonePanel.jsx       # Gemstone & Rudraksha Recommendation Panel
+    │   │   ├── DashaTree.jsx           # Interactive Vimshottari Tree
+    │   │   ├── AshtakvargaGrid.jsx     # SAV Heatmap & On-Demand BAV Matrices
+    │   │   ├── YogaList.jsx            # Vedic Yogas & Malefic Doshas Cards
+    │   │   ├── ProfileCard.jsx         # Rich Dashboard Profile Card
+    │   │   ├── BirthDetailsForm.jsx    # Auto-Fill Birth Details Form
+    │   │   └── PartnerSlot.jsx         # Dual-Mode Match Partner Card
+    │   ├── supabaseClient.js           # Supabase JS Client Initializer
     │   ├── utils/
-    │   │   ├── i18n.js            # 4-Language Translation Dictionaries (EN, MR, HI, GU)
-    │   │   ├── astrology.js       # Helper utilities
-    │   │   └── pdfExport.js       # Multi-Tab PDF Generator
-    │   └── styles/                # CSS Tokens & Parchment Design System
+    │   │   ├── i18n.js                 # 4-Language Translation Dictionaries (EN, MR, HI, GU)
+    │   │   ├── astrology.js            # Helper utilities
+    │   │   └── pdfExport.js            # Multi-Tab PDF Generator
+    │   └── styles/                     # CSS Tokens & Parchment Design System
+    ├── .env                            # Local environment (gitignored)
+    ├── .env.example                    # Template: VITE_API_BASE_URL, VITE_SUPABASE_URL, VITE_ADMIN_EMAIL
     ├── package.json
     └── vite.config.js
 ```
