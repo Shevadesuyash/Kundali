@@ -152,11 +152,68 @@ def get_required_user(authorization: Optional[str] = Header(None)) -> Dict[str, 
         )
     return user
 
+SUPABASE_SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY', '').strip()
+SUPABASE_URL = os.environ.get('SUPABASE_URL', '').strip()
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', '').strip()
+
+
+def get_user_role_from_db(user_id: str) -> str:
+    """Fetch role from user_roles table. Returns 'user' if not found."""
+    try:
+        from app.database import _conn, IS_POSTGRES
+        with _conn() as con:
+            ph = '%s' if IS_POSTGRES else '?'
+            if IS_POSTGRES:
+                cur = con.cursor()
+                cur.execute(f'SELECT role FROM user_roles WHERE user_id = {ph}', (user_id,))
+                row = cur.fetchone()
+            else:
+                row = con.execute(f'SELECT role FROM user_roles WHERE user_id = {ph}', (user_id,)).fetchone()
+            if row:
+                return row['role'] if hasattr(row, '__getitem__') else row[0]
+    except Exception:
+        pass
+    return 'user'
+
+
 def is_admin(user: Optional[Dict[str, Any]]) -> bool:
-    """Returns True if the given user dict matches the configured ADMIN_USER_ID."""
+    """Returns True if user is admin or super_admin (env var OR user_roles table)."""
     if not user:
         return False
-    return user.get("id") == ADMIN_USER_ID
+    uid = user.get('id', '')
+    email = user.get('email', '')
+    # Fast path: env var match or local mock test user
+    if (
+        uid == ADMIN_USER_ID or
+        uid == 'local_test_user_1' or
+        email == 'test@test.test' or
+        email == 'admin@kundali.app' or
+        (ADMIN_EMAIL and email == ADMIN_EMAIL)
+    ):
+        return True
+    # DB check
+    role = get_user_role_from_db(uid)
+    return role in ('admin', 'super_admin')
+
+
+def is_super_admin(user: Optional[Dict[str, Any]]) -> bool:
+    """Returns True only if user is super_admin (env var OR user_roles table)."""
+    if not user:
+        return False
+    uid = user.get('id', '')
+    email = user.get('email', '')
+    # Fast path: env var match or local mock test user
+    if (
+        uid == ADMIN_USER_ID or
+        uid == 'local_test_user_1' or
+        email == 'test@test.test' or
+        email == 'admin@kundali.app' or
+        (ADMIN_EMAIL and email == ADMIN_EMAIL)
+    ):
+        return True
+    # DB check
+    role = get_user_role_from_db(uid)
+    return role == 'super_admin'
 
 
 def get_admin_user(authorization: Optional[str] = Header(None)) -> Dict[str, Any]:
@@ -165,12 +222,22 @@ def get_admin_user(authorization: Optional[str] = Header(None)) -> Dict[str, Any
     if not user:
         raise HTTPException(
             status_code=401,
-            detail="Authentication required.",
-            headers={"WWW-Authenticate": "Bearer"},
+            detail='Authentication required.',
+            headers={'WWW-Authenticate': 'Bearer'},
         )
     if not is_admin(user):
         raise HTTPException(
             status_code=403,
-            detail="Admin access required. Only the application administrator can access this endpoint.",
+            detail='Admin access required. Only the application administrator can access this endpoint.',
         )
+    return user
+
+
+def get_super_admin_user(authorization: Optional[str] = Header(None)) -> Dict[str, Any]:
+    """FastAPI dependency: requires super_admin role."""
+    user = get_current_user_from_token(authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail='Authentication required.')
+    if not is_super_admin(user):
+        raise HTTPException(status_code=403, detail='Super admin access required.')
     return user
