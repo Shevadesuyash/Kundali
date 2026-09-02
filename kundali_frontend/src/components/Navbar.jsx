@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useLang } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-import AuthModal from './AuthModal';
 import SupportDeveloper from './SupportDeveloper';
 import './Navbar.css';
 
@@ -18,11 +17,10 @@ export default function Navbar() {
   const { user, isLoggedIn, signOut } = useAuth();
   const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || '';
   const isAdmin = isLoggedIn && user && (
-    user.id === 'local_test_user_1' || // offline test admin
+    user.id === 'local_test_user_1' ||
     (ADMIN_EMAIL && user.email === ADMIN_EMAIL) ||
-    user.email === 'test@test.test' // test user is admin in dev
+    user.email === 'test@test.test'
   );
-  const [showAuthModal, setShowAuthModal] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
 
   return (
@@ -34,23 +32,25 @@ export default function Navbar() {
             <span>{t('nav.brand')}</span>
           </NavLink>
           <nav className="navbar__links">
-            <NavLink to="/kundali" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>
-              {t('nav.kundali')}
-            </NavLink>
-            <NavLink to="/match" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>
-              {t('nav.match')}
-            </NavLink>
-            <NavLink to="/panchang" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>
-              {t('nav.panchang')}
-            </NavLink>
-            <NavLink to="/profiles" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>
-              {t('nav.profiles')}
-            </NavLink>
-            <NavLink to="/guide" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>
-              📖 {t('nav.guide')}
-            </NavLink>
+            <NavLink to="/kundali"  className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.kundali')}</NavLink>
+            <NavLink to="/match"    className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.match')}</NavLink>
+            <NavLink to="/panchang" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.panchang')}</NavLink>
+            <NavLink to="/profiles" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.profiles')}</NavLink>
+            <NavLink to="/guide"    className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>📖 {t('nav.guide')}</NavLink>
 
-            {/* Developer Support Trigger */}
+            {/* 🛡️ Admin link — visible only to admin user */}
+            {isAdmin && (
+              <NavLink
+                to="/admin"
+                className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}
+                style={{ color: '#c8720a', fontWeight: '700' }}
+                title="Admin Panel"
+              >
+                🛡️ Admin
+              </NavLink>
+            )}
+
+            {/* ☕ Support Developer */}
             <button
               type="button"
               className="navbar__dev-btn"
@@ -60,7 +60,7 @@ export default function Navbar() {
               ☕ {lang === 'mr' ? 'सहकार्य' : 'Support'}
             </button>
 
-            {/* Auth / Account Profile */}
+            {/* 👤 Auth: User pill when logged in, Sign In link when guest */}
             {isLoggedIn ? (
               <div className="navbar__user-pill" title={user.email}>
                 <span className="user-avatar">👤</span>
@@ -75,7 +75,7 @@ export default function Navbar() {
               </NavLink>
             )}
 
-            {/* Clean Native Vedic Multi-Language Selector */}
+            {/* 🌐 Language selector */}
             <div className="lang-toggle" role="group" aria-label="Language">
               {LANGUAGES.map((l) => (
                 <button
@@ -92,12 +92,6 @@ export default function Navbar() {
           </nav>
         </div>
       </header>
-
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-      />
 
       {/* Support Developer Modal */}
       {showSupportModal && (

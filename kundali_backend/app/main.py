@@ -73,6 +73,43 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ---------------------------------------------------------------------------
+# Security Headers Middleware (ISSUE-015)
+# Adds defensive HTTP headers on every response.
+# ---------------------------------------------------------------------------
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request as StarletteRequest
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: StarletteRequest, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "geolocation=(), microphone=()"
+        # Only set HSTS in production (when not localhost)
+        host = request.headers.get("host", "")
+        if "localhost" not in host and "127.0.0.1" not in host:
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        return response
+
+app.add_middleware(SecurityHeadersMiddleware)
+
+# ---------------------------------------------------------------------------
+# Global 500 Exception Handler (ISSUE-016)
+# Prevents internal tracebacks, stack traces, or SQLite paths from leaking.
+# ---------------------------------------------------------------------------
+from fastapi.responses import JSONResponse
+from fastapi import Request as FastAPIRequest
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: FastAPIRequest, exc: Exception):
+    logger.exception("Unhandled exception on %s %s", request.method, request.url.path)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "An internal server error occurred. Please try again later."},
+    )
+
 # Engines are stateless and cheap to share across requests / warm Lambda invocations.
 _astro_engine = VedicAstrologyEngine()
 _kundali_analyzer = KundaliAnalyzer(_astro_engine)
@@ -341,18 +378,26 @@ def match_bulk(request: BulkMatchRequest):
     if not anchor_row:
         raise HTTPException(status_code=404, detail="Anchor profile not found")
 
+    # ISSUE-020: Limit bulk match to prevent CPU exhaustion
+    MAX_BULK_CANDIDATES = 20
+
     try:
         if request.candidate_ids:
+            if len(request.candidate_ids) > MAX_BULK_CANDIDATES:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Too many candidates. Maximum is {MAX_BULK_CANDIDATES} profiles per bulk match request.",
+                )
             cand_rows = [get_profile_by_id(cid) for cid in request.candidate_ids]
             cand_rows = [r for r in cand_rows if r is not None]
         else:
-            all_profiles = search_profiles(q="", page=1, per_page=500)
+            all_profiles = search_profiles(q="", page=1, per_page=MAX_BULK_CANDIDATES + 1)
             cand_rows = [
                 get_profile_by_id(r["id"])
                 for r in all_profiles
                 if r["id"] != request.anchor_profile_id
             ]
-            cand_rows = [r for r in cand_rows if r is not None]
+            cand_rows = [r for r in cand_rows if r is not None][:MAX_BULK_CANDIDATES]
 
         def row_to_person(row):
             return BirthDetails(
