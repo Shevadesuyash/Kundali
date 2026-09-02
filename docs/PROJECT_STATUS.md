@@ -260,6 +260,17 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-09-02 16:35 IST] — Commit `fb244db` / Phase 4 UI Restoration & Vedic Tokens Fix (on `develop` branch)
+- **Context**: Session `bb79b74f` — User reported overlapping buttons and CSS regression in fonts/buttons.
+- **Root Cause & Fixes**:
+  1. Restored canonical BEM classes (`.navbar`, `.navbar__inner`, `.navbar__links`, `.navbar__link`, `.lang-toggle`, `.lang-btn`, `.navbar__user-pill`).
+  2. Added missing CSS token aliases in `tokens.css` (`--color-copper`, `--color-text-main`, `--color-text-muted`, `--color-bg-card`, `--font-serif`), ensuring all buttons and text across the entire application render with their proper font family, gold/copper palette, and styling.
+  3. Structured desktop and mobile layouts with clean flex spacing to eliminate overlapping buttons across laptop and mobile views.
+- **Test Results**: **134/134 passed**. Build: **0 errors, 33 chunks**.
+- **Files Modified**: `kundali_frontend/src/styles/tokens.css`, `kundali_frontend/src/components/Navbar.jsx`, `kundali_frontend/src/components/Navbar.css`.
+
+---
+
 ### [2026-09-02 16:27 IST] — Commit `f98e78e` / Phase 4 UI/UX Polish — Fluid Auto-Fit Responsive Navbar & Window Overflow Prevention (on `develop` branch)
 - **Context**: Session `bb79b74f` — User feedback: Navbar buttons exceeded screen bounds, causing horizontal shifting and misaligned top bar on laptops and varied resolutions.
 - **Root Cause & Fixes**:
