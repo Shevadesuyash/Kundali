@@ -260,6 +260,20 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-09-02 15:33 IST] — Commit `e981911` / Phase 4 UX & Auth Polish — Strict Profile Isolation, Supabase Anon Key, Wallet & Plans Modal, Modern Responsive Navbar (on `develop` branch)
+- **Context**: Session `bb79b74f` — User feedback resolution: (1) Test users were seeing all 49 profiles due to missing Supabase anon key triggering mock fallback IDs; (2) Admin page showed "Authentication required" for mock token; (3) Requested Wallet / Plans option in UI; (4) Navbar layout and mobile responsiveness needed modern polish and proper spacing.
+- **Summary**: Configured `VITE_SUPABASE_ANON_KEY` in frontend environment to connect seamlessly with Supabase Auth API. Implemented strict profile isolation in `list_profiles` so each user sees only their own saved profiles. Added `GET /api/v1/wallet` endpoint and designed a full-featured `WalletModal.jsx` (Plans & Credits). Redesigned `Navbar.jsx` & `Navbar.css` with a modern, responsive layout, proper top-bar height, action buttons (Plans, Support, Admin, User Pill with Settings & Logout, Language selector), and a mobile hamburger drawer.
+- **Fixes Applied**:
+  1. **Supabase Frontend Auth Integration**: Added valid `VITE_SUPABASE_ANON_KEY` to `kundali_frontend/.env`. Logins now authenticate directly with Supabase, returning real JWT tokens and UUIDs (`admin@kundali.app` -> `425a7447-...`, `testuser2@kundali.app` -> `5f43fa49-...`).
+  2. **Strict Profile Isolation**: Updated `app/main.py` and `app/database.py` to enforce strict scoping (`WHERE user_id = %s` for logged-in users; `WHERE user_id IS NULL` for guests). Regular users now see strictly their own profiles in Profiles Hub.
+  3. **Astro Wallet & Pricing Modal (`WalletModal.jsx`)**: Added wallet/pricing modal accessible from the navbar with current credit count, 24h pass countdown timer, and 3 plan cards (Explorer Pack: ₹49/50 Qs, 24h Pass: ₹49/24h, Pro Astrologer: ₹149/mo).
+  4. **Backend Wallet API**: Added `GET /api/v1/wallet` in `main.py` and `get_wallet_status()` in `database.py` returning credits, tier, 24h pass expiration, and daily free quota status.
+  5. **Modern Responsive Navbar**: Redesigned navbar with fixed blur backdrop, proper container spacing, clean brand typography, organized action cluster, and a mobile hamburger menu drawer for phones and laptops.
+- **Test Results**: **134/134 passed**. Build: **0 errors, 33 chunks**.
+- **Files Modified/Created**: `kundali_frontend/.env`, `kundali_frontend/src/api/kundaliApi.js`, `kundali_frontend/src/components/WalletModal.jsx` (NEW), `kundali_frontend/src/components/WalletModal.css` (NEW), `kundali_frontend/src/components/Navbar.jsx`, `kundali_frontend/src/components/Navbar.css`, `kundali_frontend/src/context/AuthContext.jsx`, `kundali_backend/app/database.py`, `kundali_backend/app/main.py`.
+
+---
+
 ### [2026-09-02 15:15 IST] — Commit `8adb0e8` / Phase 4: Supabase PostgreSQL Integration, Multi-Level Admin Roles & Password Management Portal (on `develop` branch)
 - **Context**: Session `bb79b74f` — Implementing Phase 4 per user directive: integrating Supabase PostgreSQL in Mumbai region, multi-level admin access (`super_admin`, `admin`, `user`), admin password management portal, and sample test accounts. No merge to `main` until user confirmation.
 - **Summary**: Full Supabase PostgreSQL 17.6 database wired with connection pooling. Created all 5 tables in Supabase Postgres and migrated all 28 existing profiles safely. Implemented a 3-tier role authorization system in FastAPI backend and transformed AdminPage into a 3-tab portal (Dashboard, Profiles, Users) with password reset and role modification. Added user-facing Change Password modal in Navbar. Created 4 live accounts in Supabase Auth.
