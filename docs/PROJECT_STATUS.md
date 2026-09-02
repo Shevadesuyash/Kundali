@@ -260,6 +260,40 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-09-02 13:55 IST] — Commit `9c7089c` / Phase 3 P1 Audit Fixes + 26 New Tests (on `develop` branch)
+- **Context**: Session `bb79b74f` — Continuing from audit report `audit_report.md`. User invoked @PROJECT_STATUS.md, @audit_report.md, and @project-status-sync/SKILL.md to continue resolving remaining open issues.
+- **Summary**: Resolved all 7 remaining P1 issues from the comprehensive audit report. Added 26 new tests (total test count: 131, up from 105). Code-split the frontend bundle from 1.54 MB monolith into 30+ lazy-loaded chunks.
+- **Fixes Applied**:
+  1. **ISSUE-007 — Leap year Feb 29 cross-validation**: Replaced no-op `field_validator` with `model_validator(mode="after")` in `BirthDetails`. Feb 29 on non-leap years, Apr 31, Feb 30 now correctly rejected at HTTP 422 before reaching the astro engine.
+  2. **ISSUE-008/009 — PostgreSQL connection pooling + SQLite thread-local**: `database.py` now uses `psycopg2.pool.ThreadedConnectionPool(min=1, max=10)` for PostgreSQL (prevents Supabase free-tier 25-connection exhaustion). SQLite now uses `threading.local` to reuse one connection per thread (no more open-close per request).
+  3. **ISSUE-011 — Rate limiter expired 24h pass fallback**: After a 24h pass expires, code now correctly checks `credits > 0` before falling to IP free tier. Added new `wallet_exhausted` return type that blocks logged-in users with no credits from consuming shared IP quota.
+  4. **ISSUE-012 — `kundali_frontend/.env` missing**: Created `kundali_frontend/.env` with `VITE_API_BASE_URL`, `VITE_SUPABASE_URL`, `VITE_ADMIN_EMAIL` for local development.
+  5. **ISSUE-014 — 1.54 MB bundle code splitting**: `App.jsx` now uses `React.lazy + Suspense` for route-level lazy loading. Bundle split into 30+ chunks. Initial load: 484 KB (was 1.54 MB). Added `<PageLoader />` spinner for chunk transitions.
+  6. **ISSUE-017 — Whitespace-only names accepted**: Added `strip_and_validate_name` field_validator to `BirthDetails` — strips leading/trailing whitespace and rejects pure-whitespace names.
+  7. **test_api.py updated**: Fixed test expectation from 400 → 422 for invalid calendar date (Pydantic model_validator correctly raises 422).
+- **New Test File**: `kundali_backend/tests/test_p1_coverage.py` — 26 new tests covering:
+  - Date edge cases: Feb 29 leap year, Feb 29 non-leap (1900), Feb 30, Apr 31, Dec 31, Jan 1
+  - Name validation: whitespace-only reject, leading/trailing strip, Unicode Devanagari, empty
+  - Auth JWT: expired JWT → None, garbage token → None, empty Bearer → None, None → None, test token still resolves
+  - All 12 Kaal Sarp variant names present in `YogaEngine` source
+  - API endpoints: `/panchang` 200 + invalid date, PATCH profile, DELETE profile, 404 edge cases, `/match-saved`, `/match-saved` 404
+  - Rate limiter: `wallet_exhausted` type blocks user with 0 credits
+- **Test Results**: **131/131 passed** (was 105). Build: 0 errors, 30+ chunks.
+- **Files Modified**: `app/models.py`, `app/database.py`, `app/rate_limiter.py`, `src/App.jsx`, `kundali_frontend/.env` (NEW), `tests/test_p1_coverage.py` (NEW), `tests/test_api.py`.
+- **Next Planned Actions**:
+  - ISSUE-013: Consolidate AuthModal → /login redirect (remove duplicate login UI)
+  - ISSUE-019: Update README file tree (auth pages, admin panel, rate_limiter, auth.py)
+  - ISSUE-020: Add `/match-bulk` profile count limit
+  - ISSUE-015: CSRF protection header check
+
+---
+
+### [2026-09-01 16:13 IST] — Commit `55861e3` / Profile Visibility Fix + Orphan Profile Migration (on `develop` branch)
+- **Summary**: Fixed root cause of profiles not showing after auth was implemented — 7 family profiles had `user_id=NULL` (saved before auth). Auto-migration added to `init_db()`. `list_profiles` endpoint now filters by current user's ID via `Depends(get_optional_user)`.
+- **Files Modified**: `app/database.py`, `app/main.py`.
+
+---
+
 ### [2026-09-01 15:59 IST] — Commit `b5ba927` / Admin Control Panel (on `develop` branch)
 - **Summary**: Implemented a complete Admin Control Panel with authentication-gated access. The admin is identified by `ADMIN_USER_ID` in `.env`. Admin can view ALL profiles from all users (not just their own), see system-wide statistics, and permanently delete any profile.
 - **Backend Changes**:
