@@ -260,6 +260,19 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-09-02 16:27 IST] — Commit `f98e78e` / Phase 4 UI/UX Polish — Fluid Auto-Fit Responsive Navbar & Window Overflow Prevention (on `develop` branch)
+- **Context**: Session `bb79b74f` — User feedback: Navbar buttons exceeded screen bounds, causing horizontal shifting and misaligned top bar on laptops and varied resolutions.
+- **Root Cause & Fixes**:
+  1. **Root Containment**: Added `overflow-x: hidden` and `max-width: 100vw` to `html, body, #root` in `tokens.css` with strict box-sizing containment, preventing any element from pushing the viewport horizontally.
+  2. **Auto-Adjusting Fluid Navbar (`Navbar.jsx`, `Navbar.css`)**:
+     - Modernized the sticky navbar with `max-width: 1240px`, compact 60px height, and proportional button padding.
+     - Set a responsive `1100px` breakpoint that collapses navigation into an animated mobile drawer on standard laptops, tablets, and phones without breaking or wrapping.
+     - Added direct single-tap triggers in the mobile drawer for **Plans & Wallet**, **Support Creator**, and **Change Password**.
+- **Test Results**: **134/134 passed**. Build: **0 errors, 33 chunks**.
+- **Files Modified**: `kundali_frontend/src/styles/tokens.css`, `kundali_frontend/src/components/Navbar.jsx`, `kundali_frontend/src/components/Navbar.css`.
+
+---
+
 ### [2026-09-02 16:20 IST] — Commit `d9bea56` / Phase 4 PostgreSQL Bugfix — Location Cache Schema & Profile Typeahead Postgres Fix (on `develop` branch)
 - **Context**: Session `bb79b74f` — User reported birthplace location search and profile auto-fill failed during new profile creation.
 - **Root Cause & Resolution**:
