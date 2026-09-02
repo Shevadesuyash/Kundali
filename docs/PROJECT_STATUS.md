@@ -260,6 +260,28 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-09-02 14:06 IST] — Commit `78ba191` / Phase 3 P2 Audit Fixes — All Remaining Issues Resolved (on `develop` branch)
+- **Context**: Session `bb79b74f` — Continuing immediately after P1 fixes. User invoked @task.md, @PROJECT_STATUS.md, @project-status-sync/SKILL.md to continue resolving remaining P2 issues from the comprehensive audit report.
+- **Summary**: Resolved all 5 remaining P2 issues from the audit. All 20 issues from the comprehensive audit report are now resolved. 131/131 tests passing. Build: 0 errors.
+- **Fixes Applied**:
+  1. **ISSUE-013 — Dead AuthModal code in Navbar**: Removed `AuthModal` import, `showAuthModal` state, and the unreachable `<AuthModal isOpen={false} />` render. The "Sign In" button already routes to `/login` via `NavLink` — no modal was ever triggered. Also cleaned up: moved Admin NavLink into correct position in nav flow.
+  2. **ISSUE-015 — Security Headers**: Added `SecurityHeadersMiddleware(BaseHTTPMiddleware)` to `main.py` — applies on every response: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: geolocation=(), microphone=()`, `Strict-Transport-Security` (production only, not localhost).
+  3. **ISSUE-016 — Internal error leakage**: Added global `@app.exception_handler(Exception)` — all unhandled exceptions now return `{"detail": "An internal server error occurred. Please try again later."}` instead of raw tracebacks, SQLite file paths, or Python stack frames.
+  4. **ISSUE-019 — README file tree outdated**: Completely rewrote the Repository File Structure section. Added: `auth.py`, `rate_limiter.py`, `LoginPage.jsx`, `RegisterPage.jsx`, `VerifyEmailPage.jsx`, `AdminPage.jsx`, `AuthContext.jsx`, `SupportDeveloper.jsx`, `SaveProfileButton.jsx`, `supabaseClient.js`, `.env` and `.env.example` for both services. Test count corrected to 131.
+  5. **ISSUE-020 — `/match-bulk` no limit**: Added `MAX_BULK_CANDIDATES = 20` cap. Explicit 400 returned if `candidate_ids` exceeds 20. Auto-discovery mode now fetches at most 21 profiles (was 500 — potential DoS via CPU exhaustion).
+- **Test Results**: **131/131 passed**. Build: **0 errors, 32 chunks**.
+- **Files Modified**: `src/components/Navbar.jsx`, `app/main.py`, `README.md`.
+- **Status of Full Audit (20/20 issues)**: ✅ ALL RESOLVED
+  - P0 (5/5): requirements.txt, .env.example files, JWT exp check, HS256 sig verify ✅
+  - P1 (7/7): Date validation, PG pooling, SQLite thread-local, rate limiter fallback, frontend .env, code splitting, name whitespace ✅
+  - P2 (8/8): AuthModal cleanup, security headers, error sanitization, README, bulk limit ✅
+- **Next Planned Actions**:
+  - Phase 4: Supabase production integration (set `DATABASE_URL` + `SUPABASE_JWT_SECRET` in `.env`)
+  - Merge `develop` → `main` when user confirms stability
+  - Payment gateway integration (Razorpay/PayPal) — final phase as decided
+
+---
+
 ### [2026-09-02 13:55 IST] — Commit `9c7089c` / Phase 3 P1 Audit Fixes + 26 New Tests (on `develop` branch)
 - **Context**: Session `bb79b74f` — Continuing from audit report `audit_report.md`. User invoked @PROJECT_STATUS.md, @audit_report.md, and @project-status-sync/SKILL.md to continue resolving remaining open issues.
 - **Summary**: Resolved all 7 remaining P1 issues from the comprehensive audit report. Added 26 new tests (total test count: 131, up from 105). Code-split the frontend bundle from 1.54 MB monolith into 30+ lazy-loaded chunks.
