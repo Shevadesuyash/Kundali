@@ -43,7 +43,7 @@ export default function Navbar() {
   return (
     <>
       <header className="navbar-wrapper">
-        <div className="container navbar-container">
+        <div className="navbar-container">
           {/* Brand */}
           <NavLink to="/" className="navbar-brand">
             <span className="brand-icon">✦</span>
@@ -91,6 +91,21 @@ export default function Navbar() {
               ☕ <span className="btn-label-desktop">{lang === 'mr' ? 'सहकार्य' : lang === 'hi' ? 'सहयोग' : 'Support'}</span>
             </button>
 
+            {/* Language Selector (Desktop) */}
+            <div className="lang-switcher" role="group" aria-label="Language Selector">
+              {LANGUAGES.map((l) => (
+                <button
+                  key={l.code}
+                  type="button"
+                  className={`lang-pill${lang === l.code ? ' is-active' : ''}`}
+                  onClick={() => setLang(l.code)}
+                  aria-pressed={lang === l.code}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </div>
+
             {/* Auth Pill or Login Button */}
             {isLoggedIn ? (
               <div className="user-pill-container" title={user.email}>
@@ -115,24 +130,9 @@ export default function Navbar() {
               </div>
             ) : (
               <NavLink to="/login" className="action-btn action-btn--login">
-                🔑 {lang === 'mr' ? 'लॉग इन' : lang === 'hi' ? 'लॉग इन' : 'Sign In'}
+                🔑 <span className="btn-label-desktop">{lang === 'mr' ? 'लॉग इन' : lang === 'hi' ? 'लॉग इन' : 'Sign In'}</span>
               </NavLink>
             )}
-
-            {/* Language Selector */}
-            <div className="lang-switcher" role="group" aria-label="Language Selector">
-              {LANGUAGES.map((l) => (
-                <button
-                  key={l.code}
-                  type="button"
-                  className={`lang-pill${lang === l.code ? ' is-active' : ''}`}
-                  onClick={() => setLang(l.code)}
-                  aria-pressed={lang === l.code}
-                >
-                  {l.label}
-                </button>
-              ))}
-            </div>
 
             {/* Mobile Hamburger Toggle */}
             <button
@@ -164,6 +164,32 @@ export default function Navbar() {
                 </NavLink>
               )}
             </nav>
+
+            <div className="mobile-drawer-actions">
+              <button
+                type="button"
+                className="action-btn action-btn--wallet mobile-action-btn"
+                onClick={() => { setMobileMenuOpen(false); setShowWalletModal(true); }}
+              >
+                🪙 {lang === 'mr' ? 'प्लॅन्स आणि वॉलेट' : lang === 'hi' ? 'प्लान्स एवं वॉलेट' : 'Plans & Wallet'}
+              </button>
+              <button
+                type="button"
+                className="action-btn action-btn--support mobile-action-btn"
+                onClick={() => { setMobileMenuOpen(false); setShowSupportModal(true); }}
+              >
+                ☕ {lang === 'mr' ? 'सहकार्य' : lang === 'hi' ? 'सहयोग' : 'Support Creator'}
+              </button>
+              {isLoggedIn && (
+                <button
+                  type="button"
+                  className="action-btn mobile-action-btn"
+                  onClick={() => { setMobileMenuOpen(false); setShowSettingsModal(true); }}
+                >
+                  ⚙️ {lang === 'mr' ? 'पासवर्ड बदला' : lang === 'hi' ? 'पासवर्ड बदलें' : 'Change Password'}
+                </button>
+              )}
+            </div>
           </div>
         )}
       </header>
