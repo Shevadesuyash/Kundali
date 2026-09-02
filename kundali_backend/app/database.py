@@ -326,7 +326,7 @@ def save_profile(
                 """,
                 (user_id, name, gender, year, month, day, hour, minute, lat, lon,
                  timezone_str, birth_place, moon_sign, nakshatra, lagna,
-                 1 if is_manglik else 0, active_dasha, tag, now)
+                 bool(is_manglik), active_dasha, tag, now)
             )
             row = cur.fetchone()
             return row["id"] if row else 1
@@ -355,6 +355,9 @@ def update_profile(profile_id: int, user_id: Optional[str] = None, **fields) -> 
     updates = {k: v for k, v in fields.items() if k in ALLOWED}
     if not updates:
         return False
+
+    if "is_manglik" in updates:
+        updates["is_manglik"] = bool(updates["is_manglik"]) if IS_POSTGRES else (1 if updates["is_manglik"] else 0)
 
     with _conn() as con:
         if IS_POSTGRES:
@@ -614,6 +617,100 @@ def save_location_cache(query: str, results: List[Dict], source: str = "nominati
                 """,
                 (key, json.dumps(results), source, now)
             )
+
+
+
+# ---------------------------------------------------------------------------
+# User Roles
+# ---------------------------------------------------------------------------
+
+def get_user_role(user_id: str) -> str:
+    """Get user role from user_roles table."""
+    try:
+        placeholder = '%s' if IS_POSTGRES else '?'
+        with _conn() as con:
+            if IS_POSTGRES:
+                cur = con.cursor()
+                cur.execute(f'SELECT role FROM user_roles WHERE user_id = {placeholder}', (user_id,))
+                row = cur.fetchone()
+            else:
+                # SQLite: create user_roles if needed
+                con.execute("CREATE TABLE IF NOT EXISTS user_roles (user_id TEXT PRIMARY KEY, email TEXT, role TEXT DEFAULT 'user', display_name TEXT, updated_at TEXT, updated_by TEXT)")
+                row = con.execute(f'SELECT role FROM user_roles WHERE user_id = {placeholder}', (user_id,)).fetchone()
+            if row:
+                return dict(row).get('role', 'user')
+    except Exception:
+        pass
+    return 'user'
+
+
+def set_user_role(user_id: str, email: str, role: str, updated_by: str = None, display_name: str = None) -> bool:
+    """Set or update a user's role."""
+    now = datetime.now(timezone.utc).isoformat()
+    try:
+        with _conn() as con:
+            if IS_POSTGRES:
+                cur = con.cursor()
+                cur.execute("""
+                    INSERT INTO user_roles (user_id, email, role, display_name, updated_at, updated_by)
+                    VALUES (%s,%s,%s,%s,%s,%s)
+                    ON CONFLICT (user_id) DO UPDATE SET
+                        email=EXCLUDED.email, role=EXCLUDED.role,
+                        display_name=EXCLUDED.display_name,
+                        updated_at=EXCLUDED.updated_at, updated_by=EXCLUDED.updated_by
+                """, (user_id, email, role, display_name, now, updated_by))
+            else:
+                con.execute("CREATE TABLE IF NOT EXISTS user_roles (user_id TEXT PRIMARY KEY, email TEXT, role TEXT DEFAULT 'user', display_name TEXT, updated_at TEXT, updated_by TEXT)")
+                con.execute("""
+                    INSERT OR REPLACE INTO user_roles (user_id, email, role, display_name, updated_at, updated_by)
+                    VALUES (?,?,?,?,?,?)
+                """, (user_id, email, role, display_name, now, updated_by))
+            return True
+    except Exception as e:
+        logger.error('set_user_role failed: %s', e)
+        return False
+
+
+def list_all_users_with_roles() -> List[Dict]:
+    """List all unique user_ids with their role, email, and profile count."""
+    with _conn() as con:
+        if IS_POSTGRES:
+            cur = con.cursor()
+            cur.execute("""
+                SELECT
+                    p.user_id,
+                    COALESCE(ur.email, '') as email,
+                    COALESCE(ur.role, 'user') as role,
+                    COALESCE(ur.display_name, '') as display_name,
+                    COUNT(p.id) as profile_count,
+                    MAX(p.created_at) as last_active
+                FROM profiles p
+                LEFT JOIN user_roles ur ON p.user_id = ur.user_id
+                WHERE p.user_id IS NOT NULL
+                GROUP BY p.user_id, ur.email, ur.role, ur.display_name
+                ORDER BY profile_count DESC
+            """)
+            rows = cur.fetchall()
+        else:
+            try:
+                con.execute("CREATE TABLE IF NOT EXISTS user_roles (user_id TEXT PRIMARY KEY, email TEXT, role TEXT DEFAULT 'user', display_name TEXT, updated_at TEXT, updated_by TEXT)")
+            except Exception:
+                pass
+            rows = con.execute("""
+                SELECT
+                    p.user_id,
+                    COALESCE(ur.email, '') as email,
+                    COALESCE(ur.role, 'user') as role,
+                    COALESCE(ur.display_name, '') as display_name,
+                    COUNT(p.id) as profile_count,
+                    MAX(p.created_at) as last_active
+                FROM profiles p
+                LEFT JOIN user_roles ur ON p.user_id = ur.user_id
+                WHERE p.user_id IS NOT NULL
+                GROUP BY p.user_id, ur.email, ur.role, ur.display_name
+                ORDER BY profile_count DESC
+            """).fetchall()
+        return [dict(r) for r in rows]
 
 
 def search_all_profiles_admin(

@@ -116,3 +116,134 @@
   color: var(--color-text-dim, #6b7280);
 }
 .admin-access-denied h2 { color: #dc2626; margin-bottom: 0.5rem; }
+
+/* ─── Admin Tabs ───────────────────────────────────────────────────────── */
+.admin-tab-nav {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--color-hairline, #e2d9cc);
+  margin-bottom: 1.5rem;
+}
+.admin-tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-muted, #57534e);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+  margin-bottom: -2px;
+}
+.admin-tab-btn:hover {
+  color: var(--color-copper, #c8720a);
+}
+.admin-tab-btn.is-active {
+  color: var(--color-copper, #c8720a);
+  border-bottom-color: var(--color-copper, #c8720a);
+}
+.tab-lock {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.admin-tab-panel {
+  animation: fadeIn 0.2s ease-in;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.admin-superadmin-warning {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  border-radius: 10px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.warning-icon { font-size: 1.8rem; }
+
+.admin-error-box {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.88rem;
+}
+
+/* ─── User Actions & Role Select ────────────────────────────────────────── */
+.user-actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.role-select {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-hairline, #e2d9cc);
+  background: #fff;
+  cursor: pointer;
+}
+.btn-admin-action {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  border-radius: 6px;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-admin-action:hover {
+  background: #e2e8f0;
+}
+
+/* ─── Reset Password Form ───────────────────────────────────────────────── */
+.reset-pw-row td {
+  background: #fafaf9 !important;
+  padding: 0.75rem 1.25rem !important;
+  border-bottom: 1px dashed var(--color-hairline, #e2d9cc) !important;
+}
+.reset-pw-form {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.reset-pw-input {
+  padding: 0.35rem 0.65rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  min-width: 180px;
+}
+.btn-admin-save {
+  background: var(--color-copper, #c8720a);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-admin-save:hover {
+  background: #a65a00;
+}
+.reset-msg {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.msg-ok { color: #16a34a; }
+.msg-err { color: #dc2626; }

@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { useLang } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import SupportDeveloper from './SupportDeveloper';
+import UserSettingsModal from './UserSettingsModal';
 import './Navbar.css';
 
 const LANGUAGES = [
@@ -15,13 +16,18 @@ const LANGUAGES = [
 export default function Navbar() {
   const { lang, setLang, t } = useLang();
   const { user, isLoggedIn, signOut } = useAuth();
-  const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || '';
+  const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@kundali.app';
   const isAdmin = isLoggedIn && user && (
     user.id === 'local_test_user_1' ||
+    user.id === '425a7447-6bdb-4461-9d39-dda0fd4ed58f' ||
+    user.email === 'admin@kundali.app' ||
+    user.email === 'test@test.test' ||
     (ADMIN_EMAIL && user.email === ADMIN_EMAIL) ||
-    user.email === 'test@test.test'
+    user.app_metadata?.role === 'super_admin' ||
+    user.app_metadata?.role === 'admin'
   );
   const [showSupportModal, setShowSupportModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   return (
     <>
@@ -65,6 +71,15 @@ export default function Navbar() {
               <div className="navbar__user-pill" title={user.email}>
                 <span className="user-avatar">👤</span>
                 <span className="user-email">{user.email?.split('@')[0]}</span>
+                <button
+                  type="button"
+                  className="btn-signout"
+                  onClick={() => setShowSettingsModal(true)}
+                  title="Account Settings / Change Password"
+                  style={{ marginRight: '2px' }}
+                >
+                  ⚙️
+                </button>
                 <button type="button" className="btn-signout" onClick={signOut} title="Sign Out">
                   🚪
                 </button>
@@ -101,6 +116,12 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {/* User Settings Modal (Change Password) */}
+      <UserSettingsModal
+        isOpen={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
+      />
     </>
   );
 }

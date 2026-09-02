@@ -23,13 +23,14 @@ from pydantic import BaseModel
 
 from app import ai_service, database
 from app.rate_limiter import get_client_ip, check_ai_quota, record_ai_usage
-from app.auth import get_optional_user, get_required_user, get_admin_user, is_admin, ADMIN_USER_ID
+from app.auth import get_optional_user, get_required_user, get_admin_user, get_super_admin_user, is_admin, ADMIN_USER_ID
 from app.astro_engine import VedicAstrologyEngine
 from app.database import (
     count_profiles, delete_profile, get_gender_counts,
     get_profile_by_id, save_profile, search_profiles,
     search_profiles_typeahead, update_profile,
     search_all_profiles_admin, count_all_profiles_admin, get_admin_stats,
+    list_all_users_with_roles, set_user_role,
 )
 from app.geocode_service import search_locations
 from app.kundali_analyzer import KundaliAnalyzer
@@ -503,7 +504,7 @@ def _row_to_summary(row: dict) -> ProfileSummary:
         is_manglik=bool(row["is_manglik"]),
         active_dasha=row.get("active_dasha"),
         tag=row.get("tag", "self"),
-        created_at=row["created_at"],
+        created_at=str(row["created_at"]) if row.get("created_at") is not None else "",
     )
 
 
@@ -520,7 +521,7 @@ def _row_to_detail(row: dict) -> ProfileDetail:
         is_manglik=bool(row["is_manglik"]),
         active_dasha=row.get("active_dasha"),
         tag=row.get("tag", "self"),
-        created_at=row["created_at"],
+        created_at=str(row["created_at"]) if row.get("created_at") is not None else "",
     )
 
 
@@ -802,6 +803,94 @@ def admin_delete_profile(profile_id: int, current_admin: dict = Depends(get_admi
     if not delete_profile(profile_id):
         raise HTTPException(status_code=404, detail="Profile not found")
     return {"deleted": True, "id": profile_id, "deleted_by_admin": current_admin["id"]}
+
+
+# ---------------------------------------------------------------------------
+# Admin: User Management Endpoints
+# ---------------------------------------------------------------------------
+
+@app.get('/api/v1/admin/users')
+def admin_list_users(current_user: dict = Depends(get_admin_user)):
+    """List all users with their roles and profile counts. Admin access required."""
+    users = list_all_users_with_roles()
+    return {'users': users, 'total': len(users)}
+
+
+@app.patch('/api/v1/admin/users/{user_id}/role')
+def admin_set_user_role(
+    user_id: str,
+    body: dict,
+    current_user: dict = Depends(get_super_admin_user),
+):
+    """Set a user's role (super_admin only). Body: {role: 'user'|'admin'|'super_admin', email: str}"""
+    role = body.get('role', 'user')
+    email = body.get('email', '')
+    display_name = body.get('display_name', '')
+    if role not in ('user', 'admin', 'super_admin'):
+        raise HTTPException(status_code=400, detail=f'Invalid role: {role}. Must be user, admin, or super_admin.')
+    success = set_user_role(user_id, email, role, updated_by=current_user['id'], display_name=display_name)
+    if not success:
+        raise HTTPException(status_code=500, detail='Failed to update role.')
+    return {'user_id': user_id, 'role': role, 'updated_by': current_user['id']}
+
+
+@app.post('/api/v1/admin/users/{user_id}/reset-password')
+def admin_reset_user_password(
+    user_id: str,
+    body: dict,
+    current_user: dict = Depends(get_super_admin_user),
+):
+    """
+    Reset a user's password via Supabase Admin API.
+    Body: {new_password: str}  (optional — if not provided, sends a reset email)
+    """
+    import os, httpx
+    supabase_url = os.environ.get('SUPABASE_URL', '').strip()
+    service_key = os.environ.get('SUPABASE_SERVICE_ROLE_KEY', '').strip()
+    if not supabase_url or not service_key:
+        raise HTTPException(
+            status_code=503,
+            detail='Supabase Admin API not configured. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.',
+        )
+
+    new_password = body.get('new_password', '').strip()
+    headers = {
+        'apikey': service_key,
+        'Authorization': f'Bearer {service_key}',
+        'Content-Type': 'application/json',
+    }
+
+    try:
+        if new_password:
+            # Direct password set
+            resp = httpx.put(
+                f'{supabase_url}/auth/v1/admin/users/{user_id}',
+                headers=headers,
+                json={'password': new_password},
+                timeout=15,
+            )
+        else:
+            # Send password reset email (requires user email)
+            email = body.get('email', '')
+            if not email:
+                raise HTTPException(status_code=400, detail='Either new_password or email is required.')
+            resp = httpx.post(
+                f'{supabase_url}/auth/v1/recover',
+                headers={'apikey': service_key, 'Content-Type': 'application/json'},
+                json={'email': email},
+                timeout=15,
+            )
+
+        if resp.status_code not in (200, 204):
+            raise HTTPException(status_code=resp.status_code, detail=f'Supabase error: {resp.text[:200]}')
+
+        action = 'Password updated' if new_password else 'Password reset email sent'
+        return {'user_id': user_id, 'status': 'success', 'action': action, 'updated_by': current_user['id']}
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception('admin_reset_user_password failed')
+        raise HTTPException(status_code=500, detail='Password reset failed. Check server logs.')
 
 
 @app.get("/api/v1/geocode")
