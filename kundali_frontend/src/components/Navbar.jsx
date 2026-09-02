@@ -37,20 +37,21 @@ export default function Navbar() {
   return (
     <>
       <header className="navbar">
-        <div className="container navbar__inner">
+        <div className="navbar__inner">
           {/* Brand */}
           <NavLink to="/" className="navbar__brand">
             <span className="navbar__brand-mark">✦</span>
             <span>{t('nav.brand')}</span>
           </NavLink>
 
+
           {/* Desktop Navigation Links */}
           <nav className="navbar__links">
-            <NavLink to="/kundali"  className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.kundali')}</NavLink>
-            <NavLink to="/match"    className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.match')}</NavLink>
-            <NavLink to="/panchang" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.panchang')}</NavLink>
-            <NavLink to="/profiles" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.profiles')}</NavLink>
-            <NavLink to="/guide"    className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>📖 {t('nav.guide')}</NavLink>
+            <NavLink to="/kundali"  className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{lang === 'mr' ? 'कुंडली' : lang === 'hi' ? 'कुंडली' : 'Kundali'}</NavLink>
+            <NavLink to="/match"    className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{lang === 'mr' ? 'गुणमिलन' : lang === 'hi' ? 'गुणमिलान' : 'Match'}</NavLink>
+            <NavLink to="/panchang" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{lang === 'mr' ? 'पंचांग' : lang === 'hi' ? 'पंचांग' : 'Panchang'}</NavLink>
+            <NavLink to="/profiles" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{lang === 'mr' ? 'प्रोफाइल्स' : lang === 'hi' ? 'प्रोफाइल' : 'Profiles'}</NavLink>
+            <NavLink to="/guide"    className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>📖 {lang === 'mr' ? 'मार्गदर्शन' : lang === 'hi' ? 'मार्गदर्शिका' : 'Guide'}</NavLink>
 
             {/* 🛡️ Admin Panel Link */}
             {isAdmin && (
@@ -66,24 +67,24 @@ export default function Navbar() {
 
           {/* Right Action Cluster */}
           <div className="navbar__actions">
-            {/* 🪙 Plans Button */}
+            {/* 🪙 Plans Button (Desktop) */}
             <button
               type="button"
               className="navbar__dev-btn navbar__plan-btn"
               onClick={() => setShowWalletModal(true)}
               title="Astro Wallet & Plans"
             >
-              🪙 <span className="btn-text-desktop">{lang === 'mr' ? 'प्लॅन्स' : lang === 'hi' ? 'प्लान्स' : 'Plans'}</span>
+              🪙 <span>{lang === 'mr' ? 'प्लॅन्स' : lang === 'hi' ? 'प्लान्स' : 'Plans'}</span>
             </button>
 
-            {/* ☕ Support Button */}
+            {/* ☕ Support Button (Desktop) */}
             <button
               type="button"
               className="navbar__dev-btn"
               onClick={() => setShowSupportModal(true)}
               title="Support the Creator"
             >
-              ☕ <span className="btn-text-desktop">{lang === 'mr' ? 'सहकार्य' : 'Support'}</span>
+              ☕ <span>{lang === 'mr' ? 'सहकार्य' : 'Support'}</span>
             </button>
 
             {/* 👤 Auth Pill or Sign In */}
@@ -109,13 +110,13 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <NavLink to="/login" className="navbar__link navbar__login-btn">
-                🔑 <span>{lang === 'mr' ? 'लॉग इन' : lang === 'hi' ? 'लॉग इन' : 'Sign In'}</span>
+              <NavLink to="/login" className="navbar__link navbar__login-btn" title="Sign In">
+                🔑 <span className="btn-text-desktop">{lang === 'mr' ? 'लॉग इन' : lang === 'hi' ? 'लॉग इन' : 'Sign In'}</span>
               </NavLink>
             )}
 
-            {/* 🌐 Language Switcher */}
-            <div className="lang-toggle" role="group" aria-label="Language">
+            {/* 🌐 Language Switcher (Desktop) */}
+            <div className="lang-toggle navbar__lang-desktop" role="group" aria-label="Language">
               {LANGUAGES.map((l) => (
                 <button
                   key={l.code}
@@ -143,6 +144,7 @@ export default function Navbar() {
           </div>
         </div>
 
+
         {/* Mobile Slide-down Drawer */}
         {mobileMenuOpen && (
           <div className="navbar__mobile-drawer">
@@ -161,6 +163,24 @@ export default function Navbar() {
             </nav>
 
             <div className="navbar__mobile-actions">
+              {/* Language Selection inside Drawer for mobile */}
+              <div className="navbar__mobile-lang-row">
+                <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--color-text-dim)' }}>Language:</span>
+                <div className="lang-toggle" role="group" aria-label="Language">
+                  {LANGUAGES.map((l) => (
+                    <button
+                      key={l.code}
+                      type="button"
+                      className={`lang-btn${lang === l.code ? ' is-active' : ''}`}
+                      onClick={() => setLang(l.code)}
+                      aria-pressed={lang === l.code}
+                    >
+                      {l.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <button
                 type="button"
                 className="navbar__dev-btn navbar__plan-btn"
@@ -172,7 +192,7 @@ export default function Navbar() {
               <button
                 type="button"
                 className="navbar__dev-btn"
-                onClick={() => { setMobileMenuOpen(false); setShowSupportModal(true); }}
+                onClick={() => { setMobileMenuOpen(false); setShowSupportModal(false); setTimeout(() => setShowSupportModal(true), 50); }}
                 style={{ width: '100%', justifyContent: 'center' }}
               >
                 ☕ {lang === 'mr' ? 'सहकार्य' : 'Support Developer'}
@@ -190,6 +210,7 @@ export default function Navbar() {
             </div>
           </div>
         )}
+
       </header>
 
       {/* Support Developer Modal */}
