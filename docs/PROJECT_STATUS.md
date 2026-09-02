@@ -260,6 +260,37 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 > - **Details & Decisions**: <Technical breakdown>
 > ```
 
+### [2026-09-02 15:15 IST] — Commit `8adb0e8` / Phase 4: Supabase PostgreSQL Integration, Multi-Level Admin Roles & Password Management Portal (on `develop` branch)
+- **Context**: Session `bb79b74f` — Implementing Phase 4 per user directive: integrating Supabase PostgreSQL in Mumbai region, multi-level admin access (`super_admin`, `admin`, `user`), admin password management portal, and sample test accounts. No merge to `main` until user confirmation.
+- **Summary**: Full Supabase PostgreSQL 17.6 database wired with connection pooling. Created all 5 tables in Supabase Postgres and migrated all 28 existing profiles safely. Implemented a 3-tier role authorization system in FastAPI backend and transformed AdminPage into a 3-tab portal (Dashboard, Profiles, Users) with password reset and role modification. Added user-facing Change Password modal in Navbar. Created 4 live accounts in Supabase Auth.
+- **Key Deliverables**:
+  1. **Supabase PostgreSQL Integration**: Connected backend to Supabase (`db.hpmrjdnmzluxhdyidizq.supabase.co:5432`) via `psycopg2` `ThreadedConnectionPool(min=1, max=10)`. Created all 5 tables (`profiles`, `ai_usage_logs`, `user_wallets`, `location_cache`, `user_roles`). Migrated existing SQLite profiles to Supabase with full boolean/datetime mapping.
+  2. **Multi-Level Role System**:
+     - `super_admin`: Full system control (manage users, promote/demote roles, reset passwords, view/delete all profiles).
+     - `admin`: View system stats and all user profiles, delete profiles.
+     - `user`: Standard customer role, access only to own profiles and personal settings.
+     - Implemented `is_super_admin()`, `is_admin()`, `get_super_admin_user()`, `get_admin_user()`, `get_user_role()`, `set_user_role()` in `app/auth.py` and `app/database.py`.
+  3. **Admin User Management Endpoints (`app/main.py`)**:
+     - `GET /api/v1/admin/users`: Lists all users with their roles, profile count, and last active timestamp.
+     - `PATCH /api/v1/admin/users/{user_id}/role`: Updates user role (protected by `get_super_admin_user`).
+     - `POST /api/v1/admin/users/{user_id}/reset-password`: Triggers direct password update or recovery email via Supabase Admin API with service role key.
+  4. **Enhanced 3-Tab Admin Portal (`AdminPage.jsx` & `AdminPage.css`)**:
+     - **Tab 1 (Dashboard)**: System metrics (Total profiles, Male/Female counts, Registered users, AI usage, Unique IPs).
+     - **Tab 2 (Profiles)**: Searchable/filterable table of all saved profiles across all users with permanent delete button.
+     - **Tab 3 (Users)**: User directory with color-coded role badges (🔑 super_admin, 🛡️ admin, 👤 user), profile counts, inline password reset form, and live role modification dropdown (restricted to super_admin).
+  5. **User Self-Service Password Management (`UserSettingsModal.jsx`)**:
+     - Added ⚙️ Settings button next to user pill in `Navbar.jsx`.
+     - Users can update their own password securely via `supabase.auth.updateUser()`.
+  6. **4 Test & Admin Accounts Created in Supabase**:
+     - 🔑 `admin@kundali.app` (`Admin@Suyash2024!`) — `super_admin` (User ID: `425a7447-6bdb-4461-9d39-dda0fd4ed58f`)
+     - 👤 `testuser1@kundali.app` (`TestUser1@2024!`) — `user` with male test profile
+     - 👤 `testuser2@kundali.app` (`TestUser2@2024!`) — `user` with female test profile
+     - 👤 `testuser3@kundali.app` (`TestUser3@2024!`) — `user` with family test profiles
+- **Test Results**: **134/134 passed** (including new admin user API tests). Frontend build: **0 errors, 33 chunks**.
+- **Files Modified/Created**: `app/auth.py`, `app/database.py`, `app/main.py`, `tests/test_auth.py`, `src/pages/AdminPage.jsx`, `src/pages/AdminPage.css`, `src/components/Navbar.jsx`, `src/components/UserSettingsModal.jsx` (NEW), `create_test_accounts.py` (NEW), `setup_supabase.py` (NEW).
+
+---
+
 ### [2026-09-02 14:06 IST] — Commit `78ba191` / Phase 3 P2 Audit Fixes — All Remaining Issues Resolved (on `develop` branch)
 - **Context**: Session `bb79b74f` — Continuing immediately after P1 fixes. User invoked @task.md, @PROJECT_STATUS.md, @project-status-sync/SKILL.md to continue resolving remaining P2 issues from the comprehensive audit report.
 - **Summary**: Resolved all 5 remaining P2 issues from the audit. All 20 issues from the comprehensive audit report are now resolved. 131/131 tests passing. Build: 0 errors.
