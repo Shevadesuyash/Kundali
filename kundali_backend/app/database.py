@@ -448,8 +448,13 @@ def search_profiles(
             return [dict(r) for r in rows]
 
 
-def search_profiles_typeahead(q: str, user_id: Optional[str] = None, limit: int = 5) -> List[Dict]:
+def search_profiles_typeahead(q: str, limit: int = 5, user_id: Optional[str] = None) -> List[Dict]:
     """Lightweight search for typeahead dropdown."""
+    # Guard if user_id was accidentally passed as second positional argument
+    if isinstance(limit, str):
+        user_id, limit = limit, 5
+
+    limit = int(limit) if isinstance(limit, (int, float, str)) and str(limit).isdigit() else 5
     placeholder = "%s" if IS_POSTGRES else "?"
     conditions = [f"name ILIKE {placeholder}" if IS_POSTGRES else f"name LIKE {placeholder} COLLATE NOCASE"]
     params = [f"%{q}%"]
@@ -458,7 +463,7 @@ def search_profiles_typeahead(q: str, user_id: Optional[str] = None, limit: int 
         conditions.append("user_id IS NULL")
     elif user_id:
         conditions.append(f"user_id = {placeholder}")
-        params.append(user_id)
+        params.append(str(user_id))
 
     where = "WHERE " + " AND ".join(conditions)
     params.append(limit)
@@ -680,24 +685,24 @@ def save_location_cache(query: str, results: List[Dict], source: str = "nominati
             cur = con.cursor()
             cur.execute(
                 """
-                INSERT INTO location_cache(query, results_json, source, created_at)
-                VALUES (%s, %s, %s, %s)
+                INSERT INTO location_cache(query, results_json, source, hit_count, created_at)
+                VALUES (%s, %s, %s, 1, %s)
                 ON CONFLICT(query) DO UPDATE SET
                   results_json = EXCLUDED.results_json,
                   source = EXCLUDED.source,
-                  hit_count = location_cache.hit_count + 1
+                  hit_count = COALESCE(location_cache.hit_count, 1) + 1
                 """,
                 (key, json.dumps(results), source, now)
             )
         else:
             con.execute(
                 """
-                INSERT INTO location_cache(query, results_json, source, created_at)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO location_cache(query, results_json, source, hit_count, created_at)
+                VALUES (?, ?, ?, 1, ?)
                 ON CONFLICT(query) DO UPDATE SET
                   results_json = excluded.results_json,
                   source = excluded.source,
-                  hit_count = hit_count + 1
+                  hit_count = COALESCE(hit_count, 1) + 1
                 """,
                 (key, json.dumps(results), source, now)
             )

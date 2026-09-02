@@ -620,14 +620,19 @@ def get_user_wallet_endpoint(
     "/api/v1/profiles/search",
     response_model=List[ProfileTypeahead],
 )
-def typeahead_profiles(q: str = Query(default="", min_length=2), limit: int = 5):
+def typeahead_profiles(
+    q: str = Query(default="", min_length=2),
+    limit: int = 5,
+    current_user: Optional[dict] = Depends(get_optional_user),
+):
     """
     Lightweight typeahead endpoint for the auto-fill name dropdown.
     Returns minimal profile fields needed to populate the birth details form.
     """
     if not q or len(q.strip()) < 2:
         return []
-    rows = search_profiles_typeahead(q.strip(), min(limit, 10))
+    effective_user_id = current_user["id"] if current_user else "__guest__"
+    rows = search_profiles_typeahead(q.strip(), limit=min(limit, 10), user_id=effective_user_id)
     return [
         ProfileTypeahead(
             id=r["id"], name=r["name"], gender=r["gender"],
