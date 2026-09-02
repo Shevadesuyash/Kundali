@@ -585,18 +585,14 @@ def list_profiles(
     per_page: int = 20,
     current_user: Optional[dict] = Depends(get_optional_user),
 ):
-    """Search / list saved profiles for the current user (or all if admin)."""
-    # Determine which user_id to filter by
-    if current_user:
-        effective_user_id = current_user["id"]
-    else:
-        effective_user_id = None  # guest: show profiles with no user_id
+    """Search / list saved profiles strictly for the current authenticated user (or guest)."""
+    effective_user_id = current_user["id"] if current_user else "__guest__"
 
     rows  = search_profiles(q or None, gender or None, tag or None, effective_user_id, page, per_page)
     total = count_profiles(q or None, gender or None, tag or None, effective_user_id)
     items = [_row_to_summary(r) for r in rows]
 
-    # Gender counts scoped to this user
+    # Gender counts strictly scoped to this user
     gender_counts = get_gender_counts(user_id=effective_user_id)
 
     return {
@@ -607,6 +603,17 @@ def list_profiles(
         "male_count": gender_counts.get("male", 0),
         "female_count": gender_counts.get("female", 0),
     }
+
+
+@app.get("/api/v1/wallet")
+def get_user_wallet_endpoint(
+    request: Request,
+    current_user: Optional[dict] = Depends(get_optional_user),
+):
+    """Return user wallet status, credits, active 24h pass, and daily free quota."""
+    client_ip = _get_client_ip(request)
+    user_id = current_user["id"] if current_user else None
+    return database.get_wallet_status(user_id=user_id, ip_address=client_ip)
 
 
 @app.get(

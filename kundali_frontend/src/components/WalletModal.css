@@ -1,0 +1,272 @@
+﻿.wallet-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 10, 2, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeInOverlay 0.2s ease;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.wallet-modal-card {
+  background: #FFFDF9;
+  border: 1.5px solid var(--color-hairline, #e2d9cc);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 760px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(45, 20, 0, 0.25);
+  animation: slideUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpModal {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.wallet-modal-close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  color: var(--color-text-dim, #6b7280);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+.wallet-modal-close:hover {
+  background: rgba(0,0,0,0.05);
+  color: #111;
+}
+
+.wallet-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.wallet-modal-icon {
+  font-size: 2.2rem;
+  background: rgba(200, 114, 10, 0.1);
+  border: 1px solid rgba(200, 114, 10, 0.25);
+  border-radius: 14px;
+  padding: 0.6rem 0.8rem;
+}
+
+.wallet-modal-header h2 {
+  margin: 0 0 0.2rem;
+  font-size: 1.45rem;
+  color: var(--color-text-main, #1c1917);
+  font-family: var(--font-display, serif);
+}
+
+.wallet-modal-subtitle {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-dim, #6b7280);
+}
+
+/* Status Banner */
+.wallet-status-banner {
+  background: linear-gradient(135deg, #FFF6EA 0%, #FEF0D8 100%);
+  border: 1px solid #F0D7AE;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.wallet-balance-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  text-align: center;
+}
+
+.wallet-balance-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.balance-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #78350F;
+  font-weight: 700;
+}
+
+.balance-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #92400E;
+}
+
+.text-green { color: #16A34A !important; font-size: 1.1rem !important; }
+.text-orange { color: #D97706 !important; font-size: 1.1rem !important; }
+
+.wallet-balance-divider {
+  width: 1px;
+  height: 40px;
+  background: #E5C38F;
+}
+
+.wallet-pass-active {
+  text-align: center;
+}
+.pass-badge {
+  background: #C8720A;
+  color: #FFF;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  display: inline-block;
+  margin-bottom: 0.4rem;
+}
+.wallet-pass-active p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #78350F;
+}
+
+/* Plans Section */
+.wallet-plans-section h3 {
+  font-size: 1.05rem;
+  margin: 0 0 1rem;
+  color: var(--color-text-main, #1c1917);
+  font-weight: 700;
+}
+
+.wallet-plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.wallet-plan-card {
+  background: #FFF;
+  border: 1.5px solid var(--color-hairline, #e2d9cc);
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.wallet-plan-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
+
+.wallet-plan-card--featured {
+  border-color: #C8720A;
+  background: #FFFCF7;
+  box-shadow: 0 4px 14px rgba(200, 114, 10, 0.12);
+}
+
+.plan-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6B7280;
+  background: #F3F4F6;
+  border-radius: 6px;
+  padding: 0.15rem 0.5rem;
+  width: fit-content;
+  margin-bottom: 0.5rem;
+}
+
+.plan-badge--gold {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.wallet-plan-card h4 {
+  margin: 0 0 0.3rem;
+  font-size: 1.1rem;
+  color: #1C1917;
+}
+
+.plan-price {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--color-copper, #C8720A);
+  margin-bottom: 0.75rem;
+}
+.plan-price span {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #6B7280;
+}
+
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.25rem;
+  flex: 1;
+}
+.plan-features li {
+  font-size: 0.82rem;
+  color: #44403C;
+  margin-bottom: 0.4rem;
+  line-height: 1.4;
+}
+
+.btn-select-plan {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  color: #1E293B;
+  font-size: 0.84rem;
+  font-weight: 700;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  transition: all 0.15s;
+}
+.btn-select-plan:hover {
+  background: #E2E8F0;
+}
+
+.btn-select-plan--gold {
+  background: var(--color-copper, #C8720A);
+  border-color: #C8720A;
+  color: #FFF;
+}
+.btn-select-plan--gold:hover {
+  background: #A65A00;
+}
+
+.wallet-footer-note {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #78716C;
+  border-top: 1px solid var(--color-hairline, #e2d9cc);
+  padding-top: 1rem;
+}
+
+@media (max-width: 640px) {
+  .wallet-modal-card { padding: 1.25rem; }
+  .wallet-plans-grid { grid-template-columns: 1fr; }
+}

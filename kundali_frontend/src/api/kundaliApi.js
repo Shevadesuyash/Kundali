@@ -1,8 +1,18 @@
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
+function getAuthHeaders() {
+  const token = localStorage.getItem('kundali_auth_token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 async function request(path, options = {}) {
   const res = await fetch(`${API_BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...options.headers },
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      ...getAuthHeaders(),
+      ...options.headers,
+    },
     ...options,
   });
 
@@ -213,6 +223,13 @@ export function getVarshapal(person, targetYear) {
     person,
     target_year: targetYear,
   });
+}
+
+// ---------------------------------------------------------------------------
+// Wallet & Pricing
+// ---------------------------------------------------------------------------
+export function getUserWallet() {
+  return request('/api/v1/wallet');
 }
 
 

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useLang } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import SupportDeveloper from './SupportDeveloper';
 import UserSettingsModal from './UserSettingsModal';
+import WalletModal from './WalletModal';
 import './Navbar.css';
 
 const LANGUAGES = [
@@ -16,6 +17,8 @@ const LANGUAGES = [
 export default function Navbar() {
   const { lang, setLang, t } = useLang();
   const { user, isLoggedIn, signOut } = useAuth();
+  const location = useLocation();
+
   const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@kundali.app';
   const isAdmin = isLoggedIn && user && (
     user.id === 'local_test_user_1' ||
@@ -26,77 +29,103 @@ export default function Navbar() {
     user.app_metadata?.role === 'super_admin' ||
     user.app_metadata?.role === 'admin'
   );
+
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showWalletModal, setShowWalletModal] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   return (
     <>
-      <header className="navbar">
-        <div className="container navbar__inner">
-          <NavLink to="/" className="navbar__brand">
-            <span className="navbar__brand-mark">✦</span>
-            <span>{t('nav.brand')}</span>
+      <header className="navbar-wrapper">
+        <div className="container navbar-container">
+          {/* Brand */}
+          <NavLink to="/" className="navbar-brand">
+            <span className="brand-icon">✦</span>
+            <span className="brand-text">{t('nav.brand')}</span>
           </NavLink>
-          <nav className="navbar__links">
-            <NavLink to="/kundali"  className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.kundali')}</NavLink>
-            <NavLink to="/match"    className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.match')}</NavLink>
-            <NavLink to="/panchang" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.panchang')}</NavLink>
-            <NavLink to="/profiles" className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>{t('nav.profiles')}</NavLink>
-            <NavLink to="/guide"    className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}>📖 {t('nav.guide')}</NavLink>
 
-            {/* 🛡️ Admin link — visible only to admin user */}
+          {/* Desktop Navigation Links */}
+          <nav className="navbar-nav-links">
+            <NavLink to="/kundali"  className={({ isActive }) => `nav-item${isActive ? ' is-active' : ''}`}>{t('nav.kundali')}</NavLink>
+            <NavLink to="/match"    className={({ isActive }) => `nav-item${isActive ? ' is-active' : ''}`}>{t('nav.match')}</NavLink>
+            <NavLink to="/panchang" className={({ isActive }) => `nav-item${isActive ? ' is-active' : ''}`}>{t('nav.panchang')}</NavLink>
+            <NavLink to="/profiles" className={({ isActive }) => `nav-item${isActive ? ' is-active' : ''}`}>{t('nav.profiles')}</NavLink>
+            <NavLink to="/guide"    className={({ isActive }) => `nav-item${isActive ? ' is-active' : ''}`}>📖 {t('nav.guide')}</NavLink>
+
             {isAdmin && (
               <NavLink
                 to="/admin"
-                className={({ isActive }) => `navbar__link${isActive ? ' is-active' : ''}`}
-                style={{ color: '#c8720a', fontWeight: '700' }}
-                title="Admin Panel"
+                className={({ isActive }) => `nav-item nav-item--admin${isActive ? ' is-active' : ''}`}
+                title="Admin Control Panel"
               >
                 🛡️ Admin
               </NavLink>
             )}
+          </nav>
 
-            {/* ☕ Support Developer */}
+          {/* Action Cluster */}
+          <div className="navbar-actions">
+            {/* Wallet / Pricing Button */}
             <button
               type="button"
-              className="navbar__dev-btn"
+              className="action-btn action-btn--wallet"
+              onClick={() => setShowWalletModal(true)}
+              title="Astro Wallet & Question Plans"
+            >
+              🪙 <span className="btn-label-desktop">{lang === 'mr' ? 'प्लॅन्स' : lang === 'hi' ? 'प्लान्स' : 'Plans'}</span>
+            </button>
+
+            {/* Support Creator */}
+            <button
+              type="button"
+              className="action-btn action-btn--support"
               onClick={() => setShowSupportModal(true)}
               title="Support the Creator"
             >
-              ☕ {lang === 'mr' ? 'सहकार्य' : 'Support'}
+              ☕ <span className="btn-label-desktop">{lang === 'mr' ? 'सहकार्य' : lang === 'hi' ? 'सहयोग' : 'Support'}</span>
             </button>
 
-            {/* 👤 Auth: User pill when logged in, Sign In link when guest */}
+            {/* Auth Pill or Login Button */}
             {isLoggedIn ? (
-              <div className="navbar__user-pill" title={user.email}>
-                <span className="user-avatar">👤</span>
-                <span className="user-email">{user.email?.split('@')[0]}</span>
+              <div className="user-pill-container" title={user.email}>
+                <span className="user-icon">👤</span>
+                <span className="user-name">{user.email?.split('@')[0]}</span>
                 <button
                   type="button"
-                  className="btn-signout"
+                  className="user-pill-btn"
                   onClick={() => setShowSettingsModal(true)}
                   title="Account Settings / Change Password"
-                  style={{ marginRight: '2px' }}
                 >
                   ⚙️
                 </button>
-                <button type="button" className="btn-signout" onClick={signOut} title="Sign Out">
+                <button
+                  type="button"
+                  className="user-pill-btn"
+                  onClick={signOut}
+                  title="Sign Out"
+                >
                   🚪
                 </button>
               </div>
             ) : (
-              <NavLink to="/login" className="navbar__login-btn">
-                🔑 {lang === 'mr' ? 'लॉग इन' : 'Sign In'}
+              <NavLink to="/login" className="action-btn action-btn--login">
+                🔑 {lang === 'mr' ? 'लॉग इन' : lang === 'hi' ? 'लॉग इन' : 'Sign In'}
               </NavLink>
             )}
 
-            {/* 🌐 Language selector */}
-            <div className="lang-toggle" role="group" aria-label="Language">
+            {/* Language Selector */}
+            <div className="lang-switcher" role="group" aria-label="Language Selector">
               {LANGUAGES.map((l) => (
                 <button
                   key={l.code}
                   type="button"
-                  className={`lang-btn${lang === l.code ? ' is-active' : ''}`}
+                  className={`lang-pill${lang === l.code ? ' is-active' : ''}`}
                   onClick={() => setLang(l.code)}
                   aria-pressed={lang === l.code}
                 >
@@ -104,8 +133,39 @@ export default function Navbar() {
                 </button>
               ))}
             </div>
-          </nav>
+
+            {/* Mobile Hamburger Toggle */}
+            <button
+              type="button"
+              className={`hamburger-toggle${mobileMenuOpen ? ' is-open' : ''}`}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle Navigation Menu"
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        {mobileMenuOpen && (
+          <div className="mobile-drawer">
+            <nav className="mobile-nav-links">
+              <NavLink to="/kundali"  className={({ isActive }) => `mobile-nav-item${isActive ? ' is-active' : ''}`}>{t('nav.kundali')}</NavLink>
+              <NavLink to="/match"    className={({ isActive }) => `mobile-nav-item${isActive ? ' is-active' : ''}`}>{t('nav.match')}</NavLink>
+              <NavLink to="/panchang" className={({ isActive }) => `mobile-nav-item${isActive ? ' is-active' : ''}`}>{t('nav.panchang')}</NavLink>
+              <NavLink to="/profiles" className={({ isActive }) => `mobile-nav-item${isActive ? ' is-active' : ''}`}>{t('nav.profiles')}</NavLink>
+              <NavLink to="/guide"    className={({ isActive }) => `mobile-nav-item${isActive ? ' is-active' : ''}`}>📖 {t('nav.guide')}</NavLink>
+
+              {isAdmin && (
+                <NavLink to="/admin" className={({ isActive }) => `mobile-nav-item mobile-nav-item--admin${isActive ? ' is-active' : ''}`}>
+                  🛡️ Admin Control Panel
+                </NavLink>
+              )}
+            </nav>
+          </div>
+        )}
       </header>
 
       {/* Support Developer Modal */}
@@ -117,10 +177,16 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* User Settings Modal (Change Password) */}
+      {/* User Settings Modal */}
       <UserSettingsModal
         isOpen={showSettingsModal}
         onClose={() => setShowSettingsModal(false)}
+      />
+
+      {/* Wallet & Plans Modal */}
+      <WalletModal
+        isOpen={showWalletModal}
+        onClose={() => setShowWalletModal(false)}
       />
     </>
   );

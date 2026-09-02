@@ -34,12 +34,18 @@ export function AuthProvider({ children }) {
     const savedUser = localStorage.getItem('kundali_auth_user');
 
     if (savedToken && savedUser) {
-      try {
-        setToken(savedToken);
-        setUser(JSON.parse(savedUser));
-      } catch {
+      if (savedToken.startsWith('mock_jwt_local_')) {
+        // Clear stale temporary mock tokens from earlier unconfigured session
         localStorage.removeItem('kundali_auth_token');
         localStorage.removeItem('kundali_auth_user');
+      } else {
+        try {
+          setToken(savedToken);
+          setUser(JSON.parse(savedUser));
+        } catch {
+          localStorage.removeItem('kundali_auth_token');
+          localStorage.removeItem('kundali_auth_user');
+        }
       }
     }
 

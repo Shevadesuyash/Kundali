@@ -410,7 +410,9 @@ def search_profiles(
     params: List[Any] = []
     placeholder = "%s" if IS_POSTGRES else "?"
 
-    if user_id:
+    if user_id == "__guest__":
+        conditions.append("user_id IS NULL")
+    elif user_id:
         conditions.append(f"user_id = {placeholder}")
         params.append(user_id)
     if q:
@@ -452,7 +454,9 @@ def search_profiles_typeahead(q: str, user_id: Optional[str] = None, limit: int 
     conditions = [f"name ILIKE {placeholder}" if IS_POSTGRES else f"name LIKE {placeholder} COLLATE NOCASE"]
     params = [f"%{q}%"]
 
-    if user_id:
+    if user_id == "__guest__":
+        conditions.append("user_id IS NULL")
+    elif user_id:
         conditions.append(f"user_id = {placeholder}")
         params.append(user_id)
 
@@ -501,7 +505,9 @@ def count_profiles(
     params: List[Any] = []
     placeholder = "%s" if IS_POSTGRES else "?"
 
-    if user_id:
+    if user_id == "__guest__":
+        conditions.append("user_id IS NULL")
+    elif user_id:
         conditions.append(f"user_id = {placeholder}")
         params.append(user_id)
     if q:
@@ -532,8 +538,15 @@ def count_profiles(
 def get_gender_counts(user_id: Optional[str] = None) -> Dict[str, int]:
     """Return counts of male and female profiles."""
     placeholder = "%s" if IS_POSTGRES else "?"
-    where = f"WHERE user_id = {placeholder}" if user_id else ""
-    params = [user_id] if user_id else []
+    if user_id == "__guest__":
+        where = "WHERE user_id IS NULL"
+        params: List[Any] = []
+    elif user_id:
+        where = f"WHERE user_id = {placeholder}"
+        params = [user_id]
+    else:
+        where = ""
+        params = []
 
     with _conn() as con:
         if IS_POSTGRES:
@@ -552,6 +565,77 @@ def get_gender_counts(user_id: Optional[str] = None) -> Dict[str, int]:
                 if row["gender"] in counts:
                     counts[row["gender"]] = row["cnt"]
             return counts
+
+
+def get_wallet_status(user_id: Optional[str] = None, ip_address: str = "127.0.0.1") -> Dict:
+    """Return comprehensive wallet, credits, active pass, and free query status."""
+    now = datetime.now(timezone.utc)
+    placeholder = "%s" if IS_POSTGRES else "?"
+
+    with _conn() as con:
+        wallet_data = {"credits": 0, "unlimited_until": None, "tier": "free", "is_unlimited": False}
+        if user_id:
+            if IS_POSTGRES:
+                cur = con.cursor()
+                cur.execute(f"SELECT credits, unlimited_until, tier FROM user_wallets WHERE user_id = {placeholder}", (user_id,))
+                w = cur.fetchone()
+            else:
+                w = con.execute(f"SELECT credits, unlimited_until, tier FROM user_wallets WHERE user_id = {placeholder}", (user_id,)).fetchone()
+            if w:
+                w_dict = dict(w)
+                wallet_data["credits"] = w_dict.get("credits", 0) or 0
+                wallet_data["tier"] = w_dict.get("tier", "free") or "free"
+                unl = w_dict.get("unlimited_until")
+                if unl:
+                    if isinstance(unl, str):
+                        try:
+                            unl_dt = datetime.fromisoformat(unl)
+                        except Exception:
+                            unl_dt = None
+                    else:
+                        unl_dt = unl
+                    if unl_dt:
+                        wallet_data["unlimited_until"] = unl_dt.isoformat()
+                        wallet_data["is_unlimited"] = now < unl_dt
+
+        # Check IP log for free tier availability
+        if IS_POSTGRES:
+            cur = con.cursor()
+            cur.execute(f"SELECT last_query_timestamp, query_count FROM ai_usage_logs WHERE ip_address = {placeholder}", (ip_address,))
+            ip_row = cur.fetchone()
+        else:
+            ip_row = con.execute(f"SELECT last_query_timestamp, query_count FROM ai_usage_logs WHERE ip_address = {placeholder}", (ip_address,)).fetchone()
+
+        free_available = True
+        next_free_utc = None
+        if ip_row:
+            ip_dict = dict(ip_row)
+            last_ts = ip_dict.get("last_query_timestamp")
+            if last_ts:
+                if isinstance(last_ts, str):
+                    try:
+                        last_dt = datetime.fromisoformat(last_ts)
+                    except Exception:
+                        last_dt = None
+                else:
+                    last_dt = last_ts
+                if last_dt:
+                    from datetime import timedelta
+                    reset_time = last_dt + timedelta(hours=24)
+                    if now < reset_time:
+                        free_available = False
+                        next_free_utc = reset_time.isoformat()
+
+        return {
+            "user_id": user_id,
+            "ip_address": ip_address,
+            "credits": wallet_data["credits"],
+            "tier": wallet_data["tier"],
+            "unlimited_until": wallet_data["unlimited_until"],
+            "is_unlimited": wallet_data["is_unlimited"],
+            "free_daily_available": free_available,
+            "next_free_query_utc": next_free_utc,
+        }
 
 
 # ---------------------------------------------------------------------------
