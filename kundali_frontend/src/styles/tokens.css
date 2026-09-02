@@ -11,10 +11,13 @@
   --color-bg: #FEF3E2;
   --color-bg-panel: #FFFFFF;
   --color-bg-panel-raised: #FFF8EF;
+  --color-bg-card: #FFF8EF;
   --color-hairline: rgba(180, 80, 0, 0.16);
   --color-hairline-strong: rgba(180, 80, 0, 0.35);
   --color-gold: #C8720A;
+  --color-copper: #C8720A;
   --color-gold-hover: #E8820A;
+  --color-copper-hover: #E8820A;
   --color-gold-soft: #F9E4C8;
   --color-gold-bright: #F5A623;
   --color-vermilion: #B71C1C;
@@ -22,11 +25,14 @@
   --color-jade: #1B6E41;
   --color-jade-soft: rgba(27, 110, 65, 0.08);
   --color-text: #1C0A00;
+  --color-text-main: #1C0A00;
   --color-text-dim: #6B3A1A;
+  --color-text-muted: #6B3A1A;
   --color-text-faint: #9E6538;
 
   /* Type */
   --font-display: 'Fraunces', 'Georgia', serif;
+  --font-serif: 'Fraunces', 'Georgia', serif;
   --font-body: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
@@ -34,7 +40,7 @@
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 20px;
-  --max-width: 1120px;
+  --max-width: 1160px;
   --shadow-panel: 0 10px 30px -10px rgba(150, 60, 0, 0.12), 0 2px 6px rgba(150, 60, 0, 0.04);
   --shadow-card: 0 4px 14px rgba(180, 80, 0, 0.08);
 }
