@@ -66,18 +66,28 @@ def check_ai_quota(
                         unlimited_dt = unlimited_until
 
                     if unlimited_dt and now < unlimited_dt:
+                        # 24h Pass is still ACTIVE
                         return True, None, "24h Pass Active", {
                             "type": "day_pass",
                             "unlimited_until": unlimited_dt.isoformat(),
                             "credits_remaining": wallet.get("credits", 0),
                         }
+                    # else: 24h pass is EXPIRED — fall through to credit check below
 
+                # Check credits (applies both when no day pass and when day pass expired)
                 credits = wallet.get("credits", 0)
                 if credits > 0:
                     return True, None, f"{credits} Credits Remaining", {
                         "type": "credit",
                         "credits_remaining": credits,
                     }
+
+                # Logged-in user with no valid pass and no credits — block them
+                # (don't let them consume the shared IP free tier quota)
+                return False, None, "No credits remaining. Please purchase a question pack.", {
+                    "type": "wallet_exhausted",
+                    "credits_remaining": 0,
+                }
 
         # 2. Check IP log (Free tier / Guest)
         if IS_POSTGRES:
