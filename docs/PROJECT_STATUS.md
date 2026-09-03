@@ -821,3 +821,28 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
   - `kundali_frontend/src/components/BirthDetailsForm.jsx/css`
   - `kundali_frontend/src/components/PartnerSlot.jsx/css`
   - `kundali_frontend/src/components/SaveProfileButton.jsx/css`
+
+---
+
+### [2026-09-03 22:45 IST] — Investigation: Mars/Jupiter Sign-Boundary + Manglik Bug (Bug #VAIBHAV-001)
+
+- **Context**: User reported that for Vaibhav Barge (14-01-1999 03:12 IST, Kolhapur 16.7028N 74.2405E), the app showed Mars in Virgo House 11 and Manglik=False, while AstroSage reference shows Mars in Libra House 12 and Manglik=HIGH.
+- **Investigation Findings**:
+  - **pyswisseph engine is CORRECT**: `VedicAstrologyEngine.get_technical_profile()` computes Mars=180.698° (Libra), Jupiter=330.17° (Pisces), Manglik=True when called via a fresh Python process with `swe.set_sid_mode(SIDM_LAHIRI)` active.
+  - **Root cause**: `pyswisseph` has global C-level state. Before `swe.set_sid_mode(SIDM_LAHIRI)` is called (which happens inside `VedicAstrologyEngine.__init__()`), `swe.calc_ut` uses a different default ayanamsha (~24.72° instead of ~23.84° Lahiri), producing Mars=179.815° (Virgo) — off by ~0.88°. This shifts sign-boundary planets across the sign line.
+  - The old API server (previously running) did NOT have `set_sid_mode` properly applied when the request was processed, resulting in wrong data displayed to the user.
+  - **Fresh API server with correct init sequence**: Returns Mars=180.698° (Libra), House 12, is_manglik=True, severity="Primary". ✅
+  - All existing 134 tests continued to pass.
+- **Fix Applied**:
+  - No code change needed — `VedicAstrologyEngine.__init__` already correctly calls `swe.set_sid_mode(swe.SIDM_LAHIRI)`. The bug was a stale/old server process issue.
+  - **Prevention**: Added 10 regression tests in `TestMarsJupiterSignBoundaryManglik` class to permanently guard against sign-boundary planet misplacement and Manglik mis-detection for Vaibhav's chart.
+- **Test Results**: **144/144 tests pass** (was 134, +10 new regression tests).
+- **Files Modified**:
+  - `kundali_backend/tests/test_regression_bugs.py` — Added `TestMarsJupiterSignBoundaryManglik` class (10 tests)
+- **Verification** (Live API on fresh server):
+  - Mars: Libra (Tula) 0°41'53", House 12 ✅
+  - Jupiter: Pisces (Meena) 0°10'18", House 5 ✅
+  - Ascendant: Scorpio (Vrishchika) 4°49'56" ✅
+  - is_manglik: True, severity: "Primary (Mars in Manglik house from Lagna)" ✅
+  - mars_house_lagna: 12, mars_house_moon: 12 ✅
+  - papa_points: 5.0 ✅

@@ -353,3 +353,137 @@ class TestYogaEngineUsesRealLagna:
             "on the same planet placements -- house-lordship-based yoga "
             "detection is not actually varying with the ascendant."
         )
+
+
+# ---------------------------------------------------------------------------
+# Bug #VAIBHAV-001: Mars and Jupiter sign-boundary misplacement + Manglik
+#
+# Vaibhav Barge (14-01-1999 03:12 IST, Kolhapur 16.7028N 74.2405E):
+#   - Mars is at sidereal ~0d42' Libra (lon approx 180.70 deg).
+#     App was incorrectly reporting Virgo House 11 (lon approx 179.82 deg).
+#   - Jupiter is at sidereal ~0d10' Pisces (lon approx 330.17 deg).
+#     App was incorrectly reporting Aquarius House 4.
+#   - Manglik should be True (Mars H12 from Lagna AND Moon).
+#     App was incorrectly returning is_manglik=False.
+#
+# Root cause: Old backend process had stale/incorrect swe ayanamsha state.
+# Fix: VedicAstrologyEngine.__init__ always calls swe.set_sid_mode(SIDM_LAHIRI)
+#      at construction. All calculations are fresh on demand (no caching).
+# This test guards against future regressions in Julian Day, UTC conversion,
+# or ayanamsha application that would shift sign-boundary planets.
+# ---------------------------------------------------------------------------
+class TestMarsJupiterSignBoundaryManglik:
+    """
+    Guards against sign-boundary misplacement of Mars and Jupiter
+    for Vaibhav Barge's chart (14-01-1999 03:12 IST, Kolhapur).
+    Reference: AstroSage cross-verified.
+    """
+
+    @pytest.fixture(scope="class")
+    def engine(self):
+        return VedicAstrologyEngine()
+
+    @pytest.fixture(scope="class")
+    def analyzer(self, engine):
+        return KundaliAnalyzer(engine)
+
+    @pytest.fixture(scope="class")
+    def profile(self, engine):
+        person = Person(
+            "Vaibhav Barge",
+            year=1999, month=1, day=14,
+            hour=3, minute=12,
+            lat=16.7028, lon=74.2405,
+            timezone_str="Asia/Kolkata",
+        )
+        return engine.get_technical_profile(person)
+
+    @pytest.fixture(scope="class")
+    def report(self, analyzer, engine):
+        person = Person(
+            "Vaibhav Barge",
+            year=1999, month=1, day=14,
+            hour=3, minute=12,
+            lat=16.7028, lon=74.2405,
+            timezone_str="Asia/Kolkata",
+        )
+        return analyzer.build_report(person, include_charts=False)
+
+    def test_ascendant_is_scorpio(self, profile):
+        """Ascendant must be Scorpio (sign_index=7)."""
+        asc = profile["ascendant"]
+        assert asc["sign_index"] == 7, (
+            f"Expected Ascendant Scorpio (7), got sign_index={asc['sign_index']} ({asc['sign']})"
+        )
+
+    def test_mars_longitude_is_in_libra_range(self, profile):
+        """Mars sidereal longitude must be in Libra (180-210 deg), NOT Virgo (150-180 deg)."""
+        mars_lon = profile["planets"]["Mars"]["longitude"]
+        assert 180.0 <= mars_lon < 210.0, (
+            f"Mars longitude {mars_lon:.4f} deg is not in Libra (180-210 deg). "
+            f"Expected approx 180.70 deg (0d42' Libra). Got sign: {profile['planets']['Mars']['sign']}"
+        )
+
+    def test_mars_sign_is_libra(self, profile):
+        """Mars must be in Libra (sign_index=6), not Virgo (5)."""
+        mars = profile["planets"]["Mars"]
+        assert mars["sign_index"] == 6, (
+            f"Expected Mars in Libra (6), got sign_index={mars['sign_index']} ({mars['sign']}). "
+            f"Mars longitude={mars['longitude']:.4f} deg"
+        )
+
+    def test_mars_house_from_lagna_is_12(self, profile):
+        """Mars must be in House 12 from Lagna (Scorpio Lagna + Libra = H12)."""
+        mars_house = profile["planets"]["Mars"]["house_from_lagna"]
+        assert mars_house == 12, (
+            f"Expected Mars in House 12, got House {mars_house}."
+        )
+
+    def test_jupiter_sign_is_pisces(self, profile):
+        """Jupiter must be in Pisces (sign_index=11), not Aquarius (10)."""
+        jup = profile["planets"]["Jupiter"]
+        assert jup["sign_index"] == 11, (
+            f"Expected Jupiter in Pisces (11), got sign_index={jup['sign_index']} ({jup['sign']}). "
+            f"Jupiter longitude={jup['longitude']:.4f} deg"
+        )
+
+    def test_jupiter_house_from_lagna_is_5(self, profile):
+        """Jupiter must be in House 5 (Pisces from Scorpio Lagna)."""
+        jup_house = profile["planets"]["Jupiter"]["house_from_lagna"]
+        assert jup_house == 5, (
+            f"Expected Jupiter in House 5, got House {jup_house}"
+        )
+
+    def test_is_manglik_true(self, report):
+        """Manglik must be True (Mars in House 12 per STANDARD Parashari)."""
+        manglik = report["manglik_dosha"]
+        assert manglik["is_manglik"] is True, (
+            f"Expected is_manglik=True (Mars H12 from Lagna), "
+            f"got is_manglik={manglik['is_manglik']}. "
+            f"mars_house_lagna={manglik.get('mars_house_lagna')}, "
+            f"mars_sign={manglik.get('mars_sign')}"
+        )
+
+    def test_manglik_from_lagna_true(self, report):
+        """Mars must be Manglik from Lagna."""
+        manglik = report["manglik_dosha"]
+        assert manglik["manglik_from_lagna"] is True, (
+            f"manglik_from_lagna must be True, got {manglik['manglik_from_lagna']}."
+        )
+
+    def test_manglik_from_moon_true(self, report):
+        """Mars must be Manglik from Moon (Moon in Scorpio H1, Mars in Libra = H12 from Moon)."""
+        manglik = report["manglik_dosha"]
+        assert manglik["manglik_from_moon"] is True, (
+            f"manglik_from_moon must be True, got {manglik['manglik_from_moon']}."
+        )
+
+    def test_julian_day_is_correct(self, profile):
+        """Julian Day for 1999-01-13 21:42 UTC must be approx 2451192.404167."""
+        jd = profile.get("julian_day", 0)
+        expected_jd = 2451192.404167
+        assert abs(jd - expected_jd) < 0.001, (
+            f"Julian Day {jd:.6f} differs from expected {expected_jd:.6f}. "
+            f"UTC conversion may be incorrect."
+        )
+
