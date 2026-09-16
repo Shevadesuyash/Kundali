@@ -846,3 +846,22 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
   - is_manglik: True, severity: "Primary (Mars in Manglik house from Lagna)" âœ…
   - mars_house_lagna: 12, mars_house_moon: 12 âœ…
   - papa_points: 5.0 âœ…
+
+---
+
+### [2026-09-16 11:50 IST] — SECURITY: Git History Purge of Leaked Supabase Credentials
+
+- **Summary**: Discovered and remediated hardcoded credentials in setup_supabase.py and create_test_accounts.py committed to GitHub on develop in commit `8adb0e8`.
+- **Credentials Leaked**: DATABASE_URL (DB password), SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL
+- **Remediation**:
+  1. Replaced all hardcoded values with os.environ reads in both scripts
+  2. Added both scripts to .gitignore permanently
+  3. Used git filter-repo --invert-paths to purge from ALL 81 commits in history
+  4. Force-pushed clean history: `2f91840...20a4e79 develop -> develop` ?
+  5. Confirmed main branch was NOT affected
+  6. Verified: `git log --all -S GEb7Q74d9utGjSRu` ? no results ?
+- **?? ACTION REQUIRED — ROTATE THESE IN SUPABASE DASHBOARD**:
+  - DB password: Supabase ? Project Settings ? Database ? Reset password
+  - Service Role key: Supabase ? Project Settings ? API ? Regenerate service_role key
+  - Update .env with new values
+- **Files**: .gitignore, setup_supabase.py, create_test_accounts.py (all git history rewritten)
