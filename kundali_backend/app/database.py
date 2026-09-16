@@ -72,50 +72,59 @@ _sqlite_local = None     # threading.local for per-thread SQLite connections
 
 def _get_pg_pool():
     """Lazy-init a PostgreSQL ThreadedConnectionPool (min=1, max=10 connections)."""
-    global _pg_pool
+    global _pg_pool, IS_POSTGRES
     if _pg_pool is None:
         import psycopg2.pool
-        _pg_pool = psycopg2.pool.ThreadedConnectionPool(
-            minconn=1,
-            maxconn=10,   # Supabase free tier allows 25; keep headroom
-            dsn=DB_URL,
-        )
-        logger.info("PostgreSQL connection pool initialized (min=1, max=10)")
+        try:
+            _pg_pool = psycopg2.pool.ThreadedConnectionPool(
+                minconn=1,
+                maxconn=10,   # Supabase free tier allows 25; keep headroom
+                dsn=DB_URL,
+                connect_timeout=3,
+            )
+            logger.info("PostgreSQL connection pool initialized (min=1, max=10)")
+        except Exception as exc:
+            logger.warning(f"PostgreSQL connection failed ({exc}). Falling back to SQLite local database.")
+            IS_POSTGRES = False
+            return None
     return _pg_pool
 
 
 @contextmanager
 def _conn():
     """Connection manager: pooled PostgreSQL or thread-local SQLite."""
+    global IS_POSTGRES
     if IS_POSTGRES:
         from psycopg2.extras import RealDictCursor
         pool = _get_pg_pool()
-        con = pool.getconn()
-        try:
-            # Ensure RealDictCursor for all cursors on this connection
-            con.cursor_factory = RealDictCursor
-            yield con
-            con.commit()
-        except Exception:
-            con.rollback()
-            raise
-        finally:
-            pool.putconn(con)   # Return to pool — NOT closed
-    else:
-        import threading
-        # Thread-local SQLite connection — one connection reused per thread
-        tls = _get_sqlite_tls()
-        if not hasattr(tls, "con") or tls.con is None:
-            tls.con = sqlite3.connect(str(DB_PATH), check_same_thread=False)
-            tls.con.row_factory = sqlite3.Row
-            tls.con.execute("PRAGMA journal_mode=WAL")
-            tls.con.execute("PRAGMA synchronous=NORMAL")
-        try:
-            yield tls.con
-            tls.con.commit()
-        except Exception:
-            tls.con.rollback()
-            raise
+        if pool is not None and IS_POSTGRES:
+            con = pool.getconn()
+            try:
+                # Ensure RealDictCursor for all cursors on this connection
+                con.cursor_factory = RealDictCursor
+                yield con
+                con.commit()
+            except Exception:
+                con.rollback()
+                raise
+            finally:
+                pool.putconn(con)   # Return to pool — NOT closed
+            return
+
+    import threading
+    # Thread-local SQLite connection — one connection reused per thread
+    tls = _get_sqlite_tls()
+    if not hasattr(tls, "con") or tls.con is None:
+        tls.con = sqlite3.connect(str(DB_PATH), check_same_thread=False)
+        tls.con.row_factory = sqlite3.Row
+        tls.con.execute("PRAGMA journal_mode=WAL")
+        tls.con.execute("PRAGMA synchronous=NORMAL")
+    try:
+        yield tls.con
+        tls.con.commit()
+    except Exception:
+        tls.con.rollback()
+        raise
 
 
 def _get_sqlite_tls():

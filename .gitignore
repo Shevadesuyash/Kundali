@@ -35,9 +35,25 @@ Thumbs.db
 # AI Agent Instructions & Local Workspace Metadata (Present Locally, Untracked in Git)
 .agents/
 GEMINI.md
+SUYASH_README.md
 run.txt
 *.postman_test_run.json
 kundali_backend/PLAN.md
 kundali_frontend/FRONTEND_PLAN.md
 docs/BUGFIXES_AND_NOTES.md
 docs/HANDOFF_AND_ROADMAP.md
+anchor_benchmark_report.md
+skills-lock.json
+.claude/
+agent/
+
+# One-time admin / setup scripts (may read sensitive env vars — never commit)
+kundali_backend/setup_supabase.py
+kundali_backend/create_test_accounts.py
+kundali_backend/seed_*.py
+kundali_backend/migrate_*.py
+
+
+# External API cache files (keep anchor cache for offline CI/CD)
+tests/fixtures/viaveda_cache/*
+!tests/fixtures/viaveda_cache/515d0c171e8cf1ebac143376ced975f723d8e7178151df0e31998dd0dac0936e.json
