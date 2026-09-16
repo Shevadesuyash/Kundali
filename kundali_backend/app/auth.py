@@ -61,16 +61,35 @@ def decode_jwt_unverified_claims(token: str) -> Optional[Dict[str, Any]]:
         return None
 
 
+_jwks_client = None
+
+def _get_jwks_client():
+    global _jwks_client
+    if _jwks_client is None:
+        try:
+            import jwt
+            from jwt import PyJWKClient
+            supa_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
+            if supa_url:
+                jwks_url = f"{supa_url}/auth/v1/.well-known/jwks.json"
+                _jwks_client = PyJWKClient(jwks_url, cache_jwk_set=True, lifespan=3600)
+        except Exception as exc:
+            logger.debug("Failed to initialize JWKS client: %s", exc)
+    return _jwks_client
+
+
 def get_current_user_from_token(token: Optional[str]) -> Optional[Dict[str, Any]]:
     """
     Validates token and returns user dict with 'id' and 'email'.
     Supports:
-    1. Supabase JWT Bearer token (verified with HS256 if SUPABASE_JWT_SECRET set, else unverified decode)
+    1. Supabase JWT Bearer token:
+       - ES256 asymmetric keys verified via Supabase JWKS
+       - HS256 symmetric secret verified with SUPABASE_JWT_SECRET
     2. Local mock test token for 'test@test.test' (offline SQLite testing only)
 
     Security:
     - Always checks `exp` claim — expired tokens return None.
-    - When SUPABASE_JWT_SECRET is configured, verifies HS256 signature.
+    - Verified signatures for both ES256 and HS256 tokens.
     """
     if not token:
         return None
@@ -91,15 +110,48 @@ def get_current_user_from_token(token: Optional[str]) -> Optional[Dict[str, Any]
             "is_test_user": True,
         }
 
-    # 2. Try HS256 signature verification if secret is configured
-    jwt_secret = os.environ.get("SUPABASE_JWT_SECRET", SUPABASE_JWT_SECRET).strip()
-    if jwt_secret:
-        try:
-            import hmac
-            import hashlib
+    parts = clean_token.split(".")
+    if len(parts) != 3:
+        return None
 
-            parts = clean_token.split(".")
-            if len(parts) == 3:
+    # Detect algorithm from JWT header
+    alg = "HS256"
+    try:
+        header_b64 = parts[0]
+        padding = 4 - len(header_b64) % 4
+        if padding and padding != 4:
+            header_b64 += "=" * padding
+        header = json.loads(base64.urlsafe_b64decode(header_b64.encode("utf-8")).decode("utf-8"))
+        alg = header.get("alg", "HS256")
+    except Exception:
+        pass
+
+    claims = None
+
+    # 2. ES256 signature verification via JWKS
+    if alg == "ES256":
+        jwks = _get_jwks_client()
+        if jwks:
+            try:
+                import jwt
+                signing_key = jwks.get_signing_key_from_jwt(clean_token)
+                claims = jwt.decode(
+                    clean_token,
+                    signing_key.key,
+                    algorithms=["ES256"],
+                    options={"verify_aud": False},
+                )
+            except Exception as exc:
+                logger.warning("ES256 JWT signature verification failed: %s", exc)
+                return None
+
+    # 3. HS256 signature verification if secret is configured
+    elif alg == "HS256":
+        jwt_secret = os.environ.get("SUPABASE_JWT_SECRET", SUPABASE_JWT_SECRET).strip()
+        if jwt_secret:
+            try:
+                import hmac
+                import hashlib
                 header_payload = f"{parts[0]}.{parts[1]}"
                 actual_sig = parts[2]
                 # Option A: string secret
@@ -131,11 +183,13 @@ def get_current_user_from_token(token: Optional[str]) -> Optional[Dict[str, Any]
                 if not sig_valid:
                     logger.warning("JWT signature verification failed — token rejected")
                     return None
-        except Exception as exc:
-            logger.debug("JWT signature verification error: %s", exc)
+            except Exception as exc:
+                logger.debug("JWT signature verification error: %s", exc)
 
-    # 3. Decode payload (verified or unverified)
-    claims = decode_jwt_unverified_claims(clean_token)
+    # 4. Decode payload if not already verified via ES256
+    if claims is None:
+        claims = decode_jwt_unverified_claims(clean_token)
+
     if claims and "sub" in claims:
         # Always check expiry
         exp = claims.get("exp")
