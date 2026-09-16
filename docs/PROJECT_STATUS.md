@@ -905,3 +905,26 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 - **Files Modified**:
   - .gitignore (added setup scripts, skill lockfiles, local artifacts)
   - docs/PROJECT_STATUS.md (status appended)
+
+- **Update [2026-09-16 13:10 IST]**:
+  - Enhanced Viaveda test client and comparator with direct **Planetary Positions & D1 Chart House Verification**:
+    - Discovered Viaveda endpoints: ield=jaimini:planetary (returns exact degrees, signs, houses, nakshatras, and pada for all 9 Grahas + Ascendant) and ield=chart:north (returns full D1 Lagna & D9 Navamsha chart layouts).
+    - Verified that **all 9 Grahas (Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, Ketu) + Ascendant match 100% in Signs and Houses** between Viaveda and our Swiss Ephemeris engine.
+    - Verified that planetary degrees match to within **0.0000Â° (0 arcseconds)** for physical planets.
+    - Verified that D1 Lagna chart house occupants across all 12 houses match 100%.
+
+---
+
+### [2026-09-16 13:25 IST] — AUTH & SECURITY: Supabase ES256 Asymmetric JWKS Token Verification
+
+- **Context**: Monitoring server logs revealed `WARNING:app.auth:JWT signature verification failed — token rejected` during user session testing.
+- **Root Cause**: Supabase migrated its default JWT signing algorithm to asymmetric ECC P-256 (`ES256`), whereas `app/auth.py` was verifying using symmetric HMAC-SHA256 (`HS256`) with `SUPABASE_JWT_SECRET`. Modern frontend Supabase sessions were rejected, causing authenticated users (Admin / Test users) to appear unauthenticated.
+- **Fix Applied**:
+  - Integrated `PyJWT` with `PyJWKClient` pointing to `{SUPABASE_URL}/auth/v1/.well-known/jwks.json` with automatic 1-hour cache.
+  - Dynamic algorithm detection in `app/auth.py`: verifies `ES256` via cached public key from JWKS, and verifies `HS256` via `SUPABASE_JWT_SECRET`.
+  - Retained offline mock test tokens for fast local testing.
+- **Verification**:
+  - Verified key retrieval: key ID `a583b990-c3ff-41bd-aecf-a0b2da4b7bf4` retrieved from Supabase JWKS.
+  - All 144 pytest tests pass (100% pass rate).
+  - Live uvicorn server reloaded cleanly with PostgreSQL pool.
+- **Files Modified**: `kundali_backend/app/auth.py`, `docs/PROJECT_STATUS.md`
