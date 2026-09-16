@@ -928,3 +928,36 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
   - All 144 pytest tests pass (100% pass rate).
   - Live uvicorn server reloaded cleanly with PostgreSQL pool.
 - **Files Modified**: `kundali_backend/app/auth.py`, `docs/PROJECT_STATUS.md`
+
+- **Update [2026-09-16 13:30 IST] - Live Server Verification for Suyash (Shirala, Sangli Coordinates)**:
+  - Input: DOB 30-03-2003 22:10:00, Location Chincholi, Shirala, Sangli District (17.0176° N, 73.9880° E), Timezone Asia/Kolkata.
+  - Live Endpoint Tested: http://localhost:8000/api/v1/kundali vs Viaveda live document ID 6aaa4c1343e6b5a64902b25d.
+  - **Results**:
+    - Ascendant: Scorpio (3°44'44") — Delta:  .0000° (Exact Match)
+    - Sun: Pisces (15°39'57", House 5) — Delta:  .0000° (Exact Match)
+    - Moon: Aquarius (22°11'58", House 4) — Delta:  .0001° (Exact Match)
+    - Mars: Sagittarius (22°24'21", House 2) — Delta:  .0000° (Exact Match)
+    - Mercury: Pisces (24°38'54", House 5) — Delta:  .0000° (Exact Match)
+    - Jupiter: Cancer (14°11'38", House 9 Exalted) — Delta:  .0000° (Exact Match)
+    - Venus: Aquarius (9°37'20", House 4) — Delta:  .0000° (Exact Match)
+    - Saturn: Taurus (29°26'41", House 7) — Delta:  .0000° (Exact Match)
+    - Rahu/Ketu: Taurus (House 7) / Scorpio (House 1) — Sign & House 100% Match
+    - D1 Lagna Kundali: All 12 houses match 100% identically.
+
+---
+
+### [2026-09-16 13:45 IST] � UX & SECURITY: Email Verification Resend Flow, Strict New User Profile Isolation & Tag Button CSS Fix
+
+- **Context**: User requested three critical improvements:
+  1. If email is not yet confirmed on login, redirect to a dedicated Verify Email page with a Resend Email option instead of blocking on the login form.
+  2. Ensure new individual users and guests see 0 default/test profiles (clean personal slate).
+  3. Fix 'Save as Tag' selected option CSS visibility in the Kundali save dialog.
+- **Fixes Applied**:
+  - **Email Verification Flow**: Updated `LoginPage.jsx` to detect unconfirmed email error from Supabase and redirect to `/verify-email` with state. Enhanced `VerifyEmailPage.jsx` and `AuthContext.jsx` with `resendVerificationEmail()`, cooldown timer, and success/error status banners in English and Marathi.
+  - **Profile Isolation**: Updated `database.py` (`search_profiles`, `count_profiles`, `search_profiles_typeahead`, `get_gender_counts`) to scope guest queries to `user_id = '__guest__'` instead of leaking test fixture records where `user_id IS NULL`. New users and guests now start with 0 profiles.
+  - **Save as Tag CSS**: Fixed class mismatch in `SaveProfileButton.jsx` by adopting `save-profile__tag-btn` and updated `SaveProfileButton.css` with clear high-contrast active styling (copper/gold background, white text, 700 font-weight, subtle shadow, and checkmark).
+- **Verification**:
+  - Pytest: **144/144 tests passed**.
+  - Vite build: **0 errors** (compiled in 951ms).
+  - Guest API: verified `GET /api/v1/profiles` returns `total: 0`.
+- **Files Modified**: `kundali_backend/app/database.py`, `kundali_frontend/src/pages/LoginPage.jsx`, `kundali_frontend/src/pages/VerifyEmailPage.jsx`, `kundali_frontend/src/context/AuthContext.jsx`, `kundali_frontend/src/components/SaveProfileButton.jsx`, `kundali_frontend/src/components/SaveProfileButton.css`, `docs/PROJECT_STATUS.md`

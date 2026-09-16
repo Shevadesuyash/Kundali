@@ -23,11 +23,22 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { error } = await signInWithEmail(email, password);
-      if (error) throw error;
+      const res = await signInWithEmail(email, password);
+      if (res?.error) throw res.error;
       navigate(from, { replace: true });
     } catch (err) {
-      setErrorMsg(err.message || 'Invalid email or password');
+      const msg = err.message || '';
+      const lower = msg.toLowerCase();
+      if (
+        lower.includes('email not confirmed') ||
+        lower.includes('not confirmed') ||
+        lower.includes('unconfirmed') ||
+        lower.includes('verify your email')
+      ) {
+        navigate('/verify-email', { state: { email, unconfirmed: true } });
+        return;
+      }
+      setErrorMsg(msg || 'Invalid email or password');
     } finally {
       setLoading(false);
     }

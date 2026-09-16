@@ -420,7 +420,7 @@ def search_profiles(
     placeholder = "%s" if IS_POSTGRES else "?"
 
     if user_id == "__guest__":
-        conditions.append("user_id IS NULL")
+        conditions.append("user_id = '__guest__'")
     elif user_id:
         conditions.append(f"user_id = {placeholder}")
         params.append(user_id)
@@ -469,7 +469,7 @@ def search_profiles_typeahead(q: str, limit: int = 5, user_id: Optional[str] = N
     params = [f"%{q}%"]
 
     if user_id == "__guest__":
-        conditions.append("user_id IS NULL")
+        conditions.append("user_id = '__guest__'")
     elif user_id:
         conditions.append(f"user_id = {placeholder}")
         params.append(str(user_id))
@@ -520,7 +520,7 @@ def count_profiles(
     placeholder = "%s" if IS_POSTGRES else "?"
 
     if user_id == "__guest__":
-        conditions.append("user_id IS NULL")
+        conditions.append("user_id = '__guest__'")
     elif user_id:
         conditions.append(f"user_id = {placeholder}")
         params.append(user_id)
@@ -553,7 +553,7 @@ def get_gender_counts(user_id: Optional[str] = None) -> Dict[str, int]:
     """Return counts of male and female profiles."""
     placeholder = "%s" if IS_POSTGRES else "?"
     if user_id == "__guest__":
-        where = "WHERE user_id IS NULL"
+        where = "WHERE user_id = '__guest__'"
         params: List[Any] = []
     elif user_id:
         where = f"WHERE user_id = {placeholder}"

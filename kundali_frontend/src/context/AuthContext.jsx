@@ -154,6 +154,23 @@ export function AuthProvider({ children }) {
     });
   };
 
+  const resendVerificationEmail = async (targetEmail) => {
+    if (!isSupabaseConfigured) {
+      return { data: {}, error: null };
+    }
+    const cleanEmail = (targetEmail || '').trim();
+    if (!cleanEmail) {
+      return { data: null, error: new Error('Email is required to resend verification link') };
+    }
+    return await supabase.auth.resend({
+      type: 'signup',
+      email: cleanEmail,
+      options: {
+        emailRedirectTo: `${window.location.origin}/verify-email`,
+      },
+    });
+  };
+
   const signOut = async () => {
     if (isSupabaseConfigured) {
       await supabase.auth.signOut().catch(() => {});
@@ -176,6 +193,7 @@ export function AuthProvider({ children }) {
         signInWithEmail,
         signUpWithEmail,
         signInWithGoogle,
+        resendVerificationEmail,
         signOut,
       }}
     >

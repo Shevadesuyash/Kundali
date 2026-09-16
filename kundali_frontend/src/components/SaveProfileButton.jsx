@@ -100,16 +100,20 @@ export default function SaveProfileButton({ person, gender: propGender = '', bir
             <div className="save-profile__row">
               <span className="save-profile__label">Save as Tag:</span>
               <div className="save-profile__tags">
-                {TAG_OPTIONS.map((t) => (
-                  <button
-                    key={t.value}
-                    type="button"
-                    className={`tag-chip${tag === t.value ? ' is-active' : ''}`}
-                    onClick={() => setTag(t.value)}
-                  >
-                    {t.label}
-                  </button>
-                ))}
+                {TAG_OPTIONS.map((t) => {
+                  const isActive = tag === t.value;
+                  return (
+                    <button
+                      key={t.value}
+                      type="button"
+                      className={`save-profile__tag-btn tag-chip${isActive ? ' is-active' : ''}`}
+                      onClick={() => setTag(t.value)}
+                      aria-pressed={isActive}
+                    >
+                      {isActive ? `✓ ${t.label}` : t.label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
