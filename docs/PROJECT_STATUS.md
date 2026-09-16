@@ -1007,3 +1007,32 @@ egistered_at, and is_verified (even if profile_count == 0).
   - Vite: Built cleanly in 495ms with **0 errors**.
   - Live Endpoint: GET /api/v1/admin/users verified live returning all 6 registered users (including shevadesuyash3@gmail.com and 0-profile accounts) with status 200.
 - **Files Modified**: kundali_backend/app/database.py, kundali_frontend/src/pages/AdminPage.jsx, docs/PROJECT_STATUS.md.
+
+---
+
+### [2026-09-16 15:25 IST] - QUALITY BENCHMARK: 50-Profile Multi-Agent Concordance Verification vs Viaveda
+
+- **Context / Chat Reference**:
+  - User requested running a 50-profile verification benchmark against Viaveda Kundli Engine (\https://www.viaveda.in/kundli-report\ / \https://prod.viaveda.in\) using parallel multi-agents to handle the multi-step retrieval (\/kundli/create\ + \/kundli/divine/details\) and test simultaneous execution against our live Kundali app.
+- **Execution Architecture**:
+  - **4 Concurrent Subagents**:
+    - Worker 1: Profiles 1–12 (Anchor cases & Maharashtra coordinates)
+    - Worker 2: Profiles 13–25 (North/South Indian & global capitals)
+    - Worker 3: Profiles 26–37 (Multi-era historical profiles: 1952–1995)
+    - Worker 4: Profiles 38–50 (Modern diverse profiles: 1997–2024 across 12 signs)
+  - **Evaluation Suite**: \	ests/run_batch_benchmark.py\ and aggregator \	ests/consolidate_report.py\.
+- **Benchmark Results Across 50 Profiles**:
+  - **Sun Sign (Surya)**: **50 / 50 (100.0%)**
+  - **Gana**: **50 / 50 (100.0%)**
+  - **Nadi**: **50 / 50 (100.0%)**
+  - **Moon Sign (Chandra)**: **49 / 50 (98.0%)**
+  - **Varna**: **49 / 50 (98.0%)**
+  - **Yoni**: **45 / 50 (90.0%)**
+  - **Planetary Signs (All 10 Grahas)**: **493 / 500 (98.6%)**
+  - **Planetary Houses (All 10 Grahas)**: **462 / 500 (92.4%)**
+  - **D1 Lagna Kundali Layout (12 Houses)**: **45 / 50 (90.0% overall, 44 / 45 = 97.8% on Indian profiles)**
+  - **Mean Graha Degree Delta**: **< 0.18°** for domestic profiles.
+- **Artifacts Created**:
+  - \enchmark_report_50.md\ (comprehensive scorecard and individual case table).
+  - Batch JSON results: \	ests/fixtures/output_batch_{1,2,3,4}.json\.
+  - Batch scripts: \	ests/run_batch_benchmark.py\, \	ests/consolidate_report.py\.
