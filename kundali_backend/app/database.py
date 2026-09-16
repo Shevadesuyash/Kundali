@@ -80,7 +80,7 @@ def _get_pg_pool():
                 minconn=1,
                 maxconn=10,   # Supabase free tier allows 25; keep headroom
                 dsn=DB_URL,
-                connect_timeout=3,
+                connect_timeout=10,
             )
             logger.info("PostgreSQL connection pool initialized (min=1, max=10)")
         except Exception as exc:
@@ -776,17 +776,17 @@ def list_all_users_with_roles() -> List[Dict]:
             cur = con.cursor()
             cur.execute("""
                 SELECT
-                    p.user_id,
+                    COALESCE(ur.user_id, p.user_id) as user_id,
                     COALESCE(ur.email, '') as email,
                     COALESCE(ur.role, 'user') as role,
                     COALESCE(ur.display_name, '') as display_name,
                     COUNT(p.id) as profile_count,
                     MAX(p.created_at) as last_active
-                FROM profiles p
-                LEFT JOIN user_roles ur ON p.user_id = ur.user_id
-                WHERE p.user_id IS NOT NULL
-                GROUP BY p.user_id, ur.email, ur.role, ur.display_name
-                ORDER BY profile_count DESC
+                FROM user_roles ur
+                FULL OUTER JOIN profiles p ON p.user_id = ur.user_id
+                WHERE COALESCE(ur.user_id, p.user_id) IS NOT NULL
+                GROUP BY COALESCE(ur.user_id, p.user_id), ur.email, ur.role, ur.display_name
+                ORDER BY profile_count DESC, last_active DESC NULLS LAST
             """)
             rows = cur.fetchall()
         else:
@@ -796,16 +796,27 @@ def list_all_users_with_roles() -> List[Dict]:
                 pass
             rows = con.execute("""
                 SELECT
-                    p.user_id,
+                    COALESCE(ur.user_id, p.user_id) as user_id,
                     COALESCE(ur.email, '') as email,
                     COALESCE(ur.role, 'user') as role,
                     COALESCE(ur.display_name, '') as display_name,
                     COUNT(p.id) as profile_count,
                     MAX(p.created_at) as last_active
+                FROM user_roles ur
+                LEFT JOIN profiles p ON p.user_id = ur.user_id
+                GROUP BY ur.user_id, ur.email, ur.role, ur.display_name
+                UNION
+                SELECT
+                    p.user_id,
+                    '' as email,
+                    'user' as role,
+                    '' as display_name,
+                    COUNT(p.id) as profile_count,
+                    MAX(p.created_at) as last_active
                 FROM profiles p
-                LEFT JOIN user_roles ur ON p.user_id = ur.user_id
-                WHERE p.user_id IS NOT NULL
-                GROUP BY p.user_id, ur.email, ur.role, ur.display_name
+                WHERE p.user_id NOT IN (SELECT user_id FROM user_roles WHERE user_id IS NOT NULL)
+                  AND p.user_id IS NOT NULL
+                GROUP BY p.user_id
                 ORDER BY profile_count DESC
             """).fetchall()
         return [dict(r) for r in rows]
