@@ -544,21 +544,23 @@ export default function AdminPage() {
 
               {/* Pagination */}
               {total > PER_PAGE && (
-                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', marginTop: '1.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', alignItems: 'center', marginTop: '1.5rem' }}>
                   <button
                     onClick={() => setPage(p => Math.max(1, p - 1))}
                     disabled={page <= 1}
-                    style={{ padding: '0.5rem 1.2rem', border: '1px solid #e2d9cc', borderRadius: '8px', cursor: 'pointer' }}
+                    className="btn btn--ghost btn--sm"
+                    type="button"
                   >
                     ← Prev
                   </button>
-                  <span style={{ lineHeight: '2.2', color: '#6b7280', fontSize: '0.85rem' }}>
+                  <span style={{ color: 'var(--color-text-dim, #6b7280)', fontSize: '0.88rem', fontWeight: 500 }}>
                     Page {page} of {Math.ceil(total / PER_PAGE)}
                   </span>
                   <button
                     onClick={() => setPage(p => p + 1)}
                     disabled={page >= Math.ceil(total / PER_PAGE)}
-                    style={{ padding: '0.5rem 1.2rem', border: '1px solid #e2d9cc', borderRadius: '8px', cursor: 'pointer' }}
+                    className="btn btn--ghost btn--sm"
+                    type="button"
                   >
                     Next →
                   </button>

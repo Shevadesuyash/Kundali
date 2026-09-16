@@ -961,3 +961,22 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
   - Vite build: **0 errors** (compiled in 951ms).
   - Guest API: verified `GET /api/v1/profiles` returns `total: 0`.
 - **Files Modified**: `kundali_backend/app/database.py`, `kundali_frontend/src/pages/LoginPage.jsx`, `kundali_frontend/src/pages/VerifyEmailPage.jsx`, `kundali_frontend/src/context/AuthContext.jsx`, `kundali_frontend/src/components/SaveProfileButton.jsx`, `kundali_frontend/src/components/SaveProfileButton.css`, `docs/PROJECT_STATUS.md`
+
+---
+
+### [2026-09-16 14:25 IST] - UI DESIGN SYSTEM: Global Button Architecture Recovery in tokens.css
+
+- **Context / Chat Reference**: User identified that buttons across several pages (e.g. Save to Profiles, Kundali/Match calculation triggers, modals, and admin pagination) appeared as unstyled, square browser-default gray buttons.
+- **Root Cause**:
+  - The .btn, .btn--primary, .btn--ghost, and .btn--full CSS utility classes were previously defined exclusively inside kundali_frontend/src/pages/HomePage.css.
+  - Vite uses code-splitting by route. When users directly accessed /kundali, /match, /profiles, /panchang, /admin, or /verify-email, HomePage.css was never loaded.
+  - As a result, buttons on those pages rendered using default user-agent HTML button styles (square, beveled, gray buttonface).
+- **Fixes Applied**:
+  - **Global Tokens (	okens.css)**: Migrated and enhanced the entire Vedic button design system (.btn, .btn--primary, .btn--ghost, .btn--secondary, .btn--danger, .btn--full, .btn--sm, and utton:disabled) into kundali_frontend/src/styles/tokens.css, which is imported globally in main.jsx.
+  - **Deduplication (HomePage.css)**: Removed duplicate .btn rules in HomePage.css so hero CTA buttons inherit cleanly from 	okens.css.
+  - **Admin Pagination (AdminPage.jsx)**: Replaced inline-styled pagination buttons with .btn .btn--ghost .btn--sm.
+- **Verification**:
+  - Frontend: 
+pm run build completed in 873ms with **0 errors**.
+  - Backend: pytest tests/ passed **144/144 tests**.
+- **Files Modified**: kundali_frontend/src/styles/tokens.css, kundali_frontend/src/pages/HomePage.css, kundali_frontend/src/pages/AdminPage.jsx, docs/PROJECT_STATUS.md.
