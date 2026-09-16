@@ -186,15 +186,51 @@ def init_db() -> None:
                     updated_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
                 );
 
-                CREATE TABLE IF NOT EXISTS location_cache (
-                    id           SERIAL PRIMARY KEY,
-                    query        TEXT NOT NULL UNIQUE,
-                    results_json TEXT NOT NULL,
-                    source       TEXT DEFAULT 'nominatim',
-                    hit_count    INTEGER DEFAULT 1,
-                    created_at   TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                CREATE TABLE IF NOT EXISTS user_roles (
+                    user_id      TEXT PRIMARY KEY,
+                    email        TEXT,
+                    role         TEXT DEFAULT 'user',
+                    display_name TEXT,
+                    updated_at   TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                    updated_by   TEXT
                 );
+                CREATE INDEX IF NOT EXISTS idx_user_roles_email ON user_roles(email);
             """)
+            try:
+                cur.execute("""
+                    CREATE OR REPLACE FUNCTION public.handle_new_user()
+                    RETURNS TRIGGER
+                    LANGUAGE plpgsql
+                    SECURITY DEFINER
+                    AS $$
+                    BEGIN
+                        INSERT INTO public.user_roles (user_id, email, role, display_name, updated_at, updated_by)
+                        VALUES (
+                            NEW.id::text,
+                            COALESCE(NEW.email, ''),
+                            'user',
+                            COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', split_part(COALESCE(NEW.email, ''), '@', 1)),
+                            NOW(),
+                            'auth_trigger'
+                        )
+                        ON CONFLICT (user_id) DO UPDATE SET
+                            email = EXCLUDED.email,
+                            display_name = CASE 
+                                WHEN public.user_roles.display_name IS NULL OR public.user_roles.display_name = '' 
+                                THEN EXCLUDED.display_name 
+                                ELSE public.user_roles.display_name 
+                            END;
+                        RETURN NEW;
+                    END;
+                    $$;
+
+                    DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+                    CREATE TRIGGER on_auth_user_created
+                    AFTER INSERT OR UPDATE OF email, raw_user_meta_data ON auth.users
+                    FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+                """)
+            except Exception as e:
+                logger.debug("auth.users trigger init skipped: %s", e)
             logger.info("Supabase PostgreSQL initialized successfully")
         else:
             con.executescript("""
@@ -770,25 +806,57 @@ def set_user_role(user_id: str, email: str, role: str, updated_by: str = None, d
 
 
 def list_all_users_with_roles() -> List[Dict]:
-    """List all unique user_ids with their role, email, and profile count."""
+    """List all registered users from auth.users + user_roles + profiles with their role and profile count."""
     with _conn() as con:
         if IS_POSTGRES:
             cur = con.cursor()
-            cur.execute("""
-                SELECT
-                    COALESCE(ur.user_id, p.user_id) as user_id,
-                    COALESCE(ur.email, '') as email,
-                    COALESCE(ur.role, 'user') as role,
-                    COALESCE(ur.display_name, '') as display_name,
-                    COUNT(p.id) as profile_count,
-                    MAX(p.created_at) as last_active
-                FROM user_roles ur
-                FULL OUTER JOIN profiles p ON p.user_id = ur.user_id
-                WHERE COALESCE(ur.user_id, p.user_id) IS NOT NULL
-                GROUP BY COALESCE(ur.user_id, p.user_id), ur.email, ur.role, ur.display_name
-                ORDER BY profile_count DESC, last_active DESC NULLS LAST
-            """)
-            rows = cur.fetchall()
+            try:
+                cur.execute("""
+                    SELECT
+                        COALESCE(ur.user_id, u.id::text, p.user_id) as user_id,
+                        COALESCE(NULLIF(ur.email, ''), u.email, '') as email,
+                        COALESCE(ur.role, 'user') as role,
+                        COALESCE(NULLIF(ur.display_name, ''), u.raw_user_meta_data->>'full_name', u.raw_user_meta_data->>'name', split_part(COALESCE(u.email, ur.email, ''), '@', 1), '') as display_name,
+                        COUNT(DISTINCT p.id) as profile_count,
+                        COALESCE(MAX(p.created_at), u.last_sign_in_at, u.created_at) as last_active,
+                        u.created_at as registered_at,
+                        (u.email_confirmed_at IS NOT NULL OR u.confirmed_at IS NOT NULL) as is_verified
+                    FROM user_roles ur
+                    FULL OUTER JOIN auth.users u ON ur.user_id = u.id::text
+                    LEFT JOIN profiles p ON p.user_id = COALESCE(ur.user_id, u.id::text)
+                    WHERE COALESCE(ur.user_id, u.id::text, p.user_id) IS NOT NULL
+                      AND COALESCE(ur.user_id, u.id::text, p.user_id) != '__guest__'
+                    GROUP BY 
+                        COALESCE(ur.user_id, u.id::text, p.user_id),
+                        ur.email, u.email,
+                        ur.role,
+                        ur.display_name,
+                        u.raw_user_meta_data,
+                        u.last_sign_in_at,
+                        u.created_at,
+                        u.email_confirmed_at,
+                        u.confirmed_at
+                    ORDER BY profile_count DESC, last_active DESC NULLS LAST
+                """)
+                rows = cur.fetchall()
+            except Exception as exc:
+                logger.warning("auth.users join failed (%s); falling back to user_roles + profiles", exc)
+                cur.execute("""
+                    SELECT
+                        COALESCE(ur.user_id, p.user_id) as user_id,
+                        COALESCE(ur.email, '') as email,
+                        COALESCE(ur.role, 'user') as role,
+                        COALESCE(ur.display_name, '') as display_name,
+                        COUNT(DISTINCT p.id) as profile_count,
+                        MAX(p.created_at) as last_active
+                    FROM user_roles ur
+                    FULL OUTER JOIN profiles p ON p.user_id = ur.user_id
+                    WHERE COALESCE(ur.user_id, p.user_id) IS NOT NULL
+                      AND COALESCE(ur.user_id, p.user_id) != '__guest__'
+                    GROUP BY COALESCE(ur.user_id, p.user_id), ur.email, ur.role, ur.display_name
+                    ORDER BY profile_count DESC, last_active DESC NULLS LAST
+                """)
+                rows = cur.fetchall()
         else:
             try:
                 con.execute("CREATE TABLE IF NOT EXISTS user_roles (user_id TEXT PRIMARY KEY, email TEXT, role TEXT DEFAULT 'user', display_name TEXT, updated_at TEXT, updated_by TEXT)")
@@ -804,6 +872,7 @@ def list_all_users_with_roles() -> List[Dict]:
                     MAX(p.created_at) as last_active
                 FROM user_roles ur
                 LEFT JOIN profiles p ON p.user_id = ur.user_id
+                WHERE COALESCE(ur.user_id, p.user_id) != '__guest__'
                 GROUP BY ur.user_id, ur.email, ur.role, ur.display_name
                 UNION
                 SELECT
@@ -816,10 +885,19 @@ def list_all_users_with_roles() -> List[Dict]:
                 FROM profiles p
                 WHERE p.user_id NOT IN (SELECT user_id FROM user_roles WHERE user_id IS NOT NULL)
                   AND p.user_id IS NOT NULL
+                  AND p.user_id != '__guest__'
                 GROUP BY p.user_id
                 ORDER BY profile_count DESC
             """).fetchall()
-        return [dict(r) for r in rows]
+
+        result = []
+        for r in rows:
+            d = dict(r)
+            for k, v in d.items():
+                if hasattr(v, 'isoformat'):
+                    d[k] = v.isoformat()
+            result.append(d)
+        return result
 
 
 def search_all_profiles_admin(

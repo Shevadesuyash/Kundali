@@ -980,3 +980,30 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 pm run build completed in 873ms with **0 errors**.
   - Backend: pytest tests/ passed **144/144 tests**.
 - **Files Modified**: kundali_frontend/src/styles/tokens.css, kundali_frontend/src/pages/HomePage.css, kundali_frontend/src/pages/AdminPage.jsx, docs/PROJECT_STATUS.md.
+
+---
+
+### [2026-09-16 14:50 IST] - FIX: Automated Supabase Auth Trigger & Admin Users Visibility
+
+- **Context / Chat Reference**:
+  - User asked why newly registered accounts were not visible in the database tables or in the Admin 'All Users' section.
+  - User also noted they cleaned up guest profiles that were attached to non-valid/guest users.
+- **Root Cause**:
+  - In Supabase, new user signups (via Supabase Auth) are stored in the internal table uth.users under the uth schema, NOT in public.profiles or public.user_roles.
+  - public.profiles only stores birth chart data when a user clicks 'Save to Profiles' (so a newly registered user initially has 0 profiles).
+  - The backend endpoint GET /api/v1/admin/users was previously performing a join exclusively between user_roles and profiles (FROM user_roles ur FULL OUTER JOIN profiles p). Because uth.users was never joined, any registered user who had not yet been manually assigned a role or saved a profile was completely omitted.
+  - Furthermore, if a user had saved a profile but had no user_roles row, their email appeared blank.
+- **Fixes Applied**:
+  - **Supabase Auth Trigger (on_auth_user_created)**: Installed a PostgreSQL SECURITY DEFINER function public.handle_new_user() and trigger on_auth_user_created on uth.users. Whenever any new user registers (via Email or Google OAuth), a row is automatically inserted into public.user_roles with 
+ole = 'user', their email, and display name.
+  - **Backfill**: Ran backfill script synchronizing all existing Supabase auth accounts into public.user_roles.
+  - **Unified User Query (database.py)**: Updated list_all_users_with_roles() to query uth.users joined with user_roles and profiles. Now returns user_id, email, 
+ole, display_name, profile_count, last_active, 
+egistered_at, and is_verified (even if profile_count == 0).
+  - **Admin UI Enhancement (AdminPage.jsx)**: Added a Status column with ✓ Verified (green pill) or ⏳ Pending (amber pill), plus email fallback to user_id if email is unset.
+  - **Database Startup (init_db)**: Added user_roles table and trigger creation into init_db() to ensure persistence across restarts.
+- **Verification**:
+  - Pytest: **144/144 tests passed**.
+  - Vite: Built cleanly in 495ms with **0 errors**.
+  - Live Endpoint: GET /api/v1/admin/users verified live returning all 6 registered users (including shevadesuyash3@gmail.com and 0-profile accounts) with status 200.
+- **Files Modified**: kundali_backend/app/database.py, kundali_frontend/src/pages/AdminPage.jsx, docs/PROJECT_STATUS.md.

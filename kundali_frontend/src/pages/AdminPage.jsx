@@ -175,6 +175,7 @@ function UsersTab({ token, isSuperAdmin }) {
                 <th>Email</th>
                 <th>Display Name</th>
                 <th>Role</th>
+                <th>Status</th>
                 <th>Profiles</th>
                 <th>Last Active</th>
                 <th>Actions</th>
@@ -191,7 +192,7 @@ function UsersTab({ token, isSuperAdmin }) {
                   <React.Fragment key={uid}>
                     <tr>
                       {/* Email */}
-                      <td style={{ fontWeight: 600, fontSize: '0.85rem' }}>{u.email}</td>
+                      <td style={{ fontWeight: 600, fontSize: '0.85rem' }}>{u.email || <em style={{ color: '#9ca3af' }}>{uid}</em>}</td>
 
                       {/* Display Name */}
                       <td style={{ fontSize: '0.83rem', color: '#44403c' }}>
@@ -200,6 +201,19 @@ function UsersTab({ token, isSuperAdmin }) {
 
                       {/* Role badge */}
                       <td><RoleBadge role={role} /></td>
+
+                      {/* Status badge */}
+                      <td>
+                        {u.is_verified ? (
+                          <span style={{ background: '#dcfce7', color: '#166534', padding: '0.18rem 0.55rem', borderRadius: '999px', fontSize: '0.74rem', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                            ✓ Verified
+                          </span>
+                        ) : (
+                          <span style={{ background: '#fef3c7', color: '#92400e', padding: '0.18rem 0.55rem', borderRadius: '999px', fontSize: '0.74rem', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                            ⏳ Pending
+                          </span>
+                        )}
+                      </td>
 
                       {/* Profile count */}
                       <td style={{ textAlign: 'center', fontWeight: 700, color: '#c8720a' }}>
@@ -243,7 +257,7 @@ function UsersTab({ token, isSuperAdmin }) {
                     {/* Inline reset password form */}
                     {form.open && (
                       <tr className="reset-pw-row">
-                        <td colSpan={6}>
+                        <td colSpan={7}>
                           <div className="reset-pw-form">
                             <span style={{ fontSize: '0.83rem', fontWeight: 600, color: '#44403c' }}>
                               New password for <em>{u.email}</em>:
